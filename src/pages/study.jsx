@@ -21,6 +21,11 @@ const Study = () => {
     );
   });
 
+  const currentLectureTitle = useSelector((state) => {
+    const currentLecture = state.lectures.lectures.find((lecture) => lecture.id === state.lectures.currentLectureId);
+    return currentLecture?.title;
+  });
+
   const handleCloseMCQPane = () => {
     dispatch(hideMCQPane());
   };
@@ -36,7 +41,9 @@ const Study = () => {
       </div>
 
       {/* MCQ Pane Modal */}
-      <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} />
+      {isMCQPaneVisible && (
+        <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} lectureTitle={currentLectureTitle} />
+      )}
     </div>
   );
 };
