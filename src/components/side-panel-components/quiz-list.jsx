@@ -16,7 +16,7 @@ const QuizList = () => {
 
   const handlePracticeClick = () => {
     dispatch(showMCQPane());
-    dispatch(nextQuiz()); // Reset to the first quiz in the MCQ pane
+    dispatch(nextQuiz());
   };
 
   return (

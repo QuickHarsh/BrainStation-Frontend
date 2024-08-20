@@ -60,16 +60,16 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
           </p>
 
           {/* Question */}
-          <p className="mt-8 text-3xl font-inter font-semibold">{currentQuiz.question}</p>
+          <p className="mt-8 text-[28px] font-inter font-semibold">{currentQuiz.question}</p>
 
           {/* MCQs */}
           <div className="w-full grid grid-cols-2 items-center my-4">
             {[currentQuiz.answer, ...currentQuiz.distractors].map((answer, index) => {
               let cardColorClass = "";
-              if (index === 0) cardColorClass = "bg-[#E5DDC5]"; // Original first card color
-              if (index === 1) cardColorClass = "bg-[#BED7DC]"; // Original second card color
-              if (index === 2) cardColorClass = "bg-[#BEDCC3]"; // Original third card color
-              if (index === 3) cardColorClass = "bg-[#D7C5E5]"; // Original fourth card color
+              if (index === 0) cardColorClass = "bg-[#E5DDC5]";
+              if (index === 1) cardColorClass = "bg-[#BED7DC]";
+              if (index === 2) cardColorClass = "bg-[#BEDCC3]";
+              if (index === 3) cardColorClass = "bg-[#D7C5E5]";
 
               let borderColorClass = "";
               if (isAnswered) {
@@ -80,8 +80,10 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
                 }
               }
 
+              const alignmentClass = index % 2 === 0 ? "justify-self-end" : "justify-self-start";
+
               return (
-                <div key={index} className="justify-self-end" onClick={() => handleAnswerClick(answer)}>
+                <div key={index} className={alignmentClass} onClick={() => handleAnswerClick(answer)}>
                   <MCQCard className={`${cardColorClass} ${borderColorClass}`} text={answer} />
                 </div>
               );
