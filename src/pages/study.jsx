@@ -11,7 +11,7 @@ const Study = () => {
   const isMCQPaneVisible = useSelector((state) => state.mcq.isMCQPaneVisible);
 
   useEffect(() => {
-    dispatch(switchView("lecturer")); // Set side panel back to "lecturer" view when this component mounts
+    dispatch(switchView("lecturer"));
   }, [dispatch]);
 
   const currentSlide = useSelector((state) => {
@@ -41,9 +41,7 @@ const Study = () => {
       </div>
 
       {/* MCQ Pane Modal */}
-      {isMCQPaneVisible && (
-        <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} lectureTitle={currentLectureTitle} />
-      )}
+      <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} lectureTitle={currentLectureTitle} />
     </div>
   );
 };

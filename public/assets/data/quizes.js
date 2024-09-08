@@ -1,76 +1,147 @@
 const quizzes = {
   1: [
     {
-      question: "What is the time complexity of finding an element in a balanced binary search tree (BST)?",
-      answer:
-        "In a balanced binary search tree (BST), the time complexity of finding an element is O(log n), where 'n' is the number of elements in the tree. This efficiency is achieved because at each comparison, the search space is halved.",
-      distractors: ["O(n)", "O(1)", "O(n^2)"]
+      context:
+        "An operating system acts as an intermediary between the user and the computer hardware, handling tasks such as memory management, process scheduling, and input/output operations.",
+      question: "What is one of the primary roles of an operating system in a computer system?",
+      answer: "Memory management",
+      distractors: ["Graphics processing", "Database management", "Network security"]
     },
     {
-      question: "Explain the difference between a stack and a queue.",
-      answer:
-        "A stack is a Last In, First Out (LIFO) data structure, where elements are added and removed from the same end. A queue is a First In, First Out (FIFO) data structure, where elements are added at the back and removed from the front.",
-      distractors: ["Both are LIFO", "Both are FIFO", "Stack uses two ends"]
-    },
-    {
-      question: "What is an array, and how does it differ from a linked list?",
-      answer:
-        "An array is a collection of elements stored at contiguous memory locations. It has a fixed size and allows O(1) time access to elements via indexing. A linked list, on the other hand, consists of nodes where each node contains a data element and a reference (or link) to the next node, allowing dynamic size but with O(n) access time.",
-      distractors: ["Linked list is contiguous", "Array has dynamic size", "Array elements are linked"]
-    },
-    {
-      question: "What are the advantages of using a linked list over an array?",
-      answer:
-        "Linked lists provide dynamic memory allocation, meaning they can grow or shrink in size without reallocating memory. They also allow efficient insertions and deletions at any position, compared to arrays which may require shifting elements.",
-      distractors: ["Array elements don't shift", "Array is always faster", "Linked list has fixed size"]
-    },
-    {
-      question: "Define a binary tree and explain its properties.",
-      answer:
-        "A binary tree is a hierarchical data structure in which each node has at most two children, referred to as the left child and the right child. Properties include: a tree with 'n' nodes has exactly 'n-1' edges, and the height of the tree affects its performance.",
-      distractors: ["Each node has three children", "It always has n edges", "Height does not affect performance"]
-    },
-    {
-      question: "What is a doubly linked list, and how does it differ from a singly linked list?",
-      answer:
-        "A doubly linked list is a type of linked list where each node contains a reference to both the next and the previous node, allowing traversal in both directions. In contrast, a singly linked list allows traversal in only one direction.",
+      context:
+        "Application programs are software that utilize system resources, such as memory, processing power, and storage, to perform specific tasks.",
+      question: "How do application programs interact with the operating system?",
+      answer: "By utilizing system resources",
       distractors: [
-        "Doubly linked list is faster",
-        "Singly linked list can traverse both ways",
-        "Doubly linked list has one reference"
+        "By manipulating the hardware directly",
+        "By bypassing the operating system",
+        "By using network protocols exclusively"
       ]
     },
     {
-      question: "Explain Big O notation and its importance in analyzing algorithms.",
-      answer:
-        "Big O notation describes the upper bound of the time complexity of an algorithm, focusing on the worst-case scenario as the input size grows. It's essential for comparing the efficiency of algorithms by quantifying their growth rates.",
+      context: "Users can be classified based on their roles, such as end-users, power users, or administrators.",
+      question: "Which classification of users typically has more privileges in a computing system?",
+      answer: "Administrators",
+      distractors: ["End-users", "Power users", "Casual users"]
+    },
+    {
+      context:
+        "The CPU executes instructions and processes data, while memory, including RAM and ROM, stores data and programs for the CPU to access.",
+      question: "What is the primary function of the CPU in a computer system?",
+      answer: "Executing instructions",
+      distractors: ["Storing data", "User interface management", "Connecting to the internet"]
+    },
+    {
+      context:
+        "System resources include CPU time, memory, and I/O devices, which the operating system manages and allocates among running applications.",
+      question: "Which of the following is NOT considered a system resource managed by the operating system?",
+      answer: "User preferences",
+      distractors: ["CPU time", "Memory", "I/O devices"]
+    },
+    {
+      context:
+        "The operating system controls and coordinates the use of hardware among various applications and users.",
+      question: "What is essential for running multiple applications concurrently without interference?",
+      answer: "Resource allocation by the operating system",
+      distractors: ["User intervention", "Hardware upgrades", "Dedicated servers"]
+    },
+    {
+      context:
+        "Users interact with computer systems and software applications to perform tasks, exchange information, and solve problems.",
+      question: "What forms the basis for modern computing, enabling collaboration across diverse platforms?",
+      answer: "An interconnected network of users, devices, and systems",
+      distractors: ["Single-user systems", "Isolated applications", "Standalone devices"]
+    },
+    {
+      context: "The operating system is responsible for controlling and executing user and application programs.",
+      question: "Whose responsibility is it to provide an interface between software and hardware?",
+      answer: "The operating system",
+      distractors: ["The application programs", "The user", "The CPU"]
+    },
+    {
+      context:
+        "Hardware encompasses the physical components of a computer system, such as the processor, memory, storage devices, and input/output peripherals.",
+      question: "Which of the following does NOT belong to the hardware components of a computer system?",
+      answer: "Operating system",
+      distractors: ["CPU", "Memory", "Storage devices"]
+    },
+    {
+      context: "The operating system manages and allocates hardware resources among running applications and users.",
+      question: "Why is efficient resource management by the operating system crucial?",
+      answer: "To prevent conflicts and ensure optimal performance",
+      distractors: ["To enhance graphics rendering", "To improve user interface design", "To increase internet speed"]
+    },
+    {
+      context: "The CPU executes instructions, processes data, and interacts with memory and I/O devices.",
+      question: "Which component of a computer system processes user commands and carries out tasks?",
+      answer: "CPU",
+      distractors: ["RAM", "Hard drive", "Network adapter"]
+    },
+    {
+      context: "Input/output devices, such as keyboards, mice, and monitors, allow users to interact with the system.",
+      question: "What role do I/O devices play in a computer system?",
+      answer: "Enabling user interaction with the system",
+      distractors: ["Executing computer programs", "Managing system memory", "Storing user data"]
+    },
+    {
+      context:
+        "Understanding user needs, behaviors, and preferences is crucial for designing effective computing systems.",
+      question: "Why is it important to understand user needs in IT?",
+      answer: "To design effective computing systems",
+      distractors: ["To enhance system security", "To reduce hardware costs", "To limit application features"]
+    },
+    {
+      context:
+        "An operating system provides common services for programs and manages computer hardware and software resources.",
+      question: "What is a key service provided by an operating system to application programs?",
+      answer: "Managing hardware resources",
       distractors: [
-        "Big O describes the best case",
-        "Big O is for small input sizes",
-        "Big O is not related to time complexity"
+        "Optimizing graphics performance",
+        "Maintaining internet security",
+        "Controlling user access directly"
       ]
     },
     {
-      question: "What is a circular queue, and how is it implemented?",
-      answer:
-        "A circular queue is a linear data structure that follows the FIFO principle but connects the last position back to the first position, forming a circle. It is implemented using an array and two pointers, 'front' and 'rear', to track the queue's elements.",
-      distractors: ["Circular queue is LIFO", "It does not form a circle", "No pointers are used"]
+      context: "The operating system allocates system resources, such as CPU time and memory, to programs as needed.",
+      question: "What aspect of the operating system is critical for maintaining performance during multitasking?",
+      answer: "Resource allocation",
+      distractors: ["Data encryption", "Hardware configuration", "User interface design"]
     },
     {
-      question: "What are the basic operations supported by a stack?",
-      answer:
-        "A stack supports the following basic operations: push (add an element to the top), pop (remove the top element), peek (view the top element without removing it), and isEmpty (check if the stack is empty).",
-      distractors: ["Peek removes the element", "Push adds to the bottom", "Stack has no isEmpty operation"]
+      context:
+        "Application programs define the ways in which the system resources are used to solve the computing problems of the users.",
+      question: "What do application programs utilize to perform specific tasks?",
+      answer: "System resources",
+      distractors: ["User preferences", "Application protocols", "Hardware upgrades"]
     },
     {
-      question: "Describe the process of inserting a new node in a binary search tree (BST).",
-      answer:
-        "To insert a new node in a BST, start at the root and compare the new node's value with the current node. If it's smaller, move to the left child; if larger, move to the right child. Continue this until an appropriate null position is found, where the new node is inserted.",
+      context: "In computer science and IT, individuals interact with machines and other computers to perform tasks.",
+      question: "What is the primary outcome of user interaction with computer systems?",
+      answer: "Performing tasks and exchanging information",
+      distractors: ["Increasing software security", "Improving hardware performance", "Reducing user errors"]
+    },
+    {
+      context: "The CPU, memory, and I/O devices are essential computer components.",
+      question: "Which component directly executes instructions in a computer system?",
+      answer: "CPU",
+      distractors: ["RAM", "I/O devices", "Motherboard"]
+    },
+    {
+      context:
+        "Computer systems can be divided into four main components, which include hardware and operating systems.",
+      question: "What are the four main components of a computer system?",
+      answer: "Hardware, OS, application programs, and users",
       distractors: [
-        "Always insert at the root",
-        "Insert directly into the left child",
-        "Insert at the first available position"
+        "Hardware, firmware, software, and users",
+        "CPU, RAM, storage, and users",
+        "Networking, storage, processors, and applications"
       ]
+    },
+    {
+      context: "The operating system serves as a bridge between user applications and the computer's hardware.",
+      question: "Which task is NOT performed by the operating system?",
+      answer: "Creating hardware specifications",
+      distractors: ["Managing application requests", "Allocating system resources", "Facilitating user interactions"]
     }
   ],
   2: [
