@@ -3,29 +3,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { shuffleArray } from "@/helper/shuffleArray";
 import { nextQuiz, resetQuizSession } from "@/store/quizzesSlice";
 import MCQCard from "./mcq-card";
+import QuizSummery from "./summery";
 
 const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const dispatch = useDispatch();
   const quizzes = useSelector((state) => state.quizzes.quizzes);
   const currentQuizIndex = useSelector((state) => state.quizzes.currentQuizIndex);
-  const currentQuiz = quizzes[currentQuizIndex];
+  const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-
-  // Track if the quiz session is new to avoid unnecessary resets
-  const [quizSessionStarted, setQuizSessionStarted] = useState(false);
+  const [showSummery, setShowSummery] = useState(false);
 
   useEffect(() => {
-    if (isVisible && !quizSessionStarted) {
-      // Reset only if the quiz session is new (i.e., the pane is opened for the first time)
+    if (isVisible) {
       dispatch(resetQuizSession());
-      setQuizSessionStarted(true); // Set session started flag
+      setShowSummery(false);
     }
-  }, [isVisible, quizSessionStarted, dispatch]);
+  }, [isVisible, dispatch]);
 
+  // Shuffle answers whenever the current quiz changes
   useEffect(() => {
     if (currentQuiz) {
       const answers = shuffleArray([currentQuiz.answer, ...currentQuiz.distractors]);
@@ -49,15 +48,21 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     if (currentQuizIndex < quizzes.length - 1) {
       dispatch(nextQuiz());
     } else {
-      onClose();
-      setQuizSessionStarted(false); // Reset the session tracking for next time
+      setShowSummery(true);
     }
   };
 
   const handleDifficultyClick = () => {
-    handleNextClick(); // Automatically go to the next question after selecting difficulty
+    handleNextClick();
   };
 
+  const handleSummeryClose = () => {
+    dispatch(resetQuizSession());
+    onClose();
+    setTimeout(() => setShowSummery(false), 300);
+  };
+
+  // Ensure we don't try to render if `currentQuiz` is invalid
   if (!currentQuiz || quizzes.length === 0) {
     return null;
   }
@@ -65,6 +70,26 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   // Calculate progress percentage
   const progressPercentage = ((currentQuizIndex + 1) / quizzes.length) * 100;
 
+  // If the summery should be displayed, render the QuizSummery component instead
+  if (showSummery) {
+    return (
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] transition-opacity duration-300 ${
+          isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div
+          className={`bg-white relative rounded-xl shadow-lg w-[90%] h-[90%] p-6 transform transition-all duration-300 ${
+            isVisible ? "scale-100" : "scale-90"
+          }`}
+        >
+          <QuizSummery onClose={handleSummeryClose} />
+        </div>
+      </div>
+    );
+  }
+
+  // Render MCQPane if quizzes are not done yet
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] transition-opacity duration-300 ${
@@ -113,12 +138,10 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             </div>
           </div>
 
-          {/* Message before answer selection */}
           {!isAnswered && (
             <div className="text-center text-red-300 font-semibold">Please select an answer to continue!</div>
           )}
 
-          {/* Difficulty Selection */}
           {isAnswered && isCorrect && (
             <div className="flex justify-center items-center gap-4">
               <button
@@ -142,7 +165,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             </div>
           )}
 
-          {/* Next button for wrong answers */}
           {isAnswered && !isCorrect && (
             <div className="flex justify-center w-full mt-4">
               <button
