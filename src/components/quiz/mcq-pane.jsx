@@ -9,19 +9,18 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const dispatch = useDispatch();
   const quizzes = useSelector((state) => state.quizzes.quizzes);
   const currentQuizIndex = useSelector((state) => state.quizzes.currentQuizIndex);
-  const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null; // Ensure quizzes and currentQuiz are valid
+  const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [showSummery, setShowSummery] = useState(false); // To track if we need to show the summary page
+  const [showSummery, setShowSummery] = useState(false);
 
-  // Reset the quiz session each time MCQPane becomes visible
   useEffect(() => {
     if (isVisible) {
       dispatch(resetQuizSession());
-      setShowSummery(false); // Make sure summary is hidden when starting a new session
+      setShowSummery(false);
     }
   }, [isVisible, dispatch]);
 
@@ -49,7 +48,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     if (currentQuizIndex < quizzes.length - 1) {
       dispatch(nextQuiz());
     } else {
-      // If all quizzes are done, show the summary page
       setShowSummery(true);
     }
   };
@@ -59,10 +57,9 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   };
 
   const handleSummeryClose = () => {
-    // When closing the summary, reset the session and close the pane
-    setShowSummery(false);
-    dispatch(resetQuizSession()); // Reset the quiz session
-    onClose(); // Trigger the original onClose behavior
+    dispatch(resetQuizSession());
+    onClose();
+    setTimeout(() => setShowSummery(false), 300);
   };
 
   // Ensure we don't try to render if `currentQuiz` is invalid
