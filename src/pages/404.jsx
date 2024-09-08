@@ -6,7 +6,10 @@ const NotFound = () => {
       <div className="rounded-lg bg-white p-8 text-center shadow-xl">
         <h1 className="mb-4 text-4xl font-bold">404</h1>
         <p className="text-gray-600">Oops! The page you are looking for could not be found.</p>
-        <Link to="/" className="mt-4 inline-block rounded bg-black px-4 py-2 font-semibold text-white hover:opacity-90">
+        <Link
+          to="/"
+          className="mt-4 inline-block rounded bg-primary-blue px-4 py-2 font-semibold text-white hover:opacity-90"
+        >
           Go back to Home
         </Link>
       </div>
