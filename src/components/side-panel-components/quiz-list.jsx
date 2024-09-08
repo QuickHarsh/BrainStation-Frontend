@@ -1,8 +1,8 @@
-// Import the show action
 import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
 import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
+import { nextQuiz } from "@/store/quizzesSlice";
 import QuizCard from "../cards/quiz-card";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
 
@@ -16,6 +16,7 @@ const QuizList = () => {
 
   const handlePracticeClick = () => {
     dispatch(showMCQPane());
+    dispatch(nextQuiz());
   };
 
   return (
