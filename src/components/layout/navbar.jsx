@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  // State to control the visibility of the dropdown
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   // Toggle dropdown visibility

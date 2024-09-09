@@ -22,8 +22,6 @@ const Study = () => {
 
     // Ensure moduleData is available and has data before dispatching
     if (moduleData && moduleData.success && moduleData.data) {
-      console.log("moduleData.data", moduleData.data);
-
       // Only set the module and lectures in the reducer
       dispatch(setCurrentModule(moduleData.data)); // Set the module and lectures in the reducer
     }

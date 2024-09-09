@@ -12,7 +12,7 @@ const LectureList = () => {
   const handleChapterClick = (lectureId) => {
     dispatch(switchLecture(lectureId));
     dispatch(setQuizzesForLecture(lectureId));
-    dispatch(switchView("quiz")); // Only switch view when lecture is clicked
+    dispatch(switchView("quiz"));
   };
 
   return (

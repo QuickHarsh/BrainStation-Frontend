@@ -15,17 +15,14 @@ const QuizList = () => {
   const { currentLectureId } = useSelector((state) => state.lectures);
   const quizzes = useSelector((state) => state.quizzes.quizzes);
 
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch questions for the current lecture
   const questionsData = useFetchData(getQuestions, { "filter[lectureId]": currentLectureId });
 
   useEffect(() => {
     if (questionsData && questionsData.success) {
       dispatch(setQuizzesForLecture(questionsData.data.docs));
-      console.log("quizzes", quizzes);
-      console.log("questionsData.data.docs", questionsData.data.docs);
       setLoading(false);
     } else if (questionsData && !questionsData.success) {
       setError("Failed to fetch questions");
@@ -53,7 +50,7 @@ const QuizList = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center h-full">
-        <p className="text-red-500 font-semibold">{error}</p> {/* Show error message if fetching fails */}
+        <p className="text-red-500 font-semibold">{error}</p>
       </div>
     );
   }

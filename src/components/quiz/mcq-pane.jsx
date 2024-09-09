@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { shuffleArray } from "@/helper/shuffleArray";
+import { respondToQuiz } from "@/service/quiz";
+import { addPracticeResult } from "@/store/practiceSlice";
 import { nextQuiz, resetQuizSession } from "@/store/quizzesSlice";
 import MCQCard from "./mcq-card";
 import QuizSummery from "./summery";
@@ -10,12 +12,16 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const quizzes = useSelector((state) => state.quizzes.quizzes);
   const currentQuizIndex = useSelector((state) => state.quizzes.currentQuizIndex);
   const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
+  const { currentLectureId } = useSelector((state) => state.lectures);
+  const userId = "66d97b6fc30a1f78cf41b620"; // Hardcoded user ID
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSummery, setShowSummery] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [difficulty, setDifficulty] = useState(null);
 
   useEffect(() => {
     if (isVisible) {
@@ -24,21 +30,52 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     }
   }, [isVisible, dispatch]);
 
-  // Shuffle answers whenever the current quiz changes
   useEffect(() => {
     if (currentQuiz) {
-      // Provide fallback if distractors is not an array or is undefined
       const distractors = Array.isArray(currentQuiz.distractors) ? currentQuiz.distractors : [];
       const answers = shuffleArray([currentQuiz.answer, ...distractors]);
       setShuffledAnswers(answers);
     }
   }, [currentQuiz]);
 
+  const sendQuizResponse = (response) => {
+    const data = {
+      userId,
+      lectureId: currentLectureId,
+      questionId: currentQuiz._id,
+      response
+    };
+
+    // Call the respondToQuiz service
+    respondToQuiz(data)
+      .then(() => {
+        console.log("Quiz response sent successfully:", response);
+      })
+      .catch((error) => {
+        console.error("Error sending quiz response:", error);
+      });
+
+    // Dispatch to practiceReducer to store practice data
+    dispatch(
+      addPracticeResult({
+        question: currentQuiz.question,
+        correctAnswer: currentQuiz.answer,
+        difficulty: response // Store the final response (wrong, easy, normal, or hard)
+      })
+    );
+  };
+
   const handleAnswerClick = (answer) => {
     if (!isAnswered) {
       setSelectedAnswer(answer);
       setIsAnswered(true);
-      setIsCorrect(answer === currentQuiz.answer);
+      const isCorrectAnswer = answer === currentQuiz.answer;
+      setIsCorrect(isCorrectAnswer);
+
+      // Immediately send "wrong" response if the answer is incorrect
+      if (!isCorrectAnswer) {
+        sendQuizResponse("wrong");
+      }
     }
   };
 
@@ -46,6 +83,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     setSelectedAnswer(null);
     setIsAnswered(false);
     setIsCorrect(false);
+    setDifficulty(null);
 
     if (currentQuizIndex < quizzes.length - 1) {
       dispatch(nextQuiz());
@@ -54,7 +92,9 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     }
   };
 
-  const handleDifficultyClick = () => {
+  const handleDifficultyClick = (selectedDifficulty) => {
+    setDifficulty(selectedDifficulty);
+    sendQuizResponse(selectedDifficulty.toLowerCase());
     handleNextClick();
   };
 
@@ -64,15 +104,12 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     setTimeout(() => setShowSummery(false), 300);
   };
 
-  // Ensure we don't try to render if `currentQuiz` is invalid
   if (!currentQuiz || quizzes.length === 0) {
     return null;
   }
 
-  // Calculate progress percentage
   const progressPercentage = ((currentQuizIndex + 1) / quizzes.length) * 100;
 
-  // If the summery should be displayed, render the QuizSummery component instead
   if (showSummery) {
     return (
       <div
@@ -91,7 +128,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     );
   }
 
-  // Render MCQPane if quizzes are not done yet
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] transition-opacity duration-300 ${
@@ -106,13 +142,9 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
       >
         <div className="h-full w-full relative p-6">
           <p className="text-sm text-[#A4A4A4]">{lectureTitle}</p>
-
-          {/* Question */}
           <p className="mt-2 text-[24px] font-inter font-semibold">{currentQuiz.question}</p>
-
-          {/* MCQs */}
           <div className="flex items-center h-[calc(100%-150px)]">
-            <div className="w-full grid grid-cols-2 items-center  my-4">
+            <div className="w-full grid grid-cols-2 items-center my-4">
               {shuffledAnswers.map((answer, index) => {
                 let cardColorClass = "";
                 if (index === 0) cardColorClass = "bg-[#E5DDC5]";
@@ -147,19 +179,19 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
           {isAnswered && isCorrect && (
             <div className="flex justify-center items-center gap-4">
               <button
-                onClick={() => handleDifficultyClick("Easy")}
+                onClick={() => handleDifficultyClick("easy")}
                 className="bg-[#B2FFA5] w-20 h-20 flex justify-center items-center rounded-full hover:opacity-80"
               >
                 Easy
               </button>
               <button
-                onClick={() => handleDifficultyClick("Normal")}
+                onClick={() => handleDifficultyClick("normal")}
                 className="bg-[#A5D9FF] w-20 h-20 flex justify-center items-center rounded-full hover:opacity-80"
               >
                 Normal
               </button>
               <button
-                onClick={() => handleDifficultyClick("Hard")}
+                onClick={() => handleDifficultyClick("hard")}
                 className="bg-[#FFA5A5] w-20 h-20 flex justify-center items-center rounded-full hover:opacity-80"
               >
                 Hard
@@ -178,7 +210,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             </div>
           )}
 
-          {/* Progress Bar */}
           <div className="absolute bottom-[0.05px] left-0 right-0 rounded-bl-xl rounded-br-xl w-full h-2 bg-gray-200 overflow-hidden">
             <div
               className="h-full bg-blue-600"
@@ -189,7 +220,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             ></div>
           </div>
 
-          {/* Quiz Counter */}
           <div className="absolute bottom-4 right-6 text-sm font-semibold text-gray-600">
             {currentQuizIndex + 1} of {quizzes.length}
           </div>

@@ -5,8 +5,6 @@ export const getQuestions = async (params = {}) => {
 
   const endpoint = `/api/questions${queryString ? `?${queryString}` : ""}`;
 
-  console.log("Requesting questions from:", endpoint);
-
   return await apiRequest(() => axiosInstance.get(endpoint));
 };
 
