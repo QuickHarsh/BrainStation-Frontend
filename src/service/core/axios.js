@@ -3,14 +3,14 @@ import axios from "axios";
 import { refresh } from "../auth";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_ARQS_BE_URL,
+  baseURL: import.meta.env.VITE_BRAINSTATION_BE_URL,
   headers: {
     "Content-Type": "application/json"
   }
 });
 
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token") || import.meta.env.VITE_BRAINSTATION_TOKEN;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
