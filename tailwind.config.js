@@ -28,4 +28,4 @@ export const theme = {
     }
   }
 };
-export const plugins = [];
+export const plugins = [require("@tailwindcss/typography")];

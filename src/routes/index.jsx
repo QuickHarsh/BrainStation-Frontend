@@ -13,7 +13,7 @@ const coreRoutes = [
     component: Main
   },
   {
-    path: "/study",
+    path: "/study/:moduleId",
     title: "study",
     component: Study
   },

@@ -27,7 +27,9 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   // Shuffle answers whenever the current quiz changes
   useEffect(() => {
     if (currentQuiz) {
-      const answers = shuffleArray([currentQuiz.answer, ...currentQuiz.distractors]);
+      // Provide fallback if distractors is not an array or is undefined
+      const distractors = Array.isArray(currentQuiz.distractors) ? currentQuiz.distractors : [];
+      const answers = shuffleArray([currentQuiz.answer, ...distractors]);
       setShuffledAnswers(answers);
     }
   }, [currentQuiz]);
