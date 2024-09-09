@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
 
 // Registering chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -63,6 +72,16 @@ function Support() {
   const tasks = parsedUserData?.tasks ? JSON.parse(parsedUserData.tasks) : [];
   console.log("Parsed tasks:", tasks);
 
+  // State to manage the completed status of each task
+  const [completedTasks, setCompletedTasks] = useState(tasks.map(() => false));
+
+  // Function to handle checkbox change
+  const handleCheckboxChange = (index) => {
+    const updatedTasks = [...completedTasks];
+    updatedTasks[index] = !updatedTasks[index]; // Toggle the task completion status
+    setCompletedTasks(updatedTasks);
+  };
+
   // Chart data and options
   const data = {
     labels: ["Quiz 1", "Quiz 2", "Quiz 3", "Quiz 4", "Quiz 5"],
@@ -72,22 +91,22 @@ function Support() {
         data: [55, 60, 65, 70, 75],
         backgroundColor: "rgba(54, 162, 235, 0.5)",
         borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "top"
+        position: "top",
       },
       title: {
         display: true,
-        text: "Quiz Performance"
-      }
-    }
+        text: "Quiz Performance",
+      },
+    },
   };
 
   const pieData = {
@@ -101,24 +120,24 @@ function Support() {
           "rgba(0, 0, 139, 0.7)",
           "rgba(255, 215, 0, 0.7)",
           "rgba(0, 0, 139, 0.7)",
-          "rgba(0, 0, 139, 0.7)"
+          "rgba(0, 0, 139, 0.7)",
         ],
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
 
   const pieOptions = {
     responsive: true,
     plugins: {
       legend: {
-        position: "right"
+        position: "right",
       },
       title: {
         display: true,
-        text: "Chapter Fluency/Performance"
-      }
-    }
+        text: "Chapter Fluency/Performance",
+      },
+    },
   };
 
   const handleGoToAnalysis = () => {
@@ -142,47 +161,50 @@ function Support() {
             <br />
             <span className="font-mono font-black text-2xl">Identification of Struggling Areas:</span>
             <span className="font-mono font-black text-blue-700 text-xl">
-              You are showing difficulty in 'Chapter 4: Data Structures'. Your performance has been below average in
-              this section
+              You are showing difficulty in 'Chapter 4: Data Structures'. Your performance has been below average in this section
             </span>
             <br />
             <span className="font-mono font-black text-2xl">Predictive Categorization:</span>
             <span className="font-mono font-black text-blue-700 text-xl">
-              You are categorized as a <span className="text-red-800">'{parsedUserData.performer_type}' </span> in this
-              course.
+              You are categorized as a <span className="text-red-800">'{parsedUserData.performer_type}' </span> in this course.
             </span>
             <br />
           </div>
 
           <div className="p-0 bg-blue-100 border rounded-xl flex flex-col">
-            {/* Bar Chart Section
-            <div className="flex-1 bg-gray-100 p-4">
+            {/* Bar Chart Section */}
+          {/*  <div className="flex-1 bg-gray-100 p-4">
               <Bar data={data} options={options} />
-            </div> */}
+            </div>*/}
           </div>
         </div>
 
-        <div className="p-5 bg-white border rounded-xl flex flex-col">
-          {/* Right Section */}
-          <div className="w-full md:w-1/2 flex flex-col">
-            <span className="font-mono font-black text-2xl">Recommendation for Personalized Learning</span>
-            <ul className="font-mono text-blue-900 text-xl">
-              {tasks.map((task, index) => (
-                <li key={index}>
-                  {" "}
-                  <br />* {task}
-                </li>
-              ))}
-            </ul>
-          </div>
-
+        {/* Right Section */}
+        <div className="w-full md:w-1/2 flex flex-col">
+          <span className="font-mono font-black text-2xl">Recommendation Task for Personalized Learning</span>
+          <ul className="font-mono text-blue-900 text-xl">
+            {tasks.map((task, index) => (
+              <li key={index}>
+                <br />
+                <input
+                  type="checkbox"
+                  checked={completedTasks[index]}
+                  onChange={() => handleCheckboxChange(index)}
+                  className="mr-2"
+                />
+                {task}
+              </li>
+            ))}
+          </ul>
+          
           <div className="flex-1 bg-gray-100 p-4 h-20 justify-center items-center">
-            <div className="flex flex-row w-96">
+            <div className="flex flex-row w-80">
               <Pie data={pieData} options={pieOptions} />
             </div>
           </div>
-
+          
           <button
+          
             onClick={handleGoToAnalysis}
             className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mt-4"
           >

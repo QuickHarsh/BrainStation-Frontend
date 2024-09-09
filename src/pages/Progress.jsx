@@ -49,9 +49,12 @@ function Progress() {
   };
 
   return (
+    
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-1/2 bg-gray-200 p-4 rounded-lg shadow-lg">
         <div className="w-full">
+        <h1><div className="font-medium">Assume these are the realtime data ..</div></h1>
+       <br></br>
           <form onSubmit={handleSubmit}>
             <div>
               <label className="block mb-2 text-lg font-medium">Emotional State:</label>

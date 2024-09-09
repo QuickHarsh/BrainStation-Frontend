@@ -205,8 +205,10 @@ const Analysis = () => {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
+            
           </PieChart>
         </ResponsiveContainer>
+
       </div>
 
       {/* Time Spent on Each Chapter (Quiz) */}
@@ -235,3 +237,5 @@ const Analysis = () => {
 };
 
 export default Analysis;
+
+
