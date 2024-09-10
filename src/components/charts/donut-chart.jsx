@@ -1,22 +1,13 @@
 import { Cell, Pie, PieChart } from "recharts";
 
-const DonutChart = ({ emotionDistribution }) => {
-  // Convert emotion_distribution into data format for the PieChart
-  const data = Object.entries(emotionDistribution).map(([name, value]) => ({
-    name,
-    value
-  }));
+const data = [
+  { name: "Group A", value: 400 },
+  { name: "Group B", value: 400 }
+];
 
-  // Define colors for each emotion (customize as per your requirements)
-  const COLORS = {
-    Happy: "#FFD200",
-    Angry: "#FF5733"
-    // You can add more emotion colors here
-  };
+const COLORS = ["#FFD200", "#0B54A0"];
 
-  // Find the emotion with the highest percentage
-  const dominantEmotion = data.reduce((prev, current) => (prev.value > current.value ? prev : current));
-
+const DonutChart = () => {
   return (
     <div style={{ position: "relative", width: "200px", height: "200px" }}>
       {/* PieChart Container */}
@@ -34,37 +25,32 @@ const DonutChart = ({ emotionDistribution }) => {
             dataKey="value"
           >
             {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[entry.name] || "#8884d8"} // Default color if not specified
-              />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
         </PieChart>
       </div>
 
-      {/* Centered Label with Dominant Emotion */}
+      {/* Centered Label */}
       <div
         style={{
           position: "absolute",
           top: "53%",
           left: "48%",
           transform: "translate(-50%, -50%)",
-          backgroundColor: COLORS[dominantEmotion.name], // Color based on dominant emotion
+          backgroundColor: "#F9F2D1", // Background color similar to the image
           borderRadius: "50%",
-          width: "110px",
-          height: "110px",
+          width: "110px", // Adjust size as needed
+          height: "110px", // Adjust size as needed
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontWeight: "bold",
-          fontSize: "14px", // Adjust font size as needed
-          color: "#000000", // Text color
-          textAlign: "center", // Center text if multi-line
-          padding: "10px"
+          fontSize: "26px",
+          color: "#000000" // Text color
         }}
       >
-        {dominantEmotion.name} {/* Display the dominant emotion */}
+        50%
       </div>
     </div>
   );

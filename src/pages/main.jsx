@@ -1,23 +1,10 @@
 import ModuleCard from "@/components/cards/module-card";
 
-// Sample data with the full object
+// Sample data, ensure you have correct data structure
 const modules = [
-  {
-    moduleId: 1,
-    title: "Foundations of Computing: Data Structures, Algorithms, and Operating Systems",
-    data: {
-      final_classification: "No ADHD symptoms",
-      focus_time: 8.933333333333312,
-      total_movements: 37,
-      erratic_movements: 0,
-      erratic_percentage: 0,
-      emotion_distribution: {
-        Happy: 92.2972972972973,
-        Angry: 7.7027027027027026
-      }
-    }
-  }
-  // More modules...
+  { moduleId: 1, title: "Foundations of Computing: Data Structures, Algorithms, and Operating Systems", progress: 50 },
+  { moduleId: 2, title: "Module 2", progress: 30 },
+  { moduleId: 3, title: "Module 3", progress: 70 }
 ];
 
 const Main = () => {
@@ -32,7 +19,7 @@ const Main = () => {
             key={module.moduleId}
             moduleId={module.moduleId}
             title={module.title}
-            data={module.data} // Pass the full data object
+            progress={module.progress}
           />
         ))}
       </div>
