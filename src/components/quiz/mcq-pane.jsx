@@ -13,6 +13,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const currentQuizIndex = useSelector((state) => state.quizzes.currentQuizIndex);
   const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
   const { currentLectureId } = useSelector((state) => state.lectures);
+  const practiceHistory = useSelector((state) => state.practiceHistory); // Accessing practice history from Redux store
   const userId = "66d97b6fc30a1f78cf41b620"; // Hardcoded user ID
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
@@ -122,7 +123,15 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             isVisible ? "scale-100" : "scale-90"
           }`}
         >
-          <QuizSummery onClose={handleSummeryClose} />
+          {/* Pass practiceHistory as summeryData */}
+          <QuizSummery
+            onClose={handleSummeryClose}
+            summeryData={{
+              title: lectureTitle,
+              feedback: "This is some feedback",
+              tableData: practiceHistory
+            }}
+          />
         </div>
       </div>
     );
