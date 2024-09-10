@@ -1,14 +1,47 @@
+import { useEffect, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
+import { useSelector } from "react-redux";
+import { getQuizFeedback } from "@/service/quiz";
 import DonutChart from "../charts/donut-chart";
+import AnimatingDots from "../common/animating-dots";
 import SummeryTable from "./summery-table";
 
-const QuizSummery = ({ onClose }) => {
+// Import the feedback service
+
+const QuizSummery = ({ onClose, summeryData }) => {
+  const practiceHistory = useSelector((state) => state.practice.practiceHistory); // Accessing practice history from the store
+  const [feedback, setFeedback] = useState(""); // Store feedback
+  const [loading, setLoading] = useState(true); // Loading state for feedback
+
+  useEffect(() => {
+    console.log("Summery Data:", summeryData);
+    console.log("Practice History from Store:", practiceHistory);
+
+    // Call the feedback service when the component mounts
+    const fetchFeedback = async () => {
+      setLoading(true); // Start loading
+
+      try {
+        const response = await getQuizFeedback({ practiceHistory });
+        setFeedback(response.data); // Store the feedback from the response
+        console.log("Feedback response:", response.data);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
+        setFeedback("Error retrieving feedback."); // Handle any error
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchFeedback(); // Call the function to get feedback
+  }, [practiceHistory]);
+
   return (
     <div>
       <button className="absolute top-4 right-4 text-xl" onClick={onClose}>
         &times;
       </button>
-      <h2 className="text-xl font-semibold">Quiz Summery</h2>
+      <h2 className="text-xl font-semibold">Quiz Summary</h2>
       <Scrollbars
         autoHide
         autoHideTimeout={1000}
@@ -22,21 +55,21 @@ const QuizSummery = ({ onClose }) => {
       >
         <div className="w-full h-full flex flex-col gap-4 items-center mt-5">
           <DonutChart />
-          <p className="text-lg font-inter">Lecturer 01: Comprehensive Guide to Data Structures and Algorithms</p>
-          {/* feedback */}
-          <div className="bg-gray-100 min-h-[160px] px-4 py-6 mt-2 rounded-xl">
+          <p className="text-lg font-inter">{summeryData?.title}</p>
+          {/* Feedback Section */}
+          <div className="bg-gray-100 w-full min-h-[160px] px-4 py-6 mt-2 rounded-xl">
             <h3 className="text-lg text-gray-600 font-semibold">Feedback</h3>
-            <p className="mt-2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
-            </p>
+            {loading ? (
+              <div className="w-full h-full mt-5 flex items-center justify-center">
+                <AnimatingDots />
+              </div>
+            ) : (
+              <p className="mt-2">{feedback}</p> // Show feedback once it's loaded
+            )}
           </div>
           {/* Quiz table */}
           <div className="w-full">
-            <SummeryTable />
+            <SummeryTable tableData={summeryData?.tableData || []} />
           </div>
         </div>
       </Scrollbars>

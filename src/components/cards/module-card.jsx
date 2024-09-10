@@ -1,17 +1,13 @@
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DonutChart from "../charts/donut-chart";
 import SmileFaceIcon from "../icons/smile-face-icon";
 
-// eslint-disable-next-line no-unused-vars
 const ModuleCard = ({ moduleId, title, progress }) => {
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
-  const dispatch = useDispatch();
 
   const handleClick = () => {
-    // dispatch(setCurrentModule(moduleId));
-    navigate("/study");
+    localStorage.setItem("currentModule", moduleId);
+    navigate(`/study/${moduleId}`);
   };
 
   return (

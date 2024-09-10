@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  // State to control the visibility of the dropdown
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   // Toggle dropdown visibility
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
+
+  const location = useLocation();
 
   return (
     <div
@@ -16,8 +18,12 @@ const Navbar = () => {
     >
       {/* Monitoring status */}
       <div className="flex items-center gap-1">
-        <div className="rounded-full bg-red-600 w-3 h-3 mb-0.5" style={{ animation: "blink 10s infinite" }} />{" "}
-        <div className="font-josfin-sans text-sm">Monitoring.</div>
+        {location.pathname !== "/" && (
+          <>
+            <div className="rounded-full bg-red-600 w-3 h-3 mb-0.5" style={{ animation: "blink 10s infinite" }} />{" "}
+            <div className="font-josfin-sans text-sm">Monitoring.</div>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-6 select-none">
         <button className="font-inter text-sm px-4 py-1.5 bg-primary-green text-white rounded-xl">
