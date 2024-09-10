@@ -3,6 +3,9 @@ import { DefaultLayout } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
 import QuizDeck from "@/pages/quiz-deck";
+import Progress from "@/pages/Progress";
+import support from "@/pages/support";
+import analysis from "@/pages/analysis";
 
 // Ensure Loader is imported correctly
 
@@ -21,6 +24,21 @@ const coreRoutes = [
     path: "/quiz-deck",
     title: "quiz-deck",
     component: QuizDeck
+  },
+  {
+    path: "/Progress",
+    title: "Progress",
+    component: Progress
+  },
+  {
+    path: "/support",
+    title: "support",
+    component: support
+  },
+  {
+    path: "/analysis",
+    title: "analysis",
+    component: analysis
   }
 ];
 

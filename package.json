@@ -18,6 +18,8 @@
     "@reduxjs/toolkit": "2.2.7",
     "@tailwindcss/typography": "0.5.15",
     "axios": "1.6.7",
+    "brain-station": "file:",
+    "cors": "2.8.5",
     "framer-motion": "11.3.22",
     "husky": "9.0.11",
     "lodash": "^4.17.21",
