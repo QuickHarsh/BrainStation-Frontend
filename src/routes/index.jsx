@@ -1,5 +1,6 @@
+import { Suspense } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { DefaultLayout } from "@/components";
+import { DefaultLayout, Loader } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
 import QuizDeck from "@/pages/quiz-deck";
@@ -16,7 +17,7 @@ const coreRoutes = [
     component: Main
   },
   {
-    path: "/study/:moduleId",
+    path: "/study",
     title: "study",
     component: Study
   },
@@ -52,7 +53,17 @@ const CustomRoutes = () => {
         {coreRoutes.map((route, index) => {
           const { path, component: Component } = route;
 
-          return <Route key={index} path={path} element={<Component />} />;
+          return (
+            <Route
+              key={index}
+              path={path}
+              element={
+                <Suspense fallback={<Loader />}>
+                  <Component />
+                </Suspense>
+              }
+            />
+          );
         })}
       </Route>
       <Route path="*" element={<NotFound />} />
