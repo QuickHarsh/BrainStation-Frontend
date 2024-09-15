@@ -1,12 +1,10 @@
-// lecturesSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import lectures from "../../public/assets/data/lectures";
 
 const initialState = {
-  lectures: lectures,
+  lectures: [],
   currentModuleId: null,
-  currentLectureId: 1,
-  currentSlideId: 1,
+  currentLectureId: null,
+  currentSlideId: null,
   currentView: "lecturer"
 };
 
@@ -15,15 +13,23 @@ const lecturesSlice = createSlice({
   initialState,
   reducers: {
     setCurrentModule: (state, action) => {
-      state.currentModuleId = action.payload;
-      state.lectures = lectures.filter((lecture) => lecture.moduleId === state.currentModuleId);
-      state.currentLectureId = state.lectures[0].id;
-      state.currentSlideId = state.lectures[0].slides[0].id;
+      const selectedModule = action.payload; // Action payload should be the module with lectures
+      state.currentModuleId = selectedModule._id;
+      state.lectures = selectedModule.lectures;
+      // Set the first lecture and slide as the current ones
+      if (selectedModule.lectures.length > 0) {
+        state.currentLectureId = selectedModule.lectures[0]._id;
+        if (selectedModule.lectures[0].slides.length > 0) {
+          state.currentSlideId = selectedModule.lectures[0].slides[0].id;
+        }
+      }
     },
     switchLecture: (state, action) => {
       state.currentLectureId = action.payload;
-      const selectedLecture = state.lectures.find((lecture) => lecture.id === action.payload);
-      state.currentSlideId = selectedLecture.slides[0].id;
+      const selectedLecture = state.lectures.find((lecture) => lecture._id === action.payload);
+      if (selectedLecture && selectedLecture.slides.length > 0) {
+        state.currentSlideId = selectedLecture.slides[0].id;
+      }
       state.currentView = "quiz";
     },
     switchSlide: (state, action) => {

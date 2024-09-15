@@ -7,7 +7,13 @@ const BottomBar = () => {
   const dispatch = useDispatch();
   const { lectures, currentLectureId, currentSlideId } = useSelector((state) => state.lectures);
 
-  const currentLecture = lectures.find((lecture) => lecture.id === currentLectureId);
+  const currentLecture = lectures.find((lecture) => lecture._id === currentLectureId);
+
+  // Ensure currentLecture exists and has slides before proceeding
+  if (!currentLecture || !currentLecture.slides || currentLecture.slides.length === 0) {
+    return null; // Return null to prevent rendering until the data is available
+  }
+
   const currentSlideIndex = currentLecture.slides.findIndex((slide) => slide.id === currentSlideId);
   const totalSlides = currentLecture.slides.length;
 
@@ -26,8 +32,8 @@ const BottomBar = () => {
   };
 
   return (
-    <div className="bg-white relative flex items-center py-2 uppercase text-xs text-gray-400 font-semibold font-josfin-sans">
-      Lecture {currentLectureId}
+    <div className="bg-white relative flex items-center py-2 uppercase text-[0.6rem] text-gray-400 font-semibold font-josfin-sans">
+      {currentLecture.title}
       <div
         className="flex items-center absolute
           left-1/2 transform -translate-x-1/2

@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // A function to wrap your promise and manage its state
 function wrapPromise(promise) {
@@ -28,19 +27,23 @@ function wrapPromise(promise) {
   };
 }
 
-// The custom hook adjusted for Suspense
-const useFetchData = (fetchFunction) => {
-  // This state will hold the wrapped promise and its status
+// The custom hook adjusted for Suspense and to accept dynamic arguments
+const useFetchData = (fetchFunction, args) => {
   const [resource, setResource] = useState();
 
-  useEffect(() => {
-    // Immediately invoke the fetch function and wrap the promise
-    const promise = fetchFunction();
-    const wrappedPromise = wrapPromise(promise);
-    setResource(wrappedPromise);
-  }, [fetchFunction]);
+  // Memoize arguments so that useEffect only runs when the arguments actually change
+  const memoizedArgs = useMemo(() => args, [JSON.stringify(args)]); // Serialize args to avoid continuous re-renders
 
-  // The resource object has a read method that Suspense can use
+  useEffect(() => {
+    const fetchData = async () => {
+      const promise = fetchFunction(memoizedArgs);
+      const wrappedPromise = wrapPromise(promise);
+      setResource(wrappedPromise);
+    };
+
+    fetchData();
+  }, [fetchFunction, memoizedArgs]);
+
   return resource ? resource.read() : null;
 };
 
