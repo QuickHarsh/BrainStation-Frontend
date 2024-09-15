@@ -1,5 +1,7 @@
-// quizzesSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import quizzes from "../../public/assets/data/quizes";
+
+// Adjust the path to your quizzes data
 
 const initialState = {
   quizzes: [],
@@ -11,8 +13,8 @@ const quizzesSlice = createSlice({
   initialState,
   reducers: {
     setQuizzesForLecture: (state, action) => {
-      // This action will receive fetched questions (quizzes) as payload
-      state.quizzes = action.payload || [];
+      const lectureId = action.payload;
+      state.quizzes = quizzes[lectureId] || [];
       state.currentQuizIndex = 0; // Reset index when a new lecture is loaded
     },
     nextQuiz: (state) => {

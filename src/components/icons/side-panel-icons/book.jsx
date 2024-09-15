@@ -1,10 +1,9 @@
 import { NavLink } from "react-router-dom";
 
 const BookIcon = () => {
-  const currentModule = localStorage.getItem("currentModule");
   return (
     <NavLink
-      to={`/study/${currentModule}`}
+      to="/study"
       className={({ isActive }) =>
         `flex flex-col items-center rounded-md p-4 hover:bg-gray-300 ${isActive ? "bg-primary-blue text-white" : ""}`
       }

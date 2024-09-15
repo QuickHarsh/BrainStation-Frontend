@@ -1,6 +1,6 @@
 import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
-import { switchLecture, switchView } from "@/store/lecturesSlice";
+import { switchLecture } from "@/store/lecturesSlice";
 import { setQuizzesForLecture } from "@/store/quizzesSlice";
 import ChapterCard from "../cards/chapter-card";
 import LastActivityCard from "../cards/last-activity-card";
@@ -12,7 +12,6 @@ const LectureList = () => {
   const handleChapterClick = (lectureId) => {
     dispatch(switchLecture(lectureId));
     dispatch(setQuizzesForLecture(lectureId));
-    dispatch(switchView("quiz"));
   };
 
   return (
@@ -35,13 +34,12 @@ const LectureList = () => {
           className="rounded-lg"
         >
           <div className="px-2">
-            {lectures.map((lecture, index) => (
+            {lectures.map((lecture) => (
               <ChapterCard
-                key={lecture._id}
-                id={lecture._id}
-                lectureNumber={index + 1}
+                key={lecture.id}
+                id={lecture.id}
                 title={lecture.title}
-                onClick={() => handleChapterClick(lecture._id)}
+                onClick={() => handleChapterClick(lecture.id)}
               />
             ))}
           </div>
