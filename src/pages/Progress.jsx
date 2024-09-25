@@ -6,9 +6,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 function Progress() {
   const navigate = useNavigate();
-  const [studentId, setStudentId] = useState("");  // Only store Student ID
-  const [isLoading, setIsLoading] = useState(false);  // State to handle loading status
-  const [errorMessage, setErrorMessage] = useState("");  // Error handling
+  const [studentId, setStudentId] = useState(""); // Only store Student ID
+  const [isLoading, setIsLoading] = useState(false); // State to handle loading status
+  const [errorMessage, setErrorMessage] = useState(""); // Error handling
 
   // Handle changes in the Student ID input field
   const handleChange = (e) => {
@@ -18,8 +18,8 @@ function Progress() {
   // Handle form submission to fetch student data
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);  // Start loading
-    setErrorMessage("");  // Reset error message
+    setIsLoading(true); // Start loading
+    setErrorMessage(""); // Reset error message
 
     try {
       // Fetch student data based on the Student_ID
@@ -34,7 +34,7 @@ function Progress() {
         throw new Error("Failed to fetch student data.");
       }
 
-      const studentData = await response.json();  // Fetched student data
+      const studentData = await response.json(); // Fetched student data
 
       // Now submit the form data to get predictions
       const predictionResponse = await fetch("http://localhost:8001/predict", {
@@ -42,7 +42,7 @@ function Progress() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ Student_id: studentData.Student_ID })  // Use fetched Student_ID for prediction
+        body: JSON.stringify({ Student_id: studentData.Student_ID }) // Use fetched Student_ID for prediction
       });
 
       const predictionResult = await predictionResponse.json();
@@ -52,7 +52,7 @@ function Progress() {
         task_group: predictionResult.task_group,
         performer_type: predictionResult.Performer_Type,
         tasks: JSON.stringify(predictionResult.tasks),
-        lowest_two_chapters: predictionResult.lowest_two_chapters 
+        lowest_two_chapters: predictionResult.lowest_two_chapters
       };
 
       // Navigate with prediction result
@@ -61,7 +61,7 @@ function Progress() {
       console.error("Error:", error);
       setErrorMessage("Failed to fetch student data or prediction. Please try again.");
     } finally {
-      setIsLoading(false);  // Stop loading
+      setIsLoading(false); // Stop loading
     }
   };
 

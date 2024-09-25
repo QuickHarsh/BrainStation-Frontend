@@ -32,32 +32,32 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-    
+
       try {
         const res = await refresh();
-    
+
         const { access_token } = res.data;
         localStorage.setItem("token", access_token);
-    
+
         // Set the new Authorization header for the instance and the original request
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
         originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
-    
+
         // Retry the original request with the new token
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Failed to refresh token:", refreshError);
         localStorage.removeItem("token");
         localStorage.removeItem("refresh_token");
-    
+
         if (!originalRequest.url.includes("/reset-password")) {
           window.location.href = "/login";
         }
-    
+
         return Promise.reject(refreshError);
       }
     }
-    
+
     // Handle other errors
     return Promise.reject(error);
   }

@@ -24,7 +24,9 @@ const Navbar = () => {
         <NavLink
           to="/progress"
           className={({ isActive }) =>
-            `font-inter text-sm px-4 py-1.5 rounded-xl flex flex-col items-center ${isActive ? "bg-primary-blue text-white" : "bg-primary-green text-white"}`
+            `font-inter text-sm px-4 py-1.5 rounded-xl flex flex-col items-center ${
+              isActive ? "bg-primary-blue text-white" : "bg-primary-green text-white"
+            }`
           }
         >
           Track Progress

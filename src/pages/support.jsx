@@ -5,7 +5,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 function convertToPercentageRange(predicted_exam_score, min_percentage, max_percentage) {
   const min_score = 0;
   const max_score = 100;
-  return min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage);
+  return (
+    min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage)
+  );
 }
 
 function Support() {
@@ -100,13 +102,19 @@ function Support() {
         {/* Academic Forecasting Section */}
         <div className="bg-gray-200 p-5 rounded-lg mb-6">
           <h3 className="font-bold text-2xl text-gray-800 mb-2">Academic Forecasting</h3>
-          
+
           {/* Academic Performance */}
           <div className="p-4 bg-white rounded-lg mb-4">
             <h4 className="font-semibold text-2xl text-gray-800">Academic Performance</h4>
             <p className="text-xl text-gray-700">
               Based on your quiz scores so far, if the next exam covers these chapters, you're likely to
-              <strong> <span className="text-red-700">score between {convertedPercentage - 5}% - {convertedPercentage}%</span></strong>.
+              <strong>
+                {" "}
+                <span className="text-red-700">
+                  score between {convertedPercentage - 5}% - {convertedPercentage}%
+                </span>
+              </strong>
+              .
             </p>
             <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md mt-4">Chapter 1-3</button>
           </div>
@@ -127,7 +135,11 @@ function Support() {
           <div className="p-4 bg-white rounded-lg">
             <h4 className="font-semibold text-2xl text-gray-800">Categorization</h4>
             <p className="text-xl text-gray-700">
-              You are categorized as a <strong><span className="text-red-700">{parsedUserData.performer_type || "Medium Performer"}</span></strong>.
+              You are categorized as a{" "}
+              <strong>
+                <span className="text-red-700">{parsedUserData.performer_type || "Medium Performer"}</span>
+              </strong>
+              .
             </p>
             <div className="flex space-x-2 mt-4">
               <button
