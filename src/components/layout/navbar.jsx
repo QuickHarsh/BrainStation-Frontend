@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   // State to control the visibility of the dropdown
@@ -20,9 +21,14 @@ const Navbar = () => {
         <div className="font-josfin-sans text-sm">Monitoring.</div>
       </div>
       <div className="flex items-center gap-6 select-none">
-        <button className="font-inter text-sm px-4 py-1.5 bg-primary-green text-white rounded-xl">
+        <NavLink
+          to="/progress"
+          className={({ isActive }) =>
+            `font-inter text-sm px-4 py-1.5 rounded-xl flex flex-col items-center ${isActive ? "bg-primary-blue text-white" : "bg-primary-green text-white"}`
+          }
+        >
           Track Progress
-        </button>
+        </NavLink>
 
         {/* User Dropdown */}
         <div className="relative">
