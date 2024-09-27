@@ -5,9 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 function convertToPercentageRange(predicted_exam_score, min_percentage, max_percentage) {
   const min_score = 0;
   const max_score = 100;
-  return (
-    min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage)
-  );
+  return min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage);
 }
 
 function Support() {
@@ -19,6 +17,9 @@ function Support() {
     const userData = searchParams.get("userData");
     if (userData) {
       parsedUserData = JSON.parse(decodeURIComponent(userData)); // Decode and parse user data
+      console.log("Parsed User Data:", parsedUserData); // For debugging
+    } else {
+      console.error("No user data found in query params.");
     }
   } catch (error) {
     console.error("Error parsing userData:", error);
@@ -33,12 +34,20 @@ function Support() {
     );
   }
 
-  const predicted_exam_score = parsedUserData?.predicted_exam_score;
-  const convertedPercentage = convertToPercentageRange(predicted_exam_score, 0, 100).toFixed(0);
+  // Accessing predicted_exam_score correctly
+  const predicted_exam_score = parsedUserData?.predicted_exam_score || null;
+  console.log("Predicted Exam Score:", predicted_exam_score); // Log predicted_exam_score for debugging
 
-  // Extract the lowest chapters from the parsed user data
-  const lowestChapter1 = parsedUserData?.lowest_two_chapters?.lowest_chapter_1?.chapter || "N/A";
-  const lowestChapter2 = parsedUserData?.lowest_two_chapters?.lowest_chapter_2?.chapter || "N/A";
+  // Handle converted percentage only if predicted_exam_score exists
+  const convertedPercentage = predicted_exam_score
+    ? convertToPercentageRange(predicted_exam_score, 0, 100).toFixed(0)
+    : "N/A";
+
+  // Accessing lowest_two_chapters correctly as an array
+  const lowestChapter1 = parsedUserData?.lowest_two_chapters?.[0]?.chapter || "N/A";
+  const lowestChapter2 = parsedUserData?.lowest_two_chapters?.[1]?.chapter || "N/A";
+  console.log("Lowest Chapter 1:", lowestChapter1); // Log lowestChapter1 for debugging
+  console.log("Lowest Chapter 2:", lowestChapter2); // Log lowestChapter2 for debugging
 
   // Redirect Handlers
   const handleGoToDashboard = () => navigate("/analysis"); // Redirect to Analysis page
@@ -52,7 +61,7 @@ function Support() {
         <div className="flex justify-between items-start mb-6">
           {/* Welcome Section */}
           <div className="bg-blue-100 p-4 rounded-md">
-            <h2 className="text-3xl font-bold text-blue-900">Welcome back Danuja!</h2>
+            <h2 className="text-3xl font-bold text-blue-900">Welcome back!</h2>
             <p className="text-xl text-gray-700">
               You've reached <strong>80%</strong> of your progress this week! Keep it up and improve your results.
             </p>
@@ -111,10 +120,9 @@ function Support() {
               <strong>
                 {" "}
                 <span className="text-red-700">
-                  score between {convertedPercentage - 5}% - {convertedPercentage}%
+                  score between {convertedPercentage - 5}% - {convertedPercentage}%.
                 </span>
               </strong>
-              .
             </p>
             <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md mt-4">Chapter 1-3</button>
           </div>
@@ -137,7 +145,7 @@ function Support() {
             <p className="text-xl text-gray-700">
               You are categorized as a{" "}
               <strong>
-                <span className="text-red-700">{parsedUserData.performer_type || "Medium Performer"}</span>
+                <span className="text-red-700">{parsedUserData?.performer_type || "Medium Performer"}</span>
               </strong>
               .
             </p>
