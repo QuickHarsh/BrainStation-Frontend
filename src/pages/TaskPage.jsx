@@ -32,9 +32,7 @@ const TaskPage = () => {
               ))}
             </ul>
 
-            {task.timeEstimate && (
-              <p className="text-sm text-gray-600 mt-2">Estimated time: {task.timeEstimate}</p>
-            )}
+            {task.timeEstimate && <p className="text-sm text-gray-600 mt-2">Estimated time: {task.timeEstimate}</p>}
           </div>
         ))}
 

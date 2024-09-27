@@ -5,7 +5,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 function convertToPercentageRange(predicted_exam_score, min_percentage, max_percentage) {
   const min_score = 0;
   const max_score = 100;
-  return min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage);
+  return (
+    min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage)
+  );
 }
 
 function Support() {
