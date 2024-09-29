@@ -62,15 +62,15 @@ function Support() {
   //   };
   //   navigate(`/Task?userData=${encodeURIComponent(JSON.stringify(updatedUserData))}`);
   // };
-  
 
   // Redirect Handlers
   const handleViewTasks = () => {
     // Pass performer_type and lowest_two_chapters as query parameters
-    const taskUrl = `/Task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(lowestChapter1)}&chapter2=${encodeURIComponent(lowestChapter2)}`;
-    navigate(taskUrl);  // Navigate to Task.jsx with the necessary data
+    const taskUrl = `/Task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
+      lowestChapter1
+    )}&chapter2=${encodeURIComponent(lowestChapter2)}`;
+    navigate(taskUrl); // Navigate to Task.jsx with the necessary data
   };
-  
 
   return (
     <main className="flex h-screen flex-col items-center justify-between p-66 bg-gray-100">

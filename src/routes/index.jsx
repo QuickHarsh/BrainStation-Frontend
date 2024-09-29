@@ -3,12 +3,12 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { DefaultLayout, Loader } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
+import CompletedTasks from "@/pages/CompletedTasks";
 import Progress from "@/pages/Progress";
+import Task from "@/pages/Task";
 import analysis from "@/pages/analysis";
 import QuizDeck from "@/pages/quiz-deck";
 import support from "@/pages/support";
-import Task from "@/pages/Task";
-import CompletedTasks from "@/pages/CompletedTasks";
 
 // Ensure Loader is imported correctly
 

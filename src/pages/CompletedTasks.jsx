@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CompletedTasks() {
   const location = useLocation();
@@ -27,7 +27,7 @@ function CompletedTasks() {
 
         <button
           className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md mt-6"
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
         >
           Go Back
         </button>
