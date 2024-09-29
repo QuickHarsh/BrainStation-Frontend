@@ -50,11 +50,27 @@ function Support() {
   const lowestChapter2 = parsedUserData?.lowest_two_chapters?.[1]?.chapter || "N/A";
   console.log("Lowest Chapter 1:", lowestChapter1); // Log lowestChapter1 for debugging
   console.log("Lowest Chapter 2:", lowestChapter2); // Log lowestChapter2 for debugging
+  const performerType = parsedUserData?.performer_type || "Medium Performer";
 
   // Redirect Handlers
   const handleGoToDashboard = () => navigate("/analysis"); // Redirect to Analysis page
   const handleCompletedTasks = () => alert("Redirect to Completed Tasks Page");
-  const handleViewTasks = () => alert("Redirect to View Tasks Page");
+  // const handleViewTasks = () => {
+  //   const updatedUserData = {
+  //     ...parsedUserData,
+  //     Student_id: parsedUserData?.Student_id || "your_actual_student_id"
+  //   };
+  //   navigate(`/Task?userData=${encodeURIComponent(JSON.stringify(updatedUserData))}`);
+  // };
+  
+
+  // Redirect Handlers
+  const handleViewTasks = () => {
+    // Pass performer_type and lowest_two_chapters as query parameters
+    const taskUrl = `/Task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(lowestChapter1)}&chapter2=${encodeURIComponent(lowestChapter2)}`;
+    navigate(taskUrl);  // Navigate to Task.jsx with the necessary data
+  };
+  
 
   return (
     <main className="flex h-screen flex-col items-center justify-between p-66 bg-gray-100">

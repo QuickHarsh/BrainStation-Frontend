@@ -7,6 +7,8 @@ import Progress from "@/pages/Progress";
 import analysis from "@/pages/analysis";
 import QuizDeck from "@/pages/quiz-deck";
 import support from "@/pages/support";
+import Task from "@/pages/Task";
+import CompletedTasks from "@/pages/CompletedTasks";
 
 // Ensure Loader is imported correctly
 
@@ -35,6 +37,16 @@ const coreRoutes = [
     path: "/support",
     title: "support",
     component: support
+  },
+  {
+    path: "/Task",
+    title: "Task",
+    component: Task
+  },
+  {
+    path: "/CompletedTasks",
+    title: "CompletedTasks",
+    component: CompletedTasks
   },
   {
     path: "/analysis",
