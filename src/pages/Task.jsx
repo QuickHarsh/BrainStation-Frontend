@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
@@ -15,7 +15,7 @@ function Task() {
   const lowestChapter2 = searchParams.get("chapter2");
 
   // Prevent duplicate fetching
-  const hasFetched = useRef(false);  // This ensures we only fetch once
+  const hasFetched = useRef(false); // This ensures we only fetch once
 
   // Load completed subtasks from local storage
   useEffect(() => {
@@ -25,8 +25,8 @@ function Task() {
 
   // Fetch tasks from backend
   useEffect(() => {
-    if (hasFetched.current) return;  // Skip if already fetched
-    hasFetched.current = true;  // Mark that fetching has occurred
+    if (hasFetched.current) return; // Skip if already fetched
+    hasFetched.current = true; // Mark that fetching has occurred
 
     const fetchTasks = async () => {
       try {
@@ -35,11 +35,11 @@ function Task() {
           lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }]
         };
 
-        console.log("Sending POST request with payload: ", payload);  // Log request payload
+        console.log("Sending POST request with payload: ", payload); // Log request payload
         const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
 
         if ((response.status === 200 || response.status === 201) && response.data.data && response.data.data.tasks) {
-          console.log("Response received: ", response.data);  // Log response
+          console.log("Response received: ", response.data); // Log response
           setTasks(response.data.data.tasks);
         } else {
           throw new Error("No tasks found or invalid response from the server.");
@@ -52,7 +52,7 @@ function Task() {
       }
     };
 
-    fetchTasks();  // Trigger fetch tasks
+    fetchTasks(); // Trigger fetch tasks
   }, [performerType, lowestChapter1, lowestChapter2]);
 
   // Handle task completion and update
