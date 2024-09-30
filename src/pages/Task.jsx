@@ -3,14 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 function Task() {
-  const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] }); // State for tasks
-  const [completedSubtasks, setCompletedSubtasks] = useState([]); // State for completed subtasks
-  const [loading, setLoading] = useState(true); // State for loading
-  const [error, setError] = useState(null); // State for errors
-  const navigate = useNavigate(); // For navigation
-  const [searchParams] = useSearchParams(); // For URL query params
+  const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
+  const [completedSubtasks, setCompletedSubtasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // Extract performer type and chapters from query params
   const performerType = searchParams.get("performerType")?.replace(" Performer", "");
   const lowestChapter1 = searchParams.get("chapter1");
   const lowestChapter2 = searchParams.get("chapter2");
@@ -21,7 +20,7 @@ function Task() {
     setCompletedSubtasks(savedCompletedSubtasks);
   }, []);
 
-  // Fetch tasks from the backend
+  // Fetch tasks from backend
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -32,15 +31,13 @@ function Task() {
 
         const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
 
-        if (response.status === 200 && response.data.tasks) {
-          console.log("API Response:", response.data.tasks); // Log the response to check subtasks
-          setTasks(response.data.tasks); // Set tasks with subtasks
+        if ((response.status === 200 || response.status === 201) && response.data.data && response.data.data.tasks) {
+          setTasks(response.data.data.tasks);
         } else {
           throw new Error("No tasks found or invalid response from the server.");
         }
       } catch (error) {
-        console.error("Error fetching tasks:", error);
-        setError(error.message);
+        setError(error.response ? error.response.data.message : error.message);
       } finally {
         setLoading(false);
       }
@@ -49,8 +46,11 @@ function Task() {
     fetchTasks();
   }, [performerType, lowestChapter1, lowestChapter2]);
 
-  // Handle subtask checkbox change
-  const handleCheckboxChange = (task, subTask, taskType) => {
+  // Handle task completion and update
+  const handleCheckboxChange = async (taskId, task, subTask, taskType, isChecked) => {
+    // If checkbox is unchecked, skip completion
+    if (!isChecked) return;
+
     const dateCompleted = new Date().toLocaleString();
     const newCompletedSubtasks = [...completedSubtasks, { task, subTask, dateCompleted }];
 
@@ -72,20 +72,24 @@ function Task() {
       });
       return updatedTasks;
     });
+
+    // Move the task to completedTasks collection in backend
+    try {
+      const response = await axios.post("http://localhost:3000/api/progress/complete-task", { taskId });
+
+      if (response.status === 200) {
+        navigate("/completedtasks", { state: { completedSubtasks: newCompletedSubtasks } });
+      } else {
+        throw new Error("Failed to complete task");
+      }
+    } catch (error) {
+      console.error("Error completing task:", error);
+    }
   };
 
-  // Render loading state
   if (loading) return <div>Loading tasks...</div>;
-
-  // Render error state
   if (error) return <div>{error}</div>;
 
-  // Navigate to the Completed Tasks page
-  const goToCompletedTasks = () => {
-    navigate("/completedtasks", { state: { completedSubtasks } });
-  };
-
-  // Render the tasks
   return (
     <main className="flex h-screen flex-col items-center justify-between p-6 bg-gray-100">
       <div className="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6">
@@ -94,18 +98,18 @@ function Task() {
         {/* Weekly Tasks Section */}
         <section className="mb-8">
           <h3 className="text-2xl font-semibold text-blue-900 mb-4">Weekly Tasks</h3>
-          {tasks.weeklyTasks.length > 0 ? (
+          {tasks?.weeklyTasks?.length > 0 ? (
             tasks.weeklyTasks.map((task, index) => (
               <div key={index} className="p-6 bg-gray-100 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
 
-                {task.subTasks && task.subTasks.length > 0 ? (
+                {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subIndex) => (
                     <div key={subIndex} className="flex items-start space-x-2 mb-4">
                       <input
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        onChange={() => handleCheckboxChange(task.task, subTask, "weeklyTasks")}
+                        onChange={(e) => handleCheckboxChange(task._id, task.task, subTask, "weeklyTasks", e.target.checked)}
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
                     </div>
@@ -123,18 +127,18 @@ function Task() {
         {/* Daily Tasks Section */}
         <section className="mb-8">
           <h3 className="text-2xl font-semibold text-blue-900 mb-4">Daily Tasks</h3>
-          {tasks.dailyTasks.length > 0 ? (
+          {tasks?.dailyTasks?.length > 0 ? (
             tasks.dailyTasks.map((task, index) => (
               <div key={index} className="p-6 bg-gray-100 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
 
-                {task.subTasks && task.subTasks.length > 0 ? (
+                {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subIndex) => (
                     <div key={subIndex} className="flex items-start space-x-2 mb-4">
                       <input
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        onChange={() => handleCheckboxChange(task.task, subTask, "dailyTasks")}
+                        onChange={(e) => handleCheckboxChange(task._id, task.task, subTask, "dailyTasks", e.target.checked)}
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
                     </div>
@@ -149,10 +153,9 @@ function Task() {
           )}
         </section>
 
-        {/* Button to navigate to Completed Tasks page */}
         <button
           className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-md"
-          onClick={goToCompletedTasks}
+          onClick={() => navigate("/completedtasks", { state: { completedSubtasks } })}
         >
           View Completed Subtasks
         </button>
