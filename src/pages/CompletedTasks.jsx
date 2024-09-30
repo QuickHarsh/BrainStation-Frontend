@@ -6,9 +6,7 @@ function CompletedTasks() {
   const navigate = useNavigate();
 
   // Load completed subtasks from location.state or localStorage as fallback
-  const [completedSubtasks, setCompletedSubtasks] = useState(
-    location.state?.completedSubtasks || []
-  );
+  const [completedSubtasks, setCompletedSubtasks] = useState(location.state?.completedSubtasks || []);
 
   // Use effect to check local storage if state is empty
   useEffect(() => {

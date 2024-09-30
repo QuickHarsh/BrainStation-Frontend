@@ -109,7 +109,9 @@ function Task() {
                       <input
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        onChange={(e) => handleCheckboxChange(task._id, task.task, subTask, "weeklyTasks", e.target.checked)}
+                        onChange={(e) =>
+                          handleCheckboxChange(task._id, task.task, subTask, "weeklyTasks", e.target.checked)
+                        }
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
                     </div>
@@ -138,7 +140,9 @@ function Task() {
                       <input
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        onChange={(e) => handleCheckboxChange(task._id, task.task, subTask, "dailyTasks", e.target.checked)}
+                        onChange={(e) =>
+                          handleCheckboxChange(task._id, task.task, subTask, "dailyTasks", e.target.checked)
+                        }
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
                     </div>
