@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] }); // State for tasks
@@ -17,7 +17,7 @@ function Task() {
 
   // Load completed subtasks from local storage
   useEffect(() => {
-    const savedCompletedSubtasks = JSON.parse(localStorage.getItem('completedSubtasks')) || [];
+    const savedCompletedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
     setCompletedSubtasks(savedCompletedSubtasks);
   }, []);
 
@@ -27,13 +27,10 @@ function Task() {
       try {
         const payload = {
           performer_type: performerType,
-          lowest_two_chapters: [
-            { chapter: lowestChapter1 },
-            { chapter: lowestChapter2 }
-          ]
+          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }]
         };
 
-        const response = await axios.post('http://localhost:3000/api/progress/task-recommendation', payload);
+        const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
 
         if (response.status === 200 && response.data.tasks) {
           console.log("API Response:", response.data.tasks); // Log the response to check subtasks
@@ -42,7 +39,7 @@ function Task() {
           throw new Error("No tasks found or invalid response from the server.");
         }
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error("Error fetching tasks:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -55,14 +52,11 @@ function Task() {
   // Handle subtask checkbox change
   const handleCheckboxChange = (task, subTask, taskType) => {
     const dateCompleted = new Date().toLocaleString();
-    const newCompletedSubtasks = [
-      ...completedSubtasks,
-      { task, subTask, dateCompleted }
-    ];
+    const newCompletedSubtasks = [...completedSubtasks, { task, subTask, dateCompleted }];
 
     // Update local state and local storage
     setCompletedSubtasks(newCompletedSubtasks);
-    localStorage.setItem('completedSubtasks', JSON.stringify(newCompletedSubtasks));
+    localStorage.setItem("completedSubtasks", JSON.stringify(newCompletedSubtasks));
 
     // Remove the completed subtask from the task list
     setTasks((prevTasks) => {

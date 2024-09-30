@@ -22,7 +22,7 @@ function CompletedTasks() {
             ))}
           </div>
         ) : (
-          <p>No completed subtasks yet.</p>
+          <p>Not completed subtasks yet.</p>
         )}
 
         <button
