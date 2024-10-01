@@ -1,24 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function CompletedTasks() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const taskId = location.state?.taskId || ""; // Retrieve taskId from the previous page's state
 
-  // Load completed subtasks from location.state or localStorage as fallback
-  const [completedSubtasks, setCompletedSubtasks] = useState(location.state?.completedSubtasks || []);
+  const [completedSubtasks, setCompletedSubtasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Use effect to check local storage if state is empty
+  // Fetch completed subtasks from the backend using taskId
   useEffect(() => {
-    if (completedSubtasks.length === 0) {
-      const savedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
-      setCompletedSubtasks(savedSubtasks);
+    if (!taskId) {
+      setError("No valid task ID provided.");
+      setLoading(false);
+      return;
     }
-  }, [completedSubtasks]);
+
+    const fetchCompletedSubtasks = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/progress/completed-tasks/${taskId}`);
+
+        if (response.status === 200 && response.data.completedTasks) {
+          setCompletedSubtasks(response.data.completedTasks);
+        } else {
+          throw new Error("No completed subtasks found.");
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompletedSubtasks(); // Call the function to fetch completed tasks
+  }, [taskId]);
+
+  if (loading) return <div>Loading completed subtasks...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <main className="flex h-screen flex-col items-center justify-between p-6 bg-gray-100">
-      <div className="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6 relative">
+      <div className="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-bold text-blue-900 mb-4">Completed Subtasks</h2>
 
         {/* Display completed subtasks */}
@@ -26,9 +51,9 @@ function CompletedTasks() {
           <div className="space-y-6">
             {completedSubtasks.map((subtask, index) => (
               <div key={index} className="p-4 bg-gray-100 rounded-lg">
-                <h3 className="text-xl font-bold text-blue-900 mb-2">{subtask.task}</h3>
-                <p className="text-gray-700">{subtask.subTask}</p>
-                <p className="text-sm text-gray-500">Completed on: {subtask.dateCompleted}</p>
+                <h3 className="text-xl font-bold text-blue-900 mb-2">{subtask.completedSubtask.task}</h3>
+                <p className="text-gray-700">{subtask.completedSubtask.subTask}</p>
+                <p className="text-sm text-gray-500">Completed on: {new Date(subtask.completedAt).toLocaleString()}</p>
               </div>
             ))}
           </div>
