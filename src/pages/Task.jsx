@@ -40,7 +40,7 @@ function Task() {
       try {
         const payload = {
           performer_type: performerType,
-          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }],
+          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }]
         };
 
         console.log("Sending POST request with payload: ", payload);
@@ -103,7 +103,7 @@ function Task() {
         taskId,
         taskIndex,
         subTaskIndex,
-        subtaskType: taskType === "weeklyTasks" ? "weekly" : "daily",
+        subtaskType: taskType === "weeklyTasks" ? "weekly" : "daily"
       });
 
       if (response.status === 200) {
@@ -146,7 +146,14 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(task.task, subTask, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
+                          handleCheckboxChange(
+                            task.task,
+                            subTask,
+                            "weeklyTasks",
+                            taskIndex,
+                            subTaskIndex,
+                            e.target.checked
+                          )
                         }
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
@@ -177,7 +184,14 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(task.task, subTask, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
+                          handleCheckboxChange(
+                            task.task,
+                            subTask,
+                            "dailyTasks",
+                            taskIndex,
+                            subTaskIndex,
+                            e.target.checked
+                          )
                         }
                       />
                       <label className="text-black font-bold text-xl">{subTask}</label>
