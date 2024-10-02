@@ -67,7 +67,7 @@ function Task() {
     };
 
     fetchTasks(); // Trigger fetch tasks
-  }, [performerType, lowestChapter1, lowestChapter2, tasks,studentId ]);
+  }, [performerType, lowestChapter1, lowestChapter2, tasks, studentId]);
 
   // Handle task completion and update
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
@@ -102,7 +102,7 @@ function Task() {
     try {
       const response = await axios.post("http://localhost:3000/api/progress/delete-subtask", {
         taskId,
-        studentId, 
+        studentId,
         taskIndex,
         subTaskIndex,
         subtaskType: taskType === "weeklyTasks" ? "weekly" : "daily"
@@ -122,7 +122,7 @@ function Task() {
   };
 
   const handleCompletedTasksButtonClick = () => {
-    navigate("/completedtasks", { state: { taskId,studentId  } });
+    navigate("/completedtasks", { state: { taskId, studentId } });
   };
 
   if (loading) return <div>Loading tasks...</div>;
