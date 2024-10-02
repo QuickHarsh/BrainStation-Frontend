@@ -6,12 +6,13 @@ function CompletedTasks() {
   const navigate = useNavigate();
   const location = useLocation();
   const taskId = location.state?.taskId || ""; // Retrieve taskId from the previous page's state
+  const studentId = location.state?.studentId || ""; // Retrieve studentId from the previous page's state
 
   const [completedSubtasks, setCompletedSubtasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch completed subtasks from the backend using taskId
+  // Fetch completed subtasks from the backend using taskId and studentId
   useEffect(() => {
     if (!taskId) {
       setError("No valid task ID provided.");
@@ -21,7 +22,10 @@ function CompletedTasks() {
 
     const fetchCompletedSubtasks = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/progress/completed-tasks/${taskId}`);
+        // Use both taskId and studentId in your request, if necessary
+        const response = await axios.get(`http://localhost:3000/api/progress/completed-tasks/${taskId}`, {
+          params: { studentId } // Passing studentId as a query parameter, if needed by your API
+        });
 
         if (response.status === 200 && response.data.completedTasks) {
           setCompletedSubtasks(response.data.completedTasks);
@@ -36,7 +40,7 @@ function CompletedTasks() {
     };
 
     fetchCompletedSubtasks(); // Call the function to fetch completed tasks
-  }, [taskId]);
+  }, [taskId, studentId]);
 
   if (loading) return <div>Loading completed subtasks...</div>;
   if (error) return <div>{error}</div>;

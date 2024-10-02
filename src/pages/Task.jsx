@@ -30,7 +30,7 @@ function Task() {
       setLoading(false); // Stop loading if we have saved tasks
     }
   }, []);
-
+  const studentId = searchParams.get("studentId");
   // Fetch tasks from backend if not saved in local storage
   useEffect(() => {
     if (hasFetched.current || tasks.weeklyTasks.length > 0 || tasks.dailyTasks.length > 0) return;
@@ -40,7 +40,8 @@ function Task() {
       try {
         const payload = {
           performer_type: performerType,
-          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }]
+          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }],
+          studentId // Include studentId in the request payload
         };
 
         console.log("Sending POST request with payload: ", payload);
@@ -66,7 +67,7 @@ function Task() {
     };
 
     fetchTasks(); // Trigger fetch tasks
-  }, [performerType, lowestChapter1, lowestChapter2, tasks]);
+  }, [performerType, lowestChapter1, lowestChapter2, tasks,studentId ]);
 
   // Handle task completion and update
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
@@ -101,6 +102,7 @@ function Task() {
     try {
       const response = await axios.post("http://localhost:3000/api/progress/delete-subtask", {
         taskId,
+        studentId, 
         taskIndex,
         subTaskIndex,
         subtaskType: taskType === "weeklyTasks" ? "weekly" : "daily"
@@ -120,7 +122,7 @@ function Task() {
   };
 
   const handleCompletedTasksButtonClick = () => {
-    navigate("/completedtasks", { state: { taskId } });
+    navigate("/completedtasks", { state: { taskId,studentId  } });
   };
 
   if (loading) return <div>Loading tasks...</div>;

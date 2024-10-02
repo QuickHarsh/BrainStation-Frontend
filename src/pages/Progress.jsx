@@ -178,6 +178,7 @@ function Progress() {
       }
 
       const studentData = await studentResponse.json(); // Fetched student data
+      const studentIdValue = studentData.data.Student_ID;
       console.log("Fetched Student Data:", studentData);
 
       // Fetch prediction data
@@ -198,6 +199,7 @@ function Progress() {
 
       // Prepare query object to pass to Support.jsx
       const query = {
+        studentId: studentData.data.Student_ID,
         predicted_exam_score: predictionResult.data.predicted_exam_score,
         lowest_two_chapters: predictionResult.data.lowest_two_chapters,
         performer_type: predictionResult.data.performer_type,

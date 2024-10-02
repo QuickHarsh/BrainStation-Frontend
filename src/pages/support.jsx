@@ -68,7 +68,7 @@ function Support() {
     // Pass performer_type and lowest_two_chapters as query parameters
     const taskUrl = `/Task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
       lowestChapter1
-    )}&chapter2=${encodeURIComponent(lowestChapter2)}`;
+    )}&chapter2=${encodeURIComponent(lowestChapter2)}&studentId=${encodeURIComponent(parsedUserData.studentId)}`;
     navigate(taskUrl); // Navigate to Task.jsx with the necessary data
   };
 
