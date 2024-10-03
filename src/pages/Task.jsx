@@ -37,7 +37,7 @@ function Task() {
   useEffect(() => {
     if (hasFetched.current || tasks.weeklyTasks.length > 0 || tasks.dailyTasks.length > 0) return;
     hasFetched.current = true;
-  
+
     const fetchTasks = async () => {
       try {
         const payload = {
@@ -45,13 +45,13 @@ function Task() {
           lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }],
           Student_id: studentId // Pass the studentId from the URL here
         };
-  
+
         console.log("Sending POST request with payload: ", payload); // Log the payload to confirm studentId is passed
         const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
-  
+
         if ((response.status === 200 || response.status === 201) && response.data.data && response.data.data.tasks) {
           console.log("Response received: ", response.data);
-  
+
           // Capture and set taskId from response
           setTaskId(response.data.data._id); // Ensure taskId is saved properly
           setTasks(response.data.data.tasks); // Set tasks separately
@@ -67,10 +67,9 @@ function Task() {
         setLoading(false);
       }
     };
-  
+
     fetchTasks(); // Trigger fetch tasks
   }, [performerType, lowestChapter1, lowestChapter2, tasks, studentId]);
-  
 
   // Handle task completion and update
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
