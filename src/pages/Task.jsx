@@ -11,9 +11,11 @@ function Task() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Get performerType, lowest chapters, and studentId from URL
   const performerType = searchParams.get("performerType")?.replace(" Performer", "");
   const lowestChapter1 = searchParams.get("chapter1");
   const lowestChapter2 = searchParams.get("chapter2");
+  const studentId = searchParams.get("studentId"); // This line is correct, only needs to appear once
 
   // Prevent duplicate fetching
   const hasFetched = useRef(false);
@@ -30,26 +32,26 @@ function Task() {
       setLoading(false); // Stop loading if we have saved tasks
     }
   }, []);
-  const studentId = searchParams.get("studentId");
+
   // Fetch tasks from backend if not saved in local storage
   useEffect(() => {
     if (hasFetched.current || tasks.weeklyTasks.length > 0 || tasks.dailyTasks.length > 0) return;
     hasFetched.current = true;
-
+  
     const fetchTasks = async () => {
       try {
         const payload = {
           performer_type: performerType,
           lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }],
-          studentId // Include studentId in the request payload
+          Student_id: studentId // Pass the studentId from the URL here
         };
-
-        console.log("Sending POST request with payload: ", payload);
+  
+        console.log("Sending POST request with payload: ", payload); // Log the payload to confirm studentId is passed
         const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
-
+  
         if ((response.status === 200 || response.status === 201) && response.data.data && response.data.data.tasks) {
           console.log("Response received: ", response.data);
-
+  
           // Capture and set taskId from response
           setTaskId(response.data.data._id); // Ensure taskId is saved properly
           setTasks(response.data.data.tasks); // Set tasks separately
@@ -65,9 +67,10 @@ function Task() {
         setLoading(false);
       }
     };
-
+  
     fetchTasks(); // Trigger fetch tasks
   }, [performerType, lowestChapter1, lowestChapter2, tasks, studentId]);
+  
 
   // Handle task completion and update
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
