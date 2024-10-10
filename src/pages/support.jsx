@@ -54,13 +54,11 @@ function Support() {
 
   // Redirect Handlers
   const handleGoToDashboard = () => {
-
     const dashUrl = `/Dashboard?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
       lowestChapter1
     )}&chapter2=${encodeURIComponent(lowestChapter2)}&studentId=${encodeURIComponent(parsedUserData.studentId)}`;
     navigate(dashUrl); // Navigate to Task.jsx with the necessary data
-
-   };// Redirect to Analysis page
+  }; // Redirect to Analysis page
   const handleCompletedTasks = () => alert("Redirect to Completed Tasks Page");
   // const handleViewTasks = () => {
   //   const updatedUserData = {
