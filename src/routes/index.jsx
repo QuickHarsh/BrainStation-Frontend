@@ -4,9 +4,9 @@ import { DefaultLayout, Loader } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
 import CompletedTasks from "@/pages/CompletedTasks";
+import Dashboard from "@/pages/Dashboard";
 import Progress from "@/pages/Progress";
 import Task from "@/pages/Task";
-import Dashboard from "@/pages/Dashboard";
 import QuizDeck from "@/pages/quiz-deck";
 import support from "@/pages/support";
 

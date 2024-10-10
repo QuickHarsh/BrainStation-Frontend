@@ -75,24 +75,26 @@ function Task() {
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
     console.log("Checkbox checked:", isChecked);
     console.log("Task details:", { taskId, taskType, taskIndex, subTaskIndex });
-  
+
     if (!isChecked) return;
 
     // Optimistically update UI before sending the request
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
-      updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter((_, idx) => idx !== subTaskIndex);
+      updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter(
+        (_, idx) => idx !== subTaskIndex
+      );
       return updatedTasks;
     });
-  
+
     try {
       const response = await axios.post("http://localhost:3000/api/progress/delete-subtask", {
-        taskId,         // Ensure taskId is correct
-        taskType,       // Should be either 'weeklyTasks' or 'dailyTasks'
-        taskIndex,      // Task index
-        subTaskIndex    // Subtask index
+        taskId, // Ensure taskId is correct
+        taskType, // Should be either 'weeklyTasks' or 'dailyTasks'
+        taskIndex, // Task index
+        subTaskIndex // Subtask index
       });
-  
+
       if (response.status === 200) {
         console.log("Subtask deleted successfully:", response.data);
       } else {
@@ -111,7 +113,7 @@ function Task() {
       });
     }
   };
-  
+
   const handleCompletedTasksButtonClick = () => {
     navigate("/completedtasks", { state: { taskId, studentId } });
   };
