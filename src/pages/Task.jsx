@@ -73,56 +73,45 @@ function Task() {
 
   // Handle task completion and update
   const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
+    console.log("Checkbox checked:", isChecked);
+    console.log("Task details:", { taskId, taskType, taskIndex, subTaskIndex });
+  
     if (!isChecked) return;
 
-    console.log("Deleting subtask:", { taskId, taskType, taskIndex, subTaskIndex });
-
-    if (!taskId) {
-      console.error("Task ID is missing!", { task, taskType, taskIndex });
-      return;
-    }
-
-    const dateCompleted = new Date().toLocaleString();
-    const newCompletedSubtasks = [...completedSubtasks, { task, subTask, dateCompleted }];
-
-    // Update local state and local storage
-    setCompletedSubtasks(newCompletedSubtasks);
-    localStorage.setItem("completedSubtasks", JSON.stringify(newCompletedSubtasks));
-
+    // Optimistically update UI before sending the request
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
-      updatedTasks[taskType] = updatedTasks[taskType].map((t, i) => {
-        if (i === taskIndex) {
-          return { ...t, subTasks: t.subTasks.filter((_, subIdx) => subIdx !== subTaskIndex) };
-        }
-        return t;
-      });
-      localStorage.setItem("taskSet", JSON.stringify(updatedTasks)); // Update local storage with the modified tasks
+      updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter((_, idx) => idx !== subTaskIndex);
       return updatedTasks;
     });
-
+  
     try {
       const response = await axios.post("http://localhost:3000/api/progress/delete-subtask", {
-        taskId,
-        studentId,
-        taskIndex,
-        subTaskIndex,
-        subtaskType: taskType === "weeklyTasks" ? "weekly" : "daily"
+        taskId,         // Ensure taskId is correct
+        taskType,       // Should be either 'weeklyTasks' or 'dailyTasks'
+        taskIndex,      // Task index
+        subTaskIndex    // Subtask index
       });
-
+  
       if (response.status === 200) {
-        console.log("Subtask deleted successfully");
+        console.log("Subtask deleted successfully:", response.data);
       } else {
-        throw new Error("Failed to complete task");
+        console.error("Failed to delete subtask, status:", response.status);
+        // Revert UI changes if failed
+        throw new Error("Failed to delete subtask.");
       }
     } catch (error) {
-      console.error("Error completing task:", error);
-      if (error.response && error.response.data) {
-        console.error("Response data:", error.response.data);
-      }
+      console.error("Error deleting subtask:", error.response?.data || error.message);
+      setError("Failed to delete subtask. Please try again.");
+      // Revert UI changes in case of error
+      setTasks((prevTasks) => {
+        const revertedTasks = { ...prevTasks };
+        revertedTasks[taskType][taskIndex].subTasks = [...prevTasks[taskType][taskIndex].subTasks];
+        return revertedTasks;
+      });
     }
   };
-
+  
   const handleCompletedTasksButtonClick = () => {
     navigate("/completedtasks", { state: { taskId, studentId } });
   };

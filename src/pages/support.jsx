@@ -53,7 +53,7 @@ function Support() {
   const performerType = parsedUserData?.performer_type || "Medium Performer";
 
   // Redirect Handlers
-  const handleGoToDashboard = () => navigate("/analysis"); // Redirect to Analysis page
+  const handleGoToDashboard = () => navigate("/Dashboard"); // Redirect to Analysis page
   const handleCompletedTasks = () => alert("Redirect to Completed Tasks Page");
   // const handleViewTasks = () => {
   //   const updatedUserData = {

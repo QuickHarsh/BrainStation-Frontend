@@ -6,7 +6,7 @@ import NotFound from "@/pages/404";
 import CompletedTasks from "@/pages/CompletedTasks";
 import Progress from "@/pages/Progress";
 import Task from "@/pages/Task";
-import analysis from "@/pages/analysis";
+import Dashboard from "@/pages/Dashboard";
 import QuizDeck from "@/pages/quiz-deck";
 import support from "@/pages/support";
 
@@ -49,9 +49,9 @@ const coreRoutes = [
     component: CompletedTasks
   },
   {
-    path: "/analysis",
-    title: "analysis",
-    component: analysis
+    path: "/Dashboard",
+    title: "Dashboard",
+    component: Dashboard
   }
 ];
 
