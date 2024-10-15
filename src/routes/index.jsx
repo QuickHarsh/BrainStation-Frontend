@@ -6,6 +6,8 @@ import Progress from "@/pages/Progress";
 import analysis from "@/pages/analysis";
 import QuizDeck from "@/pages/quiz-deck";
 import support from "@/pages/support";
+import Signin from "@/pages/login";
+import Signup from "@/pages/signup";
 
 // Ensure Loader is imported correctly
 
@@ -48,6 +50,8 @@ const CustomRoutes = () => {
   return (
     <Routes location={location}>
       {/* Routes with DefaultLayout */}
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/signup" element={<Signup />} />
       <Route element={<DefaultLayout />}>
         {coreRoutes.map((route, index) => {
           const { path, component: Component } = route;
