@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Logo from "@/components/common/logo";
-import GoogleIcon from "@/components/icons/google-icon"
+import GoogleIcon from "@/components/icons/google-icon";
 
 const CreateAccount = () => {
   const [email, setEmail] = useState("");
@@ -27,9 +27,7 @@ const CreateAccount = () => {
         </div>
 
         {/* Title */}
-        <h2 className="text-center text-xl font-inter font-semibold mb-2">
-          Create an account
-        </h2>
+        <h2 className="text-center text-xl font-inter font-semibold mb-2">Create an account</h2>
         <p className="text-center font-inter text-sm text-gray-500 mb-4">
           Already have an account?{" "}
           <a href="/admin-portal/login" className="text-blue-600 hover:underline">
@@ -58,9 +56,7 @@ const CreateAccount = () => {
           <p className="block text-gray-500 text-center text-xs mb-2 font-inter">
             Enter your email address to create an account.
           </p>
-          <label className="block text-gray-500 text-xs mb-2 font-inter">
-            Your email
-          </label>
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Your email</label>
           <input
             type="email"
             value={email}
@@ -71,9 +67,7 @@ const CreateAccount = () => {
           <button
             type="submit"
             className={`w-full py-2 px-4 font-inter font-semibold text-white rounded-full shadow ${
-              email
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-300 cursor-not-allowed"
+              email ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
             }`}
             disabled={!email}
           >

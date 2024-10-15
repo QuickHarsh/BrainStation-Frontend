@@ -20,7 +20,7 @@ const Main = () => {
   if (modulesData && modulesData.data?.docs && modules.length === 0) {
     const modulesWithProgress = modulesData.data.docs.map((module) => ({
       ...module,
-      progress: 50, // Add progress field to each module
+      progress: 50 // Add progress field to each module
     }));
 
     dispatch(setModules(modulesWithProgress));
@@ -38,9 +38,7 @@ const Main = () => {
 
   return (
     <div className="p-4 px-6">
-      <h1 className="font-inter font-bold text-2xl">
-        Welcome, Choose a module to get started!
-      </h1>
+      <h1 className="font-inter font-bold text-2xl">Welcome, Choose a module to get started!</h1>
 
       {!modulesData || modulesData.loading ? (
         <div className="flex justify-center items-center">
@@ -70,9 +68,7 @@ const Main = () => {
                 />
               ))
             ) : (
-              <div className="text-center text-lg font-bold">
-                No modules available.
-              </div>
+              <div className="text-center text-lg font-bold">No modules available.</div>
             )}
           </div>
         </Scrollbars>
