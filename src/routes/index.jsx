@@ -2,10 +2,10 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { DefaultLayout } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
-import QuizDeck from "@/pages/quiz-deck";
 import Progress from "@/pages/Progress";
-import support from "@/pages/support";
 import analysis from "@/pages/analysis";
+import QuizDeck from "@/pages/quiz-deck";
+import support from "@/pages/support";
 
 // Ensure Loader is imported correctly
 
