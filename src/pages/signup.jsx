@@ -9,7 +9,7 @@ const CreateAccount = () => {
     email: "",
     username: "",
     password: "",
-    organization: "",
+    organization: ""
   });
 
   const [loading, setLoading] = useState(false); // Handle loading state
@@ -20,7 +20,7 @@ const CreateAccount = () => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -150,8 +150,8 @@ const CreateAccount = () => {
               loading
                 ? "bg-gray-300 cursor-not-allowed"
                 : email && password && name && username
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-300 cursor-not-allowed"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-300 cursor-not-allowed"
             }`}
             disabled={loading || !email || !password || !name || !username}
           >

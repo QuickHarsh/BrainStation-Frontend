@@ -2,7 +2,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Logo from "@/components/common/logo";
 import GoogleIcon from "@/components/icons/google-icon";
-import { login } from "../service/auth";  // Update the path as needed
+import { login } from "../service/auth";
+
+// Update the path as needed
 
 const Login = () => {
   const [email, setEmail] = useState("");
