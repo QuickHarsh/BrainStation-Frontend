@@ -153,7 +153,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
           <p className="text-sm text-[#A4A4A4]">{lectureTitle}</p>
           <p className="mt-2 text-[24px] font-inter font-semibold">{currentQuiz.question}</p>
           <div className="flex items-center h-[calc(100%-150px)]">
-            <div className="w-full grid grid-cols-2 items-center my-4">
+            <div className="w-full grid grid-cols-2 gap-2 md:gap-4 items-center my-4">
               {shuffledAnswers.map((answer, index) => {
                 let cardColorClass = "";
                 if (index === 0) cardColorClass = "bg-[#E5DDC5]";
@@ -173,7 +173,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
                 const alignmentClass = index % 2 === 0 ? "justify-self-end" : "justify-self-start";
 
                 return (
-                  <div key={index} className={alignmentClass} onClick={() => handleAnswerClick(answer)}>
+                  <div key={index} className={`${alignmentClass}`} onClick={() => handleAnswerClick(answer)}>
                     <MCQCard className={`${cardColorClass} ${borderColorClass}`} text={answer} />
                   </div>
                 );
