@@ -1,7 +1,6 @@
 import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// Import useNavigate for navigation
 import { Loader } from "@/components";
 import ModuleCard from "@/components/cards/module-card";
 import useFetchData from "@/hooks/fetch-data";
@@ -14,12 +13,14 @@ const Main = () => {
   const navigate = useNavigate();
   const modules = useSelector((state) => state.modules.modules);
 
+  // Fetch modules data
   const modulesData = useFetchData(getAllModules);
 
-  if (modulesData && modules.length === 0) {
+  // Check if modulesData is available and contains docs before proceeding
+  if (modulesData && modulesData.data?.docs && modules.length === 0) {
     const modulesWithProgress = modulesData.data.docs.map((module) => ({
       ...module,
-      progress: 50
+      progress: 50 // Add progress field to each module
     }));
 
     dispatch(setModules(modulesWithProgress));
@@ -39,7 +40,7 @@ const Main = () => {
     <div className="p-4 px-6">
       <h1 className="font-inter font-bold text-2xl">Welcome, Choose a module to get started!</h1>
 
-      {!modulesData ? (
+      {!modulesData || modulesData.loading ? (
         <div className="flex justify-center items-center">
           <Loader />
         </div>
