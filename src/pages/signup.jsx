@@ -1,27 +1,55 @@
 import { useState } from "react";
 import Logo from "@/components/common/logo";
 import GoogleIcon from "@/components/icons/google-icon";
+import { register } from "../service/auth";
 
 const CreateAccount = () => {
-  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+    organization: ""
+  });
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const [loading, setLoading] = useState(false); // Handle loading state
+  const [error, setError] = useState(null); // Handle error state
+  const [success, setSuccess] = useState(false); // Handle success state
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   const handleGoogleSignIn = () => {
-    console.log("Google sign-in clicked");
+    // Google sign-in functionality should be implemented here.
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Create account with email:", email);
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      await register(formData); // Register the user using the form data
+      setSuccess(true); // Set success to true when account creation is successful
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create an account"); // Handle error
+    } finally {
+      setLoading(false); // Stop loading spinner regardless of the result
+    }
   };
+
+  const { name, email, username, password, organization } = formData;
 
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-b from-blue-900 to-cyan-500">
       <div className="bg-white rounded-lg shadow-lg w-8/12 max-w-lg p-8">
-        {/* BrainStation Logo */}
+        {/* Logo */}
         <div className="mb-5">
           <Logo />
         </div>
@@ -30,7 +58,7 @@ const CreateAccount = () => {
         <h2 className="text-center text-xl font-inter font-semibold mb-2">Create an account</h2>
         <p className="text-center font-inter text-sm text-gray-500 mb-4">
           Already have an account?{" "}
-          <a href="/admin-portal/login" className="text-blue-600 hover:underline">
+          <a href="/signin" className="text-blue-600 hover:underline">
             Log in
           </a>
         </p>
@@ -51,27 +79,83 @@ const CreateAccount = () => {
           <hr className="flex-grow border-t border-gray-300" />
         </div>
 
-        {/* Email Input Form */}
+        {/* Account Creation Form */}
         <form onSubmit={handleSubmit}>
           <p className="block text-gray-500 text-center text-xs mb-2 font-inter">
-            Enter your email address to create an account.
+            Enter your details to create an account.
           </p>
-          <label className="block text-gray-500 text-xs mb-2 font-inter">Your email</label>
+
+          {/* Name */}
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Name</label>
           <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
+            type="text"
+            name="name"
+            value={name}
+            onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
             required
           />
+
+          {/* Email */}
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            required
+          />
+
+          {/* Username */}
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={username}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            required
+          />
+
+          {/* Password */}
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            required
+          />
+
+          {/* Organization */}
+          <label className="block text-gray-500 text-xs mb-2 font-inter">Organization</label>
+          <input
+            type="text"
+            name="organization"
+            value={organization}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          {/* Error and Success Messages */}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {success && <p className="text-green-500 text-center mb-4">Account created successfully!</p>}
+
+          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full py-2 px-4 font-inter font-semibold text-white rounded-full shadow ${
-              email ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
+              loading
+                ? "bg-gray-300 cursor-not-allowed"
+                : email && password && name && username
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-300 cursor-not-allowed"
             }`}
-            disabled={!email}
+            disabled={loading || !email || !password || !name || !username}
           >
-            Create an account
+            {loading ? "Creating Account..." : "Create an account"}
           </button>
         </form>
       </div>
