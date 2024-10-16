@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_BRAINSTATION_BE_URL}/api/assrs`;
 
@@ -7,11 +7,11 @@ export const createAssrsResult = async (userId, questions) => {
   try {
     const response = await axios.post(`${API_URL}/`, {
       userId,
-      ...questions,  // Spread the questions into the request body
+      ...questions // Spread the questions into the request body
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error creating ASRS result');
+    throw new Error(error.response?.data?.message || "Error creating ASRS result");
   }
 };
 
@@ -21,7 +21,7 @@ export const checkAssrsResultExists = async (userId) => {
     const response = await axios.get(`${API_URL}/${userId}/check`);
     return response.data.exists;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error checking ASRS result existence');
+    throw new Error(error.response?.data?.message || "Error checking ASRS result existence");
   }
 };
 
@@ -31,7 +31,7 @@ export const checkAssrsResultAge = async (userId) => {
     const response = await axios.get(`${API_URL}/${userId}/check-age`);
     return response.data.isOlderThanSixMonths;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error checking ASRS result age');
+    throw new Error(error.response?.data?.message || "Error checking ASRS result age");
   }
 };
 
@@ -41,7 +41,7 @@ export const updateAssrsResult = async (userId, updatedData) => {
     const response = await axios.patch(`${API_URL}/${userId}`, updatedData);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error updating ASRS result');
+    throw new Error(error.response?.data?.message || "Error updating ASRS result");
   }
 };
 
@@ -51,7 +51,6 @@ export const getAssrsResultByUser = async (userId) => {
     const response = await axios.get(`${API_URL}/getByUser/${userId}`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error retrieving ASRS result');
+    throw new Error(error.response?.data?.message || "Error retrieving ASRS result");
   }
 };
-

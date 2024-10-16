@@ -3,15 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import ContentCard from "@/components/cards/content-card";
+import SurveyModal from "@/components/emotion/asrs-form";
 import BottomBar from "@/components/layout/bottom-bar";
 import MCQPane from "@/components/quiz/mcq-pane";
 import useFetchData from "@/hooks/fetch-data";
+import { checkAssrsResultAge, checkAssrsResultExists, createAssrsResult, getAssrsResultByUser } from "@/service/asrs";
 import { getModuleById } from "@/service/module";
+import { saveSession } from "@/service/session";
 import { setCurrentModule, switchView } from "@/store/lecturesSlice";
 import { hideMCQPane } from "@/store/mcqSlice";
-import SurveyModal from "@/components/emotion/asrs-form";
-import { saveSession } from "@/service/session";
-import { checkAssrsResultExists, checkAssrsResultAge, getAssrsResultByUser, createAssrsResult } from "@/service/asrs"; // Import the API services
+
+// Import the API services
 
 const Study = () => {
   const dispatch = useDispatch();
@@ -47,21 +49,17 @@ const Study = () => {
   }, [moduleData, dispatch]);
 
   const currentSlide = useSelector((state) => {
-    const currentLecture = state.lectures.lectures.find(
-      (lecture) => lecture._id === state.lectures.currentLectureId
-    );
+    const currentLecture = state.lectures.lectures.find((lecture) => lecture._id === state.lectures.currentLectureId);
     if (currentLecture && currentLecture.slides && currentLecture.slides.length > 0) {
-      return currentLecture.slides.find(
-        (slide) => slide.id === state.lectures.currentSlideId
-      ) || currentLecture.slides[0];
+      return (
+        currentLecture.slides.find((slide) => slide.id === state.lectures.currentSlideId) || currentLecture.slides[0]
+      );
     }
     return null;
   });
 
   const currentLectureTitle = useSelector((state) => {
-    const currentLecture = state.lectures.lectures.find(
-      (lecture) => lecture._id === state.lectures.currentLectureId
-    );
+    const currentLecture = state.lectures.lectures.find((lecture) => lecture._id === state.lectures.currentLectureId);
     return currentLecture ? currentLecture.title : "";
   });
 
@@ -84,7 +82,7 @@ const Study = () => {
           return null;
         } else {
           const asrsResult = await getAssrsResultByUser(userId);
-          const finalasrsResult = asrsResult.data.assrsResult
+          const finalasrsResult = asrsResult.data.assrsResult;
           return finalasrsResult; // Use the existing ASRS result from MongoDB
         }
       } else {
@@ -211,7 +209,7 @@ const Study = () => {
     const initVideoStream = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720, frameRate: 30 },
+          video: { width: 1280, height: 720, frameRate: 30 }
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -267,10 +265,7 @@ const Study = () => {
       <div className="flex justify-between items-center p-4">
         {/* Status with Dot */}
         <div className="flex items-center space-x-2">
-          <div
-            className={`w-3 h-3 rounded-full`}
-            style={{ backgroundColor: dotColor }}
-          ></div>
+          <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: dotColor }}></div>
           <p>{sessionStatus}</p>
         </div>
 

@@ -7,7 +7,7 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
     question3: null,
     question4: null,
     question5: null,
-    question6: null,
+    question6: null
   });
 
   const [errorMessage, setErrorMessage] = useState(""); // State to handle incomplete submission
@@ -19,7 +19,7 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
   const handleChange = (questionKey, value) => {
     setSurveyData((prevData) => ({
       ...prevData,
-      [questionKey]: value,
+      [questionKey]: value
     }));
   };
 
@@ -86,7 +86,7 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
                   "How often do you complete your assignments on time?",
                   "How often do you review lecture notes after class?",
                   "How often do you participate in class discussions?",
-                  "How often do you use additional resources for learning?",
+                  "How often do you use additional resources for learning?"
                 ].map((question, index) => (
                   <tr key={index}>
                     <td className="border border-gray-300 p-2">{question}</td>
@@ -109,10 +109,7 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
             {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
 
             <div className="mt-4 text-right">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-              >
+              <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                 Submit
               </button>
             </div>
@@ -126,7 +123,10 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
           <div className="bg-white p-6 rounded shadow-lg text-center w-[400px] border-l-8 border-blue-400">
             <h2 className="text-lg font-bold mb-4">Thank You For Your Time</h2>
             <p className="mb-4">Let&apos;s Start The Lessons</p>
-            <button className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600" onClick={() => setShowThankYouPopup(false)}>
+            <button
+              className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+              onClick={() => setShowThankYouPopup(false)}
+            >
               Continue
             </button>
           </div>
