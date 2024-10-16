@@ -1,13 +1,13 @@
 import { Cell, Pie, PieChart } from "recharts";
 
-const data = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 400 }
-];
+const COLORS = ["#0B54A0", "#FFD200"];
 
-const COLORS = ["#FFD200", "#0B54A0"];
-
-const DonutChart = () => {
+const DonutChart = ({
+  data = [
+    { name: "Default Correct", value: 50 },
+    { name: "Default Incorrect", value: 50 }
+  ]
+}) => {
   return (
     <div style={{ position: "relative", width: "200px", height: "200px" }}>
       {/* PieChart Container */}
@@ -38,19 +38,19 @@ const DonutChart = () => {
           top: "53%",
           left: "48%",
           transform: "translate(-50%, -50%)",
-          backgroundColor: "#F9F2D1", // Background color similar to the image
+          backgroundColor: "#F9F2D1",
           borderRadius: "50%",
-          width: "110px", // Adjust size as needed
-          height: "110px", // Adjust size as needed
+          width: "110px",
+          height: "110px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontWeight: "bold",
           fontSize: "26px",
-          color: "#000000" // Text color
+          color: "#000000"
         }}
       >
-        50%
+        {data[0].value > 0 ? `${Math.round((data[0].value / (data[0].value + data[1].value)) * 100)}%` : "50%"}
       </div>
     </div>
   );
