@@ -6,7 +6,8 @@ function convertToPercentageRange(predicted_exam_score, min_percentage, max_perc
   const min_score = 0;
   const max_score = 100;
   return (
-    min_percentage + ((predicted_exam_score - min_score) / (max_score - min_percentage)) * (max_percentage - min_percentage)
+    min_percentage +
+    ((predicted_exam_score - min_score) / (max_score - min_percentage)) * (max_percentage - min_percentage)
   );
 }
 
@@ -62,8 +63,12 @@ function Support() {
   // Accessing lowest_two_chapters_with_descriptions and their details
   const lowestChapter1 = parsedUserData?.lowest_two_chapters_with_descriptions?.[0]?.chapter || "N/A";
   const lowestChapter2 = parsedUserData?.lowest_two_chapters_with_descriptions?.[1]?.chapter || "N/A";
-  const description1 = cleanDescription(parsedUserData?.lowest_two_chapters_with_descriptions?.[0]?.description || "No description available");
-  const description2 = cleanDescription(parsedUserData?.lowest_two_chapters_with_descriptions?.[1]?.description || "No description available");
+  const description1 = cleanDescription(
+    parsedUserData?.lowest_two_chapters_with_descriptions?.[0]?.description || "No description available"
+  );
+  const description2 = cleanDescription(
+    parsedUserData?.lowest_two_chapters_with_descriptions?.[1]?.description || "No description available"
+  );
 
   const performerType = parsedUserData?.performer_type || "Medium Performer";
 
@@ -140,14 +145,19 @@ function Support() {
 
         {/* Academic Forecasting Section */}
         <div className="bg-gray-200 p-5 rounded-lg mb-6">
-          <h3 className="font-bold text-2xl text-gray-800 mb-4 border-b-2 border-gray-300 pb-2">Academic Forecasting</h3>
+          <h3 className="font-bold text-2xl text-gray-800 mb-4 border-b-2 border-gray-300 pb-2">
+            Academic Forecasting
+          </h3>
 
           {/* Academic Performance */}
           <div className="p-4 bg-white rounded-lg mb-4">
             <h4 className="font-semibold text-xl text-gray-800">Academic Performance</h4>
             <p className="text-lg text-gray-700">
               Based on your quiz scores so far, if the next exam covers these chapters, you're likely to
-              <strong className="text-red-700"> score between {convertedPercentage - 5}% - {convertedPercentage}%.</strong>
+              <strong className="text-red-700">
+                {" "}
+                score between {convertedPercentage - 5}% - {convertedPercentage}%.
+              </strong>
             </p>
             <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md mt-4">Chapter 1-3</button>
           </div>
@@ -157,32 +167,36 @@ function Support() {
             <h4 className="font-semibold text-xl text-gray-800">Struggling Areas</h4>
             <p className="text-lg text-gray-700">
               You are showing difficulty in <strong>{lowestChapter1}</strong> and <strong>{lowestChapter2}</strong>.
-                    </p>
-                    <div className="mt-2 p-4 bg-gray-100 rounded-lg border border-gray-300 shadow-sm">
-  <p className="text-md text-gray-800 font-semibold mb-4">
-    {description1 && (
-      <>
-        <span className="font-bold text-blue-800">{lowestChapter1}</span>:
-        <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
-          <li>📝 <span className="font-bold">Key Concept:</span> {description1.split('.')[0]}</li>
-           {description1.split('.').slice(1).join('. ')}
-        </ul>
-      </>
-    )}
-  </p>
+            </p>
+            <div className="mt-2 p-4 bg-gray-100 rounded-lg border border-gray-300 shadow-sm">
+              <p className="text-md text-gray-800 font-semibold mb-4">
+                {description1 && (
+                  <>
+                    <span className="font-bold text-blue-800">{lowestChapter1}</span>:
+                    <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
+                      <li>
+                        📝 <span className="font-bold">Key Concept:</span> {description1.split(".")[0]}
+                      </li>
+                      {description1.split(".").slice(1).join(". ")}
+                    </ul>
+                  </>
+                )}
+              </p>
 
-  <p className="text-md text-gray-800 font-semibold mt-4">
-    {description2 && (
-      <>
-        <span className="font-bold text-blue-800">{lowestChapter2}</span>:
-        <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
-          <li>📝 <span className="font-bold">Key Concept:</span> {description2.split('.')[0]}</li>
-        {description2.split('.').slice(1).join('. ')}
-        </ul>
-      </>
-    )}
-  </p>
-</div>
+              <p className="text-md text-gray-800 font-semibold mt-4">
+                {description2 && (
+                  <>
+                    <span className="font-bold text-blue-800">{lowestChapter2}</span>:
+                    <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
+                      <li>
+                        📝 <span className="font-bold">Key Concept:</span> {description2.split(".")[0]}
+                      </li>
+                      {description2.split(".").slice(1).join(". ")}
+                    </ul>
+                  </>
+                )}
+              </p>
+            </div>
 
             <div className="flex space-x-2 mt-4">
               <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md">{lowestChapter1}</button>
