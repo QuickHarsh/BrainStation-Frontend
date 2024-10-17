@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { shuffleArray } from "@/helper/shuffleArray";
 import { respondToQuiz } from "@/service/quiz";
-import { addPracticeResult } from "@/store/practiceSlice";
+import { addPracticeResult, clearPracticeHistory } from "@/store/practiceSlice";
 import { nextQuiz, resetQuizSession } from "@/store/quizzesSlice";
 import MCQCard from "./mcq-card";
 import QuizSummery from "./summery";
@@ -13,7 +13,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const currentQuizIndex = useSelector((state) => state.quizzes.currentQuizIndex);
   const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
   const { currentLectureId } = useSelector((state) => state.lectures);
-  const practiceHistory = useSelector((state) => state.practiceHistory);
+  const practiceHistory = useSelector((state) => state.practice.practiceHistory);
   const userId = "66d97b6fc30a1f78cf41b620";
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
@@ -21,12 +21,11 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSummery, setShowSummery] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [difficulty, setDifficulty] = useState(null);
 
   useEffect(() => {
     if (isVisible) {
       dispatch(resetQuizSession());
+      dispatch(clearPracticeHistory());
       setShowSummery(false);
     }
   }, [isVisible, dispatch]);
@@ -56,12 +55,12 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
         console.error("Error sending quiz response:", error);
       });
 
-    // Dispatch to practiceReducer to store practice data
     dispatch(
       addPracticeResult({
+        id: currentQuiz._id,
         question: currentQuiz.question,
         correctAnswer: currentQuiz.answer,
-        difficulty: response // Store the final response (wrong, easy, normal, or hard)
+        difficulty: response
       })
     );
   };
@@ -84,7 +83,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     setSelectedAnswer(null);
     setIsAnswered(false);
     setIsCorrect(false);
-    setDifficulty(null);
 
     if (currentQuizIndex < quizzes.length - 1) {
       dispatch(nextQuiz());
@@ -94,7 +92,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   };
 
   const handleDifficultyClick = (selectedDifficulty) => {
-    setDifficulty(selectedDifficulty);
     sendQuizResponse(selectedDifficulty.toLowerCase());
     handleNextClick();
   };
@@ -123,7 +120,6 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
             isVisible ? "scale-100" : "scale-90"
           }`}
         >
-          {/* Pass practiceHistory as summeryData */}
           <QuizSummery
             onClose={handleSummeryClose}
             summeryData={{
@@ -153,7 +149,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
           <p className="text-sm text-[#A4A4A4]">{lectureTitle}</p>
           <p className="mt-2 text-[24px] font-inter font-semibold">{currentQuiz.question}</p>
           <div className="flex items-center h-[calc(100%-150px)]">
-            <div className="w-full grid grid-cols-2 items-center my-4">
+            <div className="w-full grid grid-cols-2 gap-2 md:gap-4 items-center my-4">
               {shuffledAnswers.map((answer, index) => {
                 let cardColorClass = "";
                 if (index === 0) cardColorClass = "bg-[#E5DDC5]";
@@ -173,7 +169,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
                 const alignmentClass = index % 2 === 0 ? "justify-self-end" : "justify-self-start";
 
                 return (
-                  <div key={index} className={alignmentClass} onClick={() => handleAnswerClick(answer)}>
+                  <div key={index} className={`${alignmentClass}`} onClick={() => handleAnswerClick(answer)}>
                     <MCQCard className={`${cardColorClass} ${borderColorClass}`} text={answer} />
                   </div>
                 );
