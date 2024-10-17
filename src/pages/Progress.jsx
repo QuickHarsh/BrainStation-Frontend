@@ -158,12 +158,11 @@ function Progress() {
   //     setIsLoading(false); // Stop loading state
   //   }
   // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage("");
-
+  
     try {
       // Fetch student data
       const studentResponse = await fetch(`http://localhost:3000/api/progress/student/${studentId}`, {
@@ -172,15 +171,14 @@ function Progress() {
           "Content-Type": "application/json"
         }
       });
-
+  
       if (!studentResponse.ok) {
         throw new Error("Failed to fetch student data.");
       }
-
+  
       const studentData = await studentResponse.json(); // Fetched student data
-      const studentIdValue = studentData.data.Student_ID;
       console.log("Fetched Student Data:", studentData);
-
+  
       // Fetch prediction data
       const predictionResponse = await fetch("http://localhost:3000/api/progress/predict", {
         method: "POST",
@@ -189,23 +187,23 @@ function Progress() {
         },
         body: JSON.stringify({ Student_id: studentData.data.Student_ID }) // Send Student_ID
       });
-
+  
       if (!predictionResponse.ok) {
         throw new Error("Failed to get prediction.");
       }
-
+  
       const predictionResult = await predictionResponse.json(); // Fetched prediction data
       console.log("Fetched Prediction Data:", predictionResult);
-
+  
       // Prepare query object to pass to Support.jsx
       const query = {
         studentId: studentData.data.Student_ID,
         predicted_exam_score: predictionResult.data.predicted_exam_score,
-        lowest_two_chapters: predictionResult.data.lowest_two_chapters,
+        lowest_two_chapters_with_descriptions: predictionResult.data.lowest_two_chapters_with_descriptions, // Ensure this field is passed
         performer_type: predictionResult.data.performer_type,
         tasks: predictionResult.data.tasks
       };
-
+  
       // Use encodeURIComponent to ensure safe passing of data via URL
       navigate(`/support?userData=${encodeURIComponent(JSON.stringify(query))}`);
     } catch (error) {
@@ -215,6 +213,7 @@ function Progress() {
       setIsLoading(false); // Stop loading
     }
   };
+  
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
