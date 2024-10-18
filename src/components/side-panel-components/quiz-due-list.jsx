@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
 import { switchView } from "@/store/lecturesSlice";
@@ -9,6 +10,8 @@ import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+
+// Import for animations
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -77,6 +80,9 @@ const QuizDueList = () => {
     fetchQuizzes();
   }, []);
 
+  const filteredQuizzes =
+    selectedTab === "all-due" ? quizzes : quizzes.filter((quiz) => quiz.status === "new" || quiz.status === "lapsed");
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -144,20 +150,24 @@ const QuizDueList = () => {
             <Tabs tabs={tabs} selectedTab={selectedTab} handleTabClick={handleTabClick} />
           </div>
           <div>
-            {quizzes.length > 0 ? (
-              quizzes.map((quiz, index) => (
-                <DueQuizCard
-                  key={index}
-                  question={quiz.questionDetails.question}
-                  attempt={quiz.attemptCount}
-                  ease={quiz.ease_factor}
-                  status={quiz.status}
-                  isLocked={checkIfLocked(quiz)}
-                />
-              ))
-            ) : (
-              <p className="text-center mt-10 text-lg font-medium text-gray-400">No due quizzes available!</p>
-            )}
+            <TransitionGroup className="quizzes-list">
+              {filteredQuizzes.length > 0 ? (
+                filteredQuizzes.map((quiz, index) => (
+                  <CSSTransition key={index} timeout={300} classNames="fade">
+                    <DueQuizCard
+                      key={index}
+                      question={quiz.questionDetails.question}
+                      attempt={quiz.attemptCount}
+                      ease={quiz.ease_factor}
+                      status={quiz.status}
+                      isLocked={checkIfLocked(quiz)}
+                    />
+                  </CSSTransition>
+                ))
+              ) : (
+                <p className="text-center mt-10 text-lg font-medium text-gray-400">No due quizzes available!</p>
+              )}
+            </TransitionGroup>
           </div>
         </ScrollView>
       </div>
