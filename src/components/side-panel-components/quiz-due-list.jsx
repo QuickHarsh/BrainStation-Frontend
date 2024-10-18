@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { GetQuizzesDueByToday } from "@/service/quiz";
 import { switchView } from "@/store/lecturesSlice";
 import DueQuizCard from "../cards/due-quiz-card";
 import Tabs from "../common/Tabs";
+import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
 
-// Import the Tabs component
-
 const QuizDueList = () => {
   const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState("all-due");
+  const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleBackClick = () => {
     dispatch(switchView("quiz-deck"));
@@ -24,23 +27,64 @@ const QuizDueList = () => {
     { label: "Total", count: 0, bgColor: "#AEF8BA" }
   ];
 
-  const handleTabClick = (tab) => {
-    setSelectedTab(tab);
-  };
-
   const tabs = [
     { id: "all-due", label: "All Due" },
     { id: "learning", label: "Learning" }
   ];
 
+  const handleTabClick = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  const fetchQuizzes = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await GetQuizzesDueByToday();
+      if (response.success) {
+        setQuizzes(response.data.docs);
+        console.log(response.data.docs);
+      } else {
+        setError("Failed to fetch due quizzes.");
+      }
+    } catch (err) {
+      setError("An error occurred while fetching quizzes.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <AnimatingDots />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-red-500 font-semibold">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-2 flex-1 overflow-hidden">
+      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <button className="bg-primary-gray-light max-w-fit p-2 rounded-full" onClick={handleBackClick}>
           <LeftArrowLongIcon size={3} />
         </button>
         <h3 className="font-josfin-sans text-md uppercase opacity-50">Due Quizzes</h3>
       </div>
+
+      {/* Quiz Info and Tabs */}
       <div className="h-full">
         <ScrollView initialMaxHeight="145px">
           <div className="pb-2 h-full">
@@ -63,6 +107,7 @@ const QuizDueList = () => {
               ))}
             </div>
           </div>
+
           {/* Practice buttons */}
           <div className="border-b mt-2 pb-4">
             <div className="flex items-center justify-center mt-2">
@@ -74,20 +119,25 @@ const QuizDueList = () => {
               <Button className={"font-medium"}>New / Lapsed</Button>
             </div>
           </div>
+
           {/* Quizzes Pane */}
           <div>
             <Tabs tabs={tabs} selectedTab={selectedTab} handleTabClick={handleTabClick} />
           </div>
           <div>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <DueQuizCard
-                key={index}
-                question={"What are the four main components of a computer system?"}
-                attempt={index % 2 === 0 ? "3" : "5"}
-                ease={(index % 3) + 1}
-                status={index % 2 === 0 ? "Review" : "Lapsed"}
-              />
-            ))}
+            {quizzes.length > 0 ? (
+              quizzes.map((quiz, index) => (
+                <DueQuizCard
+                  key={index}
+                  question={quiz.questionDetails.question}
+                  attempt={quiz.attemptCount}
+                  ease={quiz.ease_factor}
+                  status={quiz.status}
+                />
+              ))
+            ) : (
+              <p className="text-center mt-10 text-lg font-medium text-gray-400">No due quizzes available!</p>
+            )}
           </div>
         </ScrollView>
       </div>
