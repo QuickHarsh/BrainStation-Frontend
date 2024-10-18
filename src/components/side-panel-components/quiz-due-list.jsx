@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import dayjs from "dayjs";
 import { GetQuizzesDueByToday } from "@/service/quiz";
 import { switchView } from "@/store/lecturesSlice";
 import DueQuizCard from "../cards/due-quiz-card";
@@ -8,6 +9,8 @@ import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+
+// Import dayjs for date manipulation
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -43,7 +46,6 @@ const QuizDueList = () => {
       const response = await GetQuizzesDueByToday();
       if (response.success) {
         setQuizzes(response.data.docs);
-        console.log(response.data.docs);
       } else {
         setError("Failed to fetch due quizzes.");
       }
@@ -57,6 +59,25 @@ const QuizDueList = () => {
   useEffect(() => {
     fetchQuizzes();
   }, []);
+
+  // Check if the quiz should be locked based on the time
+  const checkIfLocked = (quiz) => {
+    const { status, current_step, learningSteps, updatedAt } = quiz;
+    const updatedAtTime = dayjs(updatedAt);
+    const currentTime = dayjs();
+
+    // Only for "new" or "lapsed" quizzes
+    if (status === "new" || status === "lapsed") {
+      const currentLearningStepMinutes = learningSteps[current_step];
+      const nextAvailableTime = updatedAtTime.add(currentLearningStepMinutes, "minute");
+
+      // Lock the quiz if the current time is before the next available learning step time
+      if (currentTime.isBefore(nextAvailableTime)) {
+        return true; // isLocked = true
+      }
+    }
+    return false; // isLocked = false
+  };
 
   if (loading) {
     return (
@@ -133,6 +154,7 @@ const QuizDueList = () => {
                   attempt={quiz.attemptCount}
                   ease={quiz.ease_factor}
                   status={quiz.status}
+                  isLocked={checkIfLocked(quiz)}
                 />
               ))
             ) : (
