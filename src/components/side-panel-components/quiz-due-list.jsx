@@ -83,8 +83,9 @@ const QuizDueList = () => {
               <DueQuizCard
                 key={index}
                 question={"What are the four main components of a computer system?"}
+                attempt={index % 2 === 0 ? "3" : "5"}
                 ease={(index % 3) + 1}
-                status={index % 2 === 0 ? "Review" : "Completed"}
+                status={index % 2 === 0 ? "Review" : "Lapsed"}
               />
             ))}
           </div>
