@@ -21,11 +21,18 @@ const QuizDueList = () => {
     dispatch(switchView("quiz-deck"));
   };
 
-  const quizStats = [
-    { label: "New", count: 0, bgColor: "#D7C5E5" },
-    { label: "Lapsed", count: 0, bgColor: "#A3E4F1" },
-    { label: "Review", count: 0, bgColor: "#FEF39D" },
-    { label: "Total", count: 0, bgColor: "#AEF8BA" }
+  const [quizStats, setQuizStats] = useState({
+    new: 0,
+    lapsed: 0,
+    review: 0,
+    total: 0
+  });
+
+  const quizStatCards = [
+    { label: "New", value: quizStats.new, bgColor: "#D7C5E5" },
+    { label: "Lapsed", value: quizStats.lapsed, bgColor: "#A3E4F1" },
+    { label: "Review", value: quizStats.review, bgColor: "#FEF39D" },
+    { label: "Total", value: quizStats.total, bgColor: "#AEF8BA" }
   ];
 
   const tabs = [
@@ -44,6 +51,18 @@ const QuizDueList = () => {
       const response = await GetQuizzesDueByToday();
       if (response.success) {
         setQuizzes(response.data.docs);
+        // Calculate stats based on quiz status or attributes
+        const newQuizzes = response.data.docs.filter((quiz) => quiz.status === "new").length;
+        const lapsedQuizzes = response.data.docs.filter((quiz) => quiz.status === "lapsed").length;
+        const reviewQuizzes = response.data.docs.filter((quiz) => quiz.status === "review").length;
+        const totalQuizzes = response.data.docs.length;
+
+        setQuizStats({
+          new: newQuizzes,
+          lapsed: lapsedQuizzes,
+          review: reviewQuizzes,
+          total: totalQuizzes
+        });
       } else {
         setError("Failed to fetch due quizzes.");
       }
@@ -57,8 +76,6 @@ const QuizDueList = () => {
   useEffect(() => {
     fetchQuizzes();
   }, []);
-
-  // Check if the quiz should be locked based on the time
 
   if (loading) {
     return (
@@ -97,14 +114,14 @@ const QuizDueList = () => {
               </p>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              {quizStats.map((quiz) => (
+              {quizStatCards.map((stat, index) => (
                 <div
-                  key={quiz.label}
+                  key={index}
                   className="flex justify-between text-sm p-2 rounded-lg"
-                  style={{ backgroundColor: quiz.bgColor }}
+                  style={{ backgroundColor: stat.bgColor }}
                 >
-                  <p>{quiz.label}:</p>
-                  <p>{quiz.count}</p>
+                  <p>{stat.label}:</p>
+                  <p>{stat.value}</p>
                 </div>
               ))}
             </div>
