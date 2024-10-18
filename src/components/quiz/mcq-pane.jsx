@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { shuffleArray } from "@/helper/shuffleArray";
 import { respondToQuiz } from "@/service/quiz";
 import { addPracticeResult, clearPracticeHistory } from "@/store/practiceSlice";
@@ -14,13 +15,14 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const currentQuiz = quizzes ? quizzes[currentQuizIndex] : null;
   const { currentLectureId } = useSelector((state) => state.lectures);
   const practiceHistory = useSelector((state) => state.practice.practiceHistory);
-  const userId = "66d97b6fc30a1f78cf41b620";
 
   const [shuffledAnswers, setShuffledAnswers] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSummery, setShowSummery] = useState(false);
+
+  const { moduleId } = useParams();
 
   useEffect(() => {
     if (isVisible) {
@@ -40,9 +42,9 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
 
   const sendQuizResponse = (response) => {
     const data = {
-      userId,
       lectureId: currentLectureId,
       questionId: currentQuiz._id,
+      moduleId,
       response
     };
 
