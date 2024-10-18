@@ -50,7 +50,7 @@ const CustomRoutes = () => {
   return (
     <Routes location={location}>
       {/* Routes with DefaultLayout */}
-      <Route path="/signin" element={<Signin />} />
+      <Route path="/login" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route element={<DefaultLayout />}>
         {coreRoutes.map((route, index) => {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Scrollbars from "react-custom-scrollbars-2";
 import { useSelector } from "react-redux";
 import { getQuizFeedback, getQuizzes } from "@/service/quiz";
 import FeedbackCard from "../cards/feedback-card";
 import DonutChart from "../charts/donut-chart";
 import AnimatingDots from "../common/animating-dots";
+import ScrollView from "../common/scrollable-view";
 import SummeryTable from "./summery-table";
 
 const QuizSummery = ({ onClose, summeryData }) => {
@@ -78,17 +78,8 @@ const QuizSummery = ({ onClose, summeryData }) => {
         &times;
       </button>
       <h2 className="text-xl font-semibold">Quiz Summary</h2>
-      <Scrollbars
-        autoHide
-        autoHideTimeout={1000}
-        autoHideDuration={200}
-        autoHeight
-        autoHeightMin={0}
-        autoHeightMax={"calc(100vh - 150px)"}
-        thumbMinSize={30}
-        universal={true}
-        className="rounded-lg"
-      >
+      <ScrollView>
+        {" "}
         <div className="w-full h-full flex flex-col gap-4 items-center mt-5">
           <DonutChart data={donutData} />
           <p className="text-lg font-inter">{summeryData?.title}</p>
@@ -116,7 +107,7 @@ const QuizSummery = ({ onClose, summeryData }) => {
             <SummeryTable tableData={mergedData} />
           </div>
         </div>
-      </Scrollbars>
+      </ScrollView>
     </div>
   );
 };

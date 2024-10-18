@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
 import useFetchData from "@/hooks/fetch-data";
 import { getQuestions } from "@/service/question";
@@ -8,6 +7,7 @@ import { showMCQPane } from "@/store/mcqSlice";
 import { nextQuiz, setQuizzesForLecture } from "@/store/quizzesSlice";
 import QuizCard from "../cards/quiz-card";
 import AnimatingDots from "../common/animating-dots";
+import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
 
 const QuizList = () => {
@@ -77,23 +77,13 @@ const QuizList = () => {
         </button>
       </div>
       {/* Quizzes */}
-      <Scrollbars
-        autoHide
-        autoHideTimeout={1000}
-        autoHideDuration={200}
-        autoHeight
-        autoHeightMin={0}
-        autoHeightMax={"calc(100vh - 280px)"}
-        thumbMinSize={30}
-        universal={true}
-        className="rounded-lg"
-      >
+      <ScrollView>
         {quizzes.length > 0 ? (
           quizzes.map((quiz, index) => <QuizCard key={index} question={quiz.question} answer={quiz.answer} />)
         ) : (
           <p className="text-center mt-10 text-lg font-medium text-gray-400">No questions available!</p>
         )}
-      </Scrollbars>
+      </ScrollView>
     </div>
   );
 };
