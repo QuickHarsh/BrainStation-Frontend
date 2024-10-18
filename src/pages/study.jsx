@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { Loader } from "@/components";
 import ContentCard from "@/components/cards/content-card";
 import SurveyModal from "@/components/emotion/asrs-form";
 import BottomBar from "@/components/layout/bottom-bar";
@@ -205,20 +206,19 @@ const Study = () => {
     }
   };
 
-  useEffect(() => {
-    const initVideoStream = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720, frameRate: 30 }
-        });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error("Error accessing webcam:", err);
+  const initVideoStream = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 1280, height: 720, frameRate: 30 }
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
-    };
-
+    } catch (err) {
+      console.error("Error accessing webcam:", err);
+    }
+  };
+  useEffect(() => {
     initVideoStream();
 
     return () => {
@@ -258,6 +258,14 @@ const Study = () => {
       console.error("Error saving ASRS result:", error);
     }
   };
+
+  if (!moduleData) {
+    return (
+      <div className="flex justify-center items-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
