@@ -1,9 +1,9 @@
-import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
 import { switchLecture, switchView } from "@/store/lecturesSlice";
 import { setQuizzesForLecture } from "@/store/quizzesSlice";
 import ChapterCard from "../cards/chapter-card";
 import LastActivityCard from "../cards/last-activity-card";
+import ScrollView from "../common/scrollable-view";
 
 const LectureList = () => {
   const dispatch = useDispatch();
@@ -21,19 +21,9 @@ const LectureList = () => {
       <p className="text-md font-inter mb-4 ml-2">ALL LECTURES/ CHAPTERS</p>
       {/* Last Activity Card */}
       <LastActivityCard />
-      {/* All Lectures with Scrollbars */}
+      {/* All Lectures */}
       <div className="flex-1 mt-3 overflow-hidden">
-        <Scrollbars
-          autoHide
-          autoHideTimeout={1000}
-          autoHideDuration={200}
-          autoHeight
-          autoHeightMin={0}
-          autoHeightMax={"calc(100vh - 280px)"}
-          thumbMinSize={30}
-          universal={true}
-          className="rounded-lg"
-        >
+        <ScrollView>
           <div className="px-2">
             {lectures.map((lecture, index) => (
               <ChapterCard
@@ -45,7 +35,7 @@ const LectureList = () => {
               />
             ))}
           </div>
-        </Scrollbars>
+        </ScrollView>
       </div>
     </div>
   );

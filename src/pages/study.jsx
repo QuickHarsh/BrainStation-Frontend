@@ -281,7 +281,7 @@ const Study = () => {
         <div className="flex space-x-4">
           <button
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-            onClick={handleStartSessionClick} // Show survey modal first if needed
+            onClick={handleStartSessionClick}
           >
             Start Session
           </button>
@@ -317,8 +317,8 @@ const Study = () => {
       {/* Survey Modal */}
       <SurveyModal
         isVisible={showSurvey}
-        onClose={() => setShowSurvey(false)} // Close the survey
-        onContinue={handleSurveyComplete} // Continue with session start after survey is complete
+        onClose={() => setShowSurvey(false)}
+        onContinue={handleSurveyComplete}
         userId={userId}
       />
 

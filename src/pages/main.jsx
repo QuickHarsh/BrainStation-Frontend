@@ -1,8 +1,8 @@
-import Scrollbars from "react-custom-scrollbars-2";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "@/components";
 import ModuleCard from "@/components/cards/module-card";
+import ScrollView from "@/components/common/scrollable-view";
 import useFetchData from "@/hooks/fetch-data";
 import { getAllModules } from "@/service/module";
 import { setCurrentModule } from "@/store/lecturesSlice";
@@ -45,17 +45,7 @@ const Main = () => {
           <Loader />
         </div>
       ) : (
-        <Scrollbars
-          autoHide
-          autoHideTimeout={1000}
-          autoHideDuration={200}
-          autoHeight
-          autoHeightMin={0}
-          autoHeightMax={"calc(100vh - 150px)"}
-          thumbMinSize={30}
-          universal={true}
-          className="rounded-lg"
-        >
+        <ScrollView>
           <div className="grid grid-cols-3 gap-4 mt-8 mb-4 mx-1">
             {modules.length > 0 ? (
               modules.map((module) => (
@@ -71,7 +61,7 @@ const Main = () => {
               <div className="text-center text-lg font-bold">No modules available.</div>
             )}
           </div>
-        </Scrollbars>
+        </ScrollView>
       )}
     </div>
   );
