@@ -9,6 +9,20 @@ export const axiosInstance = axios.create({
   }
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Check if the request URL contains 'ontology'
+    if (config.url.includes("/api/ontology/file")) {
+      config.headers["Accept"] = "text/markdown";
+      config.responseType = "text";
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token") || import.meta.env.VITE_BRAINSTATION_TOKEN;
   if (token) {
@@ -63,6 +77,30 @@ export const apiRequest = async (request) => {
   const response = await request()
     .then((res) => ({
       ...res.data,
+      success: true
+    }))
+    .catch((error) => {
+      const message = error.response.data.message;
+      if (error.response.status === 403) {
+        if (localStorage.getItem("token")) {
+          toast.error(message);
+        }
+      } else {
+        toast.error(message);
+      }
+      return {
+        success: false,
+        message: message
+      };
+    });
+
+  return response;
+};
+
+export const ontologyApiRequest = async (request) => {
+  const response = await request()
+    .then((res) => ({
+      ...res,
       success: true
     }))
     .catch((error) => {
