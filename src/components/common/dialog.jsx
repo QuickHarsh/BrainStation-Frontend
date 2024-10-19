@@ -1,14 +1,6 @@
 import { twMerge } from "tailwind-merge";
 
-const OntologyDialogBox = ({
-  isVisible,
-  title,
-  message,
-  onOkay,
-  onCancel,
-  okayLabel = "Okay",
-  cancelLabel = "Cancel"
-}) => {
+const DialogBox = ({ isVisible, title, message, onOkay, onCancel, okayLabel = "Okay", cancelLabel = "Cancel" }) => {
   if (!isVisible) return null;
 
   return (
@@ -35,4 +27,4 @@ const OntologyDialogBox = ({
   );
 };
 
-export default OntologyDialogBox;
+export default DialogBox;
