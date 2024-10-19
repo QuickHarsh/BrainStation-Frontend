@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Logo from "../common/logo";
 import LectureList from "../side-panel-components/lecturer-list";
 import QuizDeckList from "../side-panel-components/quiz-deck-list";
+import QuizDueList from "../side-panel-components/quiz-due-list";
 import QuizList from "../side-panel-components/quiz-list";
 
 // Ensure this is imported
@@ -24,6 +25,7 @@ const ExpandedSidePanel = ({ isVisible }) => {
       {currentView === "lecturer" && <LectureList />}
       {currentView === "quiz" && <QuizList />}
       {currentView === "quiz-deck" && <QuizDeckList />}
+      {currentView === "due-quiz" && <QuizDueList />}
     </div>
   );
 };

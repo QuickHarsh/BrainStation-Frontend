@@ -13,7 +13,7 @@ const lecturesSlice = createSlice({
   initialState,
   reducers: {
     setCurrentModule: (state, action) => {
-      const selectedModule = action.payload; // Action payload should be the module with lectures
+      const selectedModule = action.payload;
       state.currentModuleId = selectedModule._id;
       state.lectures = selectedModule.lectures;
       // Set the first lecture and slide as the current ones
