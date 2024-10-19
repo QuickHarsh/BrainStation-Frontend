@@ -1,14 +1,8 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
-
 // Import the API services
-import {
-  checkAssrsResultAge,
-  checkAssrsResultExists,
-  createAssrsResult,
-  getAssrsResultByUser
-} from "@/service/asrs";
+import { checkAssrsResultAge, checkAssrsResultExists, createAssrsResult, getAssrsResultByUser } from "@/service/asrs";
 import { saveSession } from "@/service/session";
 
 const SessionControl = ({ userId, moduleId }) => {

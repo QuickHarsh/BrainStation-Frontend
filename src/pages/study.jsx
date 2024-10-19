@@ -3,13 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Loader } from "@/components";
 import ContentCard from "@/components/cards/content-card";
+import SessionControl from "@/components/emotion/SessionControl";
 import BottomBar from "@/components/layout/bottom-bar";
 import MCQPane from "@/components/quiz/mcq-pane";
 import useFetchData from "@/hooks/fetch-data";
 import { getModuleById } from "@/service/module";
 import { setCurrentModule, switchView } from "@/store/lecturesSlice";
 import { hideMCQPane } from "@/store/mcqSlice";
-import SessionControl from "@/components/emotion/SessionControl"; // Import the new component
+
+// Import the new component
 
 const Study = () => {
   const dispatch = useDispatch();
@@ -28,22 +30,17 @@ const Study = () => {
   }, [moduleData, dispatch]);
 
   const currentSlide = useSelector((state) => {
-    const currentLecture = state.lectures.lectures.find(
-      (lecture) => lecture._id === state.lectures.currentLectureId
-    );
+    const currentLecture = state.lectures.lectures.find((lecture) => lecture._id === state.lectures.currentLectureId);
     if (currentLecture && currentLecture.slides && currentLecture.slides.length > 0) {
       return (
-        currentLecture.slides.find((slide) => slide.id === state.lectures.currentSlideId) ||
-        currentLecture.slides[0]
+        currentLecture.slides.find((slide) => slide.id === state.lectures.currentSlideId) || currentLecture.slides[0]
       );
     }
     return null;
   });
 
   const currentLectureTitle = useSelector((state) => {
-    const currentLecture = state.lectures.lectures.find(
-      (lecture) => lecture._id === state.lectures.currentLectureId
-    );
+    const currentLecture = state.lectures.lectures.find((lecture) => lecture._id === state.lectures.currentLectureId);
     return currentLecture ? currentLecture.title : "";
   });
 
@@ -74,11 +71,7 @@ const Study = () => {
           <div className="px-4 py-1">
             <BottomBar />
           </div>
-          <MCQPane
-            isVisible={isMCQPaneVisible}
-            onClose={handleCloseMCQPane}
-            lectureTitle={currentLectureTitle}
-          />
+          <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} lectureTitle={currentLectureTitle} />
         </>
       ) : (
         <div className="flex justify-center items-center">
