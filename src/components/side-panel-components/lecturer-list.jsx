@@ -22,8 +22,8 @@ const LectureList = () => {
       {/* Last Activity Card */}
       <LastActivityCard />
       {/* All Lectures */}
-      <div className="flex-1 mt-3 overflow-hidden">
-        <ScrollView>
+      <div className="flex-1 overflow-hidden">
+        <ScrollView initialMaxHeight="260px">
           <div className="px-2">
             {lectures.map((lecture, index) => (
               <ChapterCard
