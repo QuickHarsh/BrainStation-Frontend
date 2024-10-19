@@ -60,7 +60,6 @@ const Study = () => {
 
   return (
     <div className="flex flex-col h-full">
-    
       {/* Use the SessionControl component and pass userId and moduleId */}
       <SessionControl userId={userId} moduleId={moduleId} />
 
