@@ -4,14 +4,14 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
 import { switchView } from "@/store/lecturesSlice";
+import { showMCQPane } from "@/store/mcqSlice";
+import { setDueQuizzes } from "@/store/quizzesDueSlice";
 import DueQuizCard from "../cards/due-quiz-card";
 import Tabs from "../common/Tabs";
 import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
-
-// Import for animations
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -54,7 +54,8 @@ const QuizDueList = () => {
       const response = await GetQuizzesDueByToday();
       if (response.success) {
         setQuizzes(response.data.docs);
-        // Calculate stats based on quiz status or attributes
+
+        // Stats calculation for New, Lapsed, and Review
         const newQuizzes = response.data.docs.filter((quiz) => quiz.status === "new").length;
         const lapsedQuizzes = response.data.docs.filter((quiz) => quiz.status === "lapsed").length;
         const reviewQuizzes = response.data.docs.filter((quiz) => quiz.status === "review").length;
@@ -80,8 +81,26 @@ const QuizDueList = () => {
     fetchQuizzes();
   }, []);
 
+  // Don't exclude locked quizzes from being displayed
   const filteredQuizzes =
-    selectedTab === "all-due" ? quizzes : quizzes.filter((quiz) => quiz.status === "new" || quiz.status === "lapsed");
+    selectedTab === "all-due"
+      ? quizzes // Show all quizzes
+      : quizzes.filter((quiz) => quiz.status === "new" || quiz.status === "lapsed");
+
+  // Exclude locked quizzes from practice session
+  const handleAllDuePractice = () => {
+    const unlockedQuizzes = quizzes.filter((quiz) => !checkIfLocked(quiz));
+    dispatch(setDueQuizzes(unlockedQuizzes)); // Send only unlocked quizzes for practice
+    dispatch(showMCQPane());
+  };
+
+  const handleNewLapsedPractice = () => {
+    const filteredQuizzes = quizzes.filter(
+      (quiz) => (quiz.status === "new" || quiz.status === "lapsed") && !checkIfLocked(quiz)
+    );
+    dispatch(setDueQuizzes(filteredQuizzes)); // Send only unlocked quizzes for practice
+    dispatch(showMCQPane());
+  };
 
   if (loading) {
     return (
@@ -101,7 +120,6 @@ const QuizDueList = () => {
 
   return (
     <div className="p-2 flex-1 overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <button className="bg-primary-gray-light max-w-fit p-2 rounded-full" onClick={handleBackClick}>
           <LeftArrowLongIcon size={3} />
@@ -109,13 +127,12 @@ const QuizDueList = () => {
         <h3 className="font-josfin-sans text-md uppercase opacity-50">Due Quizzes</h3>
       </div>
 
-      {/* Quiz Info and Tabs */}
       <div className="h-full">
         <ScrollView initialMaxHeight="145px">
           <div className="pb-2 h-full">
             <div className="mb-2 bg-slate-300 rounded-lg p-4">
-              <p className=" text-[14px]">
-                <span className="font-semibold text-left">Today’s Recall Deck:</span>{" "}
+              <p className="text-[14px]">
+                <span className="font-semibold text-left">Today’s Recall Deck:</span>
                 <span className="text-justify">Strengthen What You’ve Learned with Spaced Repetition!</span>
               </p>
             </div>
@@ -133,19 +150,21 @@ const QuizDueList = () => {
             </div>
           </div>
 
-          {/* Practice buttons */}
           <div className="border-b mt-2 pb-4">
             <div className="flex items-center justify-center mt-2">
               <p className="text-base mb-2 font-josfin-sans text-gray-400">Practice</p>
               <div className="flex-1 ml-2 border-b border-gray-200"></div>
             </div>
             <div className="flex gap-2 ">
-              <Button className={"font-medium"}>All Due</Button>
-              <Button className={"font-medium"}>New / Lapsed</Button>
+              <Button className="font-medium" onClick={handleAllDuePractice}>
+                All Due
+              </Button>
+              <Button className="font-medium" onClick={handleNewLapsedPractice}>
+                New / Lapsed
+              </Button>
             </div>
           </div>
 
-          {/* Quizzes Pane */}
           <div>
             <Tabs tabs={tabs} selectedTab={selectedTab} handleTabClick={handleTabClick} />
           </div>
@@ -160,7 +179,7 @@ const QuizDueList = () => {
                       attempt={quiz.attemptCount}
                       ease={quiz.ease_factor}
                       status={quiz.status}
-                      isLocked={checkIfLocked(quiz)}
+                      isLocked={Boolean(checkIfLocked(quiz))} // Show locked status
                     />
                   </CSSTransition>
                 ))
