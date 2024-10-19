@@ -5,6 +5,7 @@ import NotFound from "@/pages/404";
 import Progress from "@/pages/Progress";
 import analysis from "@/pages/analysis";
 import Signin from "@/pages/login";
+import Ontology from "@/pages/ontology";
 import QuizDeck from "@/pages/quiz-deck";
 import Signup from "@/pages/signup";
 import support from "@/pages/support";
@@ -41,6 +42,11 @@ const coreRoutes = [
     path: "/analysis",
     title: "analysis",
     component: analysis
+  },
+  {
+    path: "/ontology/:lectureId",
+    title: "ontology",
+    component: Ontology
   }
 ];
 
