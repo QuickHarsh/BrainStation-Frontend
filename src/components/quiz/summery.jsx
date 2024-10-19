@@ -78,7 +78,8 @@ const QuizSummery = ({ onClose, summeryData }) => {
         &times;
       </button>
       <h2 className="text-xl font-semibold">Quiz Summary</h2>
-      <ScrollView initialMaxHeight={"140px"}>
+      <ScrollView>
+        {" "}
         <div className="w-full h-full flex flex-col gap-4 items-center mt-5">
           <DonutChart data={donutData} />
           <p className="text-lg font-inter">{summeryData?.title}</p>

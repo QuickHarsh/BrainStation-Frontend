@@ -19,7 +19,3 @@ export const getUserScoreBasedOnLecture = async (userId, lectureId) => {
 export const getQuizFeedback = async (data) => {
   return await apiRequest(() => axiosInstance.post(`/api/quizzes/feedback`, data));
 };
-
-export const GetQuizzesDueByToday = async () => {
-  return await apiRequest(() => axiosInstance.get(`/api/quizzes/due`));
-};

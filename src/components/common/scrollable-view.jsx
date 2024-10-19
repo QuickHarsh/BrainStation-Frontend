@@ -1,23 +1,6 @@
-import { useEffect, useState } from "react";
 import Scrollbars from "react-custom-scrollbars-2";
 
-const ScrollView = ({ children, initialMaxHeight = "280px" }) => {
-  const [maxHeight, setMaxHeight] = useState(initialMaxHeight);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      const dynamicHeight = `calc(${window.innerHeight}px - ${initialMaxHeight})`;
-      setMaxHeight(dynamicHeight);
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateHeight);
-    };
-  }, [initialMaxHeight]);
-
+const ScrollView = ({ children }) => {
   return (
     <Scrollbars
       autoHide
@@ -25,7 +8,7 @@ const ScrollView = ({ children, initialMaxHeight = "280px" }) => {
       autoHideDuration={200}
       autoHeight
       autoHeightMin={0}
-      autoHeightMax={maxHeight}
+      autoHeightMax={"calc(100vh - 280px)"}
       thumbMinSize={30}
       universal={true}
       className="rounded-lg"

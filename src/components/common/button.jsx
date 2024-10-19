@@ -1,7 +1,7 @@
 import { twMerge } from "tailwind-merge";
 
 const Button = ({ onClick, children, className }) => {
-  const baseStyles = "uppercase text-xs text-white bg-horizontal-gradient p-2 rounded-lg w-full hover:opacity-80";
+  const baseStyles = "uppercase text-xs text-white bg-horizontal-gradient p-2 rounded-lg w-full";
 
   return (
     <button className={twMerge(baseStyles, className)} onClick={onClick}>
