@@ -7,7 +7,6 @@ import ScrollView from "../common/scrollable-view";
 const QuizDeckList = () => {
   const dispatch = useDispatch();
 
-  // Handle clicking on the quiz summary card
   const handleQuizSummaryClick = () => {
     dispatch(switchView("due-quiz")); // Switch view to "due-quiz"
   };
@@ -24,7 +23,7 @@ const QuizDeckList = () => {
       <div className="w-full border-b mt-4" />
       <p className="uppercase text-[#C5C5C5]">All</p>
       {/* Quiz Cards */}
-      <ScrollView>
+      <ScrollView initialMaxHeight="340px">
         {Array.from({ length: 10 }).map((_, index) => (
           <QuizDeckCard key={index} />
         ))}
