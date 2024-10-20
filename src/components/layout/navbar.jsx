@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -26,9 +26,16 @@ const Navbar = () => {
         )}
       </div>
       <div className="flex items-center gap-6 select-none">
-        <button className="font-inter text-sm px-4 py-1.5 bg-primary-green text-white rounded-xl">
+        <NavLink
+          to="/progress"
+          className={({ isActive }) =>
+            `font-inter text-sm px-4 py-1.5 rounded-xl flex flex-col items-center ${
+              isActive ? "bg-primary-blue text-white" : "bg-primary-green text-white"
+            }`
+          }
+        >
           Track Progress
-        </button>
+        </NavLink>
 
         {/* User Dropdown */}
         <div className="relative">
