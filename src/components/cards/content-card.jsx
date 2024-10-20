@@ -19,7 +19,6 @@ const ContentCard = ({ content, lectureId }) => {
 
   const checkOntology = async () => {
     const result = await checkOntologyExists(data);
-    console.log(result);
     if (result === true) {
       setIsVisible(true); // Directly show the main popup
     } else {
