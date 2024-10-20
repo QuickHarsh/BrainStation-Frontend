@@ -19,10 +19,10 @@ const QuizDueListSkeleton = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-2">
-          <SkeletonBox className="h-12" />
-          <SkeletonBox className="h-12" />
-          <SkeletonBox className="h-12" />
-          <SkeletonBox className="h-12" />
+          <SkeletonBox className="h-9" />
+          <SkeletonBox className="h-9" />
+          <SkeletonBox className="h-9" />
+          <SkeletonBox className="h-9" />
         </div>
 
         {/* Practice Buttons */}
