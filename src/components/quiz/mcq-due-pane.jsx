@@ -123,6 +123,7 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
           <QuizSummery
             onClose={handleSummeryClose}
             summeryData={{ title: "", feedback: "Well Done!", tableData: practiceHistory }}
+            isFromDue={true}
           />
         </div>
       </div>

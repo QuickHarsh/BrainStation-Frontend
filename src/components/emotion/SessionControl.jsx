@@ -25,27 +25,22 @@ const SessionControl = ({ userId, moduleId }) => {
 
   // Fetch ASRS result by checking if it's older than 6 months
   const fetchAndCheckASRSResult = async () => {
-    try {
-      const exists = await checkAssrsResultExists(userId);
+    const exists = await checkAssrsResultExists(userId);
 
-      if (exists) {
-        const isOlderThanSixMonths = await checkAssrsResultAge(userId);
+    if (exists) {
+      const isOlderThanSixMonths = await checkAssrsResultAge(userId);
 
-        if (isOlderThanSixMonths) {
-          setShowSurvey(true); // Show the survey if it's older than 6 months
-          return null;
-        } else {
-          const asrsResult = await getAssrsResultByUser(userId);
-          const finalasrsResult = asrsResult.data.assrsResult;
-          return finalasrsResult; // Use the existing ASRS result from MongoDB
-        }
-      } else {
-        setShowSurvey(true); // Show the survey if no ASRS result exists
+      if (isOlderThanSixMonths) {
+        setShowSurvey(true); // Show the survey if it's older than 6 months
         return null;
+      } else {
+        const asrsResult = await getAssrsResultByUser(userId);
+        const finalasrsResult = asrsResult.data.assrsResult;
+        return finalasrsResult; // Use the existing ASRS result from MongoDB
       }
-    } catch (error) {
-      console.error("Error fetching ASRS result:", error);
-      throw error;
+    } else {
+      setShowSurvey(true); // Show the survey if no ASRS result exists
+      return null;
     }
   };
 
@@ -59,7 +54,7 @@ const SessionControl = ({ userId, moduleId }) => {
         videoRef.current.srcObject = stream;
       }
     } catch (err) {
-      console.error("Error accessing webcam:", err);
+      alert("Error accessing webcam:", err);
     }
   };
 
@@ -93,7 +88,6 @@ const SessionControl = ({ userId, moduleId }) => {
       setWebSocket(ws);
 
       ws.onopen = () => {
-        console.log("WebSocket connection established.");
         setSessionStatus("Monitoring");
         setDotColor("green");
 
