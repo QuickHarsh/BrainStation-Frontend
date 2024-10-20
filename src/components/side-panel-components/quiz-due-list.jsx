@@ -9,10 +9,10 @@ import { showMCQPane } from "@/store/mcqSlice";
 import { setDueQuizzes } from "@/store/quizzesDueSlice";
 import DueQuizCard from "../cards/due-quiz-card";
 import Tabs from "../common/Tabs";
-import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+import QuizDueListSkeleton from "../skeletons/quiz-due-list";
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -120,11 +120,7 @@ const QuizDueList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <AnimatingDots />
-      </div>
-    );
+    return <QuizDueListSkeleton />;
   }
 
   if (error) {
