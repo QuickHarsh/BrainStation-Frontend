@@ -70,7 +70,7 @@ const Study = () => {
 
       {currentSlide ? (
         <>
-          <div className="flex-grow w-full overflow-hidden bg-primary-paper p-16 flex items-center justify-center ">
+          <div className="flex-grow w-full overflow-hidden bg-primary-paper pl-16 flex items-center justify-center ">
             <ContentCard title={currentSlide.title} content={currentSlide.content} lectureId={currentLectureId} />
           </div>
           <div className="px-4 py-1">

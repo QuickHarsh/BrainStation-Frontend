@@ -44,8 +44,8 @@ const ContentCard = ({ content, lectureId }) => {
 
   return (
     <>
-      <ScrollView>
-        <div className="flex flex-col gap-6">
+      <ScrollView initialMaxHeight="13rem">
+        <div className="w-full flex flex-col gap-6">
           <div className="prose prose-lg text-gray-800" dangerouslySetInnerHTML={{ __html: content }} />
           <button
             className="fixed bottom-16 right-8 bg-horizontal-gradient text-white py-3 px-3 rounded-full shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
