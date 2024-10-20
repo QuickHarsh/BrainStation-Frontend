@@ -97,9 +97,7 @@ function Support() {
           <div className="bg-blue-100 p-4 rounded-md">
             <h2 className="text-3xl font-bold text-blue-900">Welcome back!</h2>
             <p className="text-xl text-gray-700">
-              {`You've reached `}
-              <strong>80%</strong>
-              {` of your progress this week! Keep it up and improve your results.`}
+              You&apos;ve reached <strong>80%</strong> of your progress this week! Keep it up and improve your results.
             </p>
           </div>
 
@@ -154,13 +152,11 @@ function Support() {
           <div className="p-4 bg-white rounded-lg mb-4">
             <h4 className="font-semibold text-xl text-gray-800">Academic Performance</h4>
             <p className="text-lg text-gray-700">
-              {`Based on your quiz scores so far, if the next exam covers these chapters, you're likely to`}
+              Based on your quiz scores so far, if the next exam covers these chapters, you&apos;re likely to
               <strong className="text-red-700">
-                {` score between ${convertedPercentage - 5}% - ${convertedPercentage}%`}
+                score between {convertedPercentage - 5}% - {convertedPercentage}%.
               </strong>
-              .
             </p>
-
             <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md mt-4">Chapter 1-3</button>
           </div>
 
@@ -168,10 +164,7 @@ function Support() {
           <div className="p-4 bg-white rounded-lg mb-4">
             <h4 className="font-semibold text-xl text-gray-800">Struggling Areas</h4>
             <p className="text-lg text-gray-700">
-              {`You are showing difficulty in `}
-              <strong>{lowestChapter1}</strong>
-              {` and `}
-              <strong>{lowestChapter2}</strong>.
+              You are showing difficulty in <strong>{lowestChapter1}</strong> and <strong>{lowestChapter2}</strong>.
             </p>
             <div className="mt-2 p-4 bg-gray-100 rounded-lg border border-gray-300 shadow-sm">
               <p className="text-md text-gray-800 font-semibold mb-4">
@@ -213,7 +206,7 @@ function Support() {
           <div className="p-4 bg-white rounded-lg">
             <h4 className="font-semibold text-xl text-gray-800">Categorization</h4>
             <p className="text-lg text-gray-700">
-              {`You are categorized as a `}
+              You are categorized as a
               <strong className="text-red-700">{parsedUserData?.performer_type || "Medium Performer"}</strong>.
             </p>
             <div className="flex space-x-2 mt-4">

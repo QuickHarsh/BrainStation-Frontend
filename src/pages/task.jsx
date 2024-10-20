@@ -5,7 +5,8 @@ import axios from "axios";
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
   const [taskId, setTaskId] = useState(""); // Store the taskId
-  //const [completedSubtasks, setCompletedSubtasks] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [completedSubtasks, setCompletedSubtasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ function Task() {
 
   // Load completed subtasks from local storage and task set from local storage
   useEffect(() => {
+    const savedCompletedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
+    setCompletedSubtasks(savedCompletedSubtasks);
+
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));
     if (savedTasks) {
       setTasks(savedTasks);
