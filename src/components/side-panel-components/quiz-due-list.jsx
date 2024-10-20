@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
+import { showDialog } from "@/store/dialogSlice";
 import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { setDueQuizzes } from "@/store/quizzesDueSlice";
@@ -90,16 +91,26 @@ const QuizDueList = () => {
   // Exclude locked quizzes from practice session
   const handleAllDuePractice = () => {
     const unlockedQuizzes = quizzes.filter((quiz) => !checkIfLocked(quiz));
-    dispatch(setDueQuizzes(unlockedQuizzes)); // Send only unlocked quizzes for practice
-    dispatch(showMCQPane());
+
+    if (unlockedQuizzes.length === 0) {
+      dispatch(showDialog({ dialogId: "quiz-deck" }));
+    } else {
+      dispatch(setDueQuizzes(unlockedQuizzes));
+      dispatch(showMCQPane());
+    }
   };
 
   const handleNewLapsedPractice = () => {
     const filteredQuizzes = quizzes.filter(
       (quiz) => (quiz.status === "new" || quiz.status === "lapsed") && !checkIfLocked(quiz)
     );
-    dispatch(setDueQuizzes(filteredQuizzes)); // Send only unlocked quizzes for practice
-    dispatch(showMCQPane());
+
+    if (filteredQuizzes.length === 0) {
+      dispatch(showDialog({ dialogId: "quiz-deck" }));
+    } else {
+      dispatch(setDueQuizzes(filteredQuizzes));
+      dispatch(showMCQPane());
+    }
   };
 
   if (loading) {

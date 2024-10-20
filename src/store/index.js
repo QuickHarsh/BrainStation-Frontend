@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import dialogReducer from "./dialogSlice";
 import lecturesReducer from "./lecturesSlice";
 import mcqReducer from "./mcqSlice";
 import modulesReducer from "./moduleSlice";
@@ -13,7 +14,8 @@ const store = configureStore({
     quizzesDue: quizzesDueReducer,
     mcq: mcqReducer,
     modules: modulesReducer,
-    practice: practiceReducer
+    practice: practiceReducer,
+    dialog: dialogReducer
   }
 });
 
