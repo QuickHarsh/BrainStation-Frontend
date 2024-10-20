@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
@@ -20,6 +20,8 @@ const QuizDueList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const shouldRefreshQuizzes = useSelector((state) => state.quizzesDue.shouldRefreshQuizzes); // Listen to refresh flag
 
   const handleBackClick = () => {
     dispatch(switchView("quiz-deck"));
@@ -81,6 +83,10 @@ const QuizDueList = () => {
   useEffect(() => {
     fetchQuizzes();
   }, []);
+
+  useEffect(() => {
+    fetchQuizzes();
+  }, [shouldRefreshQuizzes]);
 
   // Don't exclude locked quizzes from being displayed
   const filteredQuizzes =
