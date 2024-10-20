@@ -40,17 +40,11 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-b from-blue-900 to-cyan-500">
-      <div className="bg-white rounded-lg shadow-lg w-8/12 max-w-lg p-8">
+      <div className="bg-white rounded-lg shadow-lg w-[27rem] max-w-lg p-8">
         <div className="mb-5">
           <Logo />
         </div>
         <h2 className="text-center text-xl font-inter font-semibold mb-2">Login</h2>
-        <p className="text-center font-inter text-sm text-gray-500 mb-4">
-          Don&apos;t have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </a>
-        </p>
 
         <form onSubmit={handleSubmit}>
           <label className="block text-gray-500 text-xs mb-2 font-inter">Your email</label>

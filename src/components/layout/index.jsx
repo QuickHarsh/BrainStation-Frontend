@@ -8,8 +8,10 @@ const DefaultLayout = () => {
   const [isPanelVisible, setIsPanelVisible] = useState(true);
   const location = useLocation();
 
+  const whiteListPaths = ["/", "/progress"];
+
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (whiteListPaths.includes(location.pathname)) {
       setIsPanelVisible(false);
     } else {
       setIsPanelVisible(true);
