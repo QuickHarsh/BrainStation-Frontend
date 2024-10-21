@@ -1,15 +1,54 @@
 import { formatDistanceToNow } from "date-fns";
 
-// You can use date-fns for easy date manipulation
-
 const SummeryTable = ({ tableData }) => {
-  const formatDateWithDays = (nextReviewDate) => {
-    const date = new Date(nextReviewDate);
-    const daysRemaining = formatDistanceToNow(date, { addSuffix: false }); // Calculate the days remaining
-    return {
-      formattedDate: date.toISOString().slice(0, 10), // Extracting the date in 'YYYY-MM-DD' format
-      daysRemaining: daysRemaining
-    };
+  const formatDateWithDays = (data) => {
+    const { nextReviewDate, currentStep, learningSteps, status } = data;
+
+    if (status === "new" || status === "lapsed") {
+      // Calculate minutes until the next review based on current step and learning steps
+      if (learningSteps && learningSteps[currentStep] !== undefined) {
+        const minutesToNextReview = learningSteps[currentStep];
+        return {
+          formattedDate: `${minutesToNextReview} minutes to next review`,
+          daysRemaining: `${minutesToNextReview} minutes`
+        };
+      } else {
+        return {
+          formattedDate: "Learning steps not available",
+          daysRemaining: "N/A"
+        };
+      }
+    }
+
+    // Fallback for statuses other than "new" or "lapsed"
+    if (!nextReviewDate) {
+      return {
+        formattedDate: "N/A",
+        daysRemaining: "N/A"
+      };
+    }
+
+    try {
+      const date = new Date(nextReviewDate);
+      if (isNaN(date.getTime())) {
+        return {
+          formattedDate: "Invalid Date",
+          daysRemaining: "N/A"
+        };
+      }
+
+      const daysRemaining = formatDistanceToNow(date, { addSuffix: false });
+      return {
+        formattedDate: date.toISOString().slice(0, 10),
+        daysRemaining: daysRemaining
+      };
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return {
+        formattedDate: "Error",
+        daysRemaining: "Error"
+      };
+    }
   };
 
   return (
@@ -35,7 +74,7 @@ const SummeryTable = ({ tableData }) => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {tableData.map((data, index) => {
-                const { formattedDate, daysRemaining } = formatDateWithDays(data.nextReviewDate);
+                const { formattedDate, daysRemaining } = formatDateWithDays(data);
 
                 return (
                   <tr key={index}>

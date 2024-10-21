@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   dueQuizzes: [],
-  currentQuizIndex: 0
+  currentQuizIndex: 0,
+  shouldRefreshQuizzes: false
 };
 
 const quizzesDueSlice = createSlice({
@@ -20,10 +21,13 @@ const quizzesDueSlice = createSlice({
     },
     resetDueQuizSession: (state) => {
       state.currentQuizIndex = 0; // Reset index for a new session
+    },
+    triggerQuizRefresh: (state) => {
+      state.shouldRefreshQuizzes = !state.shouldRefreshQuizzes;
     }
   }
 });
 
-export const { setDueQuizzes, nextDueQuiz, resetDueQuizSession } = quizzesDueSlice.actions;
+export const { setDueQuizzes, nextDueQuiz, resetDueQuizSession, triggerQuizRefresh } = quizzesDueSlice.actions;
 
 export default quizzesDueSlice.reducer;

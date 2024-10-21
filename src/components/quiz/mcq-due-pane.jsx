@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { shuffleArray } from "@/helper/shuffleArray";
 import { respondToQuiz } from "@/service/quiz";
 import { addPracticeResult, clearPracticeHistory } from "@/store/practiceSlice";
-import { nextDueQuiz, resetDueQuizSession } from "@/store/quizzesDueSlice";
+import { nextDueQuiz, resetDueQuizSession, triggerQuizRefresh } from "@/store/quizzesDueSlice";
 import MCQCard from "./mcq-card";
 import QuizSummery from "./summery";
 
@@ -102,6 +102,7 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
 
   const handleSummeryClose = () => {
     dispatch(resetDueQuizSession());
+    dispatch(triggerQuizRefresh());
     onClose();
     setTimeout(() => setShowSummery(false), 300);
   };
@@ -123,6 +124,7 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
           <QuizSummery
             onClose={handleSummeryClose}
             summeryData={{ title: "", feedback: "Well Done!", tableData: practiceHistory }}
+            isFromDue={true}
           />
         </div>
       </div>

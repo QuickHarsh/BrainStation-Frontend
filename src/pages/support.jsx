@@ -1,40 +1,47 @@
-import { useState } from "react";
-import { Pie } from "react-chartjs-2";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
-
-// Registering chart components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 // Function to convert score to percentage
 function convertToPercentageRange(predicted_exam_score, min_percentage, max_percentage) {
   const min_score = 0;
   const max_score = 100;
+  return (
+    min_percentage +
+    ((predicted_exam_score - min_score) / (max_score - min_percentage)) * (max_percentage - min_percentage)
+  );
+}
 
-  const percentage =
-    min_percentage + ((predicted_exam_score - min_score) / (max_score - min_score)) * (max_percentage - min_percentage);
+// Function to clean up descriptions by removing unwanted phrases
+function cleanDescription(description) {
+  const unwantedWords = ["Sure!", "!", "'"];
+  let cleanedDescription = description;
 
-  return percentage;
+  // Remove unwanted words
+  unwantedWords.forEach((word) => {
+    cleanedDescription = cleanedDescription.replace(word, "");
+  });
+
+  return cleanedDescription.trim();
 }
 
 function Support() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // Hook for query parameters
+  const [searchParams] = useSearchParams();
   let parsedUserData = null;
-  const [completedTasks, setCompletedTasks] = useState(tasks.map(() => false));
 
+  // Parsing userData from URL params
   try {
     const userData = searchParams.get("userData");
     if (userData) {
-      console.log("Raw userData:", userData);
-      parsedUserData = JSON.parse(decodeURIComponent(userData)); // Parsing the query param
-      console.log("Parsed userData:", parsedUserData);
+      parsedUserData = JSON.parse(decodeURIComponent(userData)); // Decode and parse user data
+      console.log("Parsed User Data:", parsedUserData); // Log the full parsed data for debugging
+    } else {
+      console.error("No user data found in query params.");
     }
   } catch (error) {
     console.error("Error parsing userData:", error);
   }
 
-  // If userData is missing or invalid, display a fallback message
+  // If no valid user data is found, show error message
   if (!parsedUserData) {
     return (
       <div>
@@ -44,137 +51,194 @@ function Support() {
     );
   }
 
-  const predicted_exam_score = parsedUserData?.predicted_exam_score;
-  const min_percentage = 0;
-  const max_percentage = 100;
+  // Accessing predicted_exam_score and handling percentage conversion
+  const predicted_exam_score = parsedUserData?.predicted_exam_score || null;
+  console.log("Predicted Exam Score:", predicted_exam_score); // Log predicted_exam_score for debugging
 
-  // Handle case where predicted_exam_score is missing
-  if (typeof predicted_exam_score === "undefined") {
-    return (
-      <div>
-        <h2>Error: Missing exam score data.</h2>
-        <p>Please make sure the user data contains a valid exam score.</p>
-      </div>
-    );
-  }
+  const convertedPercentage = predicted_exam_score
+    ? convertToPercentageRange(predicted_exam_score, 0, 100).toFixed(0)
+    : "N/A";
 
-  const convertedPercentage = convertToPercentageRange(predicted_exam_score, min_percentage, max_percentage).toFixed(0);
+  // Accessing lowest_two_chapters_with_descriptions and their details
+  const lowestChapter1 = parsedUserData?.lowest_two_chapters_with_descriptions?.[0]?.chapter || "N/A";
+  const lowestChapter2 = parsedUserData?.lowest_two_chapters_with_descriptions?.[1]?.chapter || "N/A";
+  const description1 = cleanDescription(
+    parsedUserData?.lowest_two_chapters_with_descriptions?.[0]?.description || "No description available"
+  );
+  const description2 = cleanDescription(
+    parsedUserData?.lowest_two_chapters_with_descriptions?.[1]?.description || "No description available"
+  );
 
-  // Handle case where tasks are missing or invalid
-  const tasks = parsedUserData?.tasks ? JSON.parse(parsedUserData.tasks) : [];
-  console.log("Parsed tasks:", tasks);
+  const performerType = parsedUserData?.performer_type || "Medium Performer";
 
-  // State to manage the completed status of each task
-
-  // Function to handle checkbox change
-  const handleCheckboxChange = (index) => {
-    const updatedTasks = [...completedTasks];
-    updatedTasks[index] = !updatedTasks[index]; // Toggle the task completion status
-    setCompletedTasks(updatedTasks);
+  // Redirect handlers
+  const handleGoToDashboard = () => {
+    const dashUrl = `/Dashboard?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
+      lowestChapter1
+    )}&chapter2=${encodeURIComponent(lowestChapter2)}&studentId=${encodeURIComponent(parsedUserData.studentId)}`;
+    navigate(dashUrl);
   };
 
-  const pieData = {
-    labels: ["Chapter 1", "Chapter 2", "Chapter 3", "Chapter 4", "Chapter 5"],
-    datasets: [
-      {
-        label: "Chapter Fluency/Performance",
-        data: [20, 15, 25, 10, 30],
-        backgroundColor: [
-          "rgba(255, 215, 0, 0.7)",
-          "rgba(0, 0, 139, 0.7)",
-          "rgba(255, 215, 0, 0.7)",
-          "rgba(0, 0, 139, 0.7)",
-          "rgba(0, 0, 139, 0.7)"
-        ],
-        borderWidth: 1
-      }
-    ]
-  };
+  const handleCompletedTasks = () => alert("Redirect to Completed Tasks Page");
 
-  const pieOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "right"
-      },
-      title: {
-        display: true,
-        text: "Chapter Fluency/Performance"
-      }
-    }
-  };
-
-  const handleGoToAnalysis = () => {
-    navigate("/analysis");
+  const handleViewTasks = () => {
+    const taskUrl = `/Task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
+      lowestChapter1
+    )}&chapter2=${encodeURIComponent(lowestChapter2)}&studentId=${encodeURIComponent(parsedUserData.studentId)}`;
+    navigate(taskUrl);
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-5">
-      <div className="flex h-screen">
-        {/* Left Section */}
-        <div className="w-full md:w-1/2 bg-gray-200 p-4">
-          <div className="p-5 bg-white border rounded-xl flex flex-col">
-            <span className="font-mono font-black text-2xl">Prediction of Academic Performance:</span>
-            <span className="font-mono font-black text-blue-700 text-xl">
-              Based on your recent quiz scores and focus levels, you are likely to{" "}
-              <span className="text-red-800">
-                score between {convertedPercentage - 5} - {convertedPercentage}{" "}
-              </span>
-              % on the upcoming midterm exam
-            </span>
-            <br />
-            <span className="font-mono font-black text-2xl">Identification of Struggling Areas:</span>
-            <span className="font-mono font-black text-blue-700 text-xl">
-              You are showing difficulty in &apos;Chapter 4: Data Structures&apos;. Your performance has been below
-              average in this section
-            </span>
-            <br />
-            <span className="font-mono font-black text-2xl">Predictive Categorization:</span>
-            <span className="font-mono font-black text-blue-700 text-xl">
-              You are categorized as a<span className="text-red-800">&apos;{parsedUserData.performer_type}&apos; </span>{" "}
-              in this course.
-            </span>
-            <br />
+    <main className="flex h-screen flex-col items-center justify-between p-10 bg-gray-100">
+      <div className="w-full md:w-3/4 bg-white shadow-lg rounded-lg p-6">
+        {/* Top Section */}
+        <div className="flex justify-between items-start mb-6">
+          {/* Welcome Section */}
+          <div className="bg-blue-100 p-4 rounded-md">
+            <h2 className="text-3xl font-bold text-blue-900">Welcome back!</h2>
+            <p className="text-xl text-gray-700">
+              You&apos;ve reached <strong>80%</strong> of your progress this week! Keep it up and improve your results.
+            </p>
           </div>
 
-          <div className="p-0 bg-blue-100 border rounded-xl flex flex-col">
-            {/* Bar Chart Section */}
-            {/*  <div className="flex-1 bg-gray-100 p-4">
-              <Bar data={data} options={options} />
-            </div>*/}
+          {/* Task Counters and Buttons */}
+          <div className="flex flex-col items-center space-y-4">
+            <div className="flex space-x-8">
+              <div className="text-center">
+                <span className="block text-xl font-semibold text-gray-800">Task completed</span>
+                <span className="block text-4xl text-blue-900">20</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-xl font-semibold text-gray-800">Task remaining</span>
+                <span className="block text-4xl text-red-700">5</span>
+              </div>
+            </div>
+
+            {/* Task Buttons */}
+            <div className="flex space-x-4">
+              <button
+                className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md"
+                onClick={handleCompletedTasks}
+              >
+                Completed Tasks
+              </button>
+              <button
+                className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md"
+                onClick={handleViewTasks}
+              >
+                View Tasks
+              </button>
+            </div>
+
+            {/* Dashboard Button */}
+            <div className="mt-4">
+              <button
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md"
+                onClick={handleGoToDashboard}
+              >
+                Go To Dashboard
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="w-full md:w-1/2 flex flex-col">
-          <span className="font-mono font-black text-2xl">Recommendation Task for Personalized Learning</span>
-          <ul className="font-mono text-blue-900 text-xl">
-            {tasks.map((task, index) => (
-              <li key={index}>
-                <br />
-                <input
-                  type="checkbox"
-                  checked={completedTasks[index]}
-                  onChange={() => handleCheckboxChange(index)}
-                  className="mr-2"
-                />
-                {task}
-              </li>
-            ))}
-          </ul>
+        {/* Academic Forecasting Section */}
+        <div className="bg-gray-200 p-5 rounded-lg mb-6">
+          <h3 className="font-bold text-2xl text-gray-800 mb-4 border-b-2 border-gray-300 pb-2">
+            Academic Forecasting
+          </h3>
 
-          <div className="flex-1 bg-gray-100 p-4 h-20 justify-center items-center">
-            <div className="flex flex-row w-80">
-              <Pie data={pieData} options={pieOptions} />
+          {/* Academic Performance */}
+          <div className="p-4 bg-white rounded-lg mb-4">
+            <h4 className="font-semibold text-xl text-gray-800">Academic Performance</h4>
+            <p className="text-lg text-gray-700">
+              Based on your quiz scores so far, if the next exam covers these chapters, you&apos;re likely to
+              <strong className="text-red-700">
+                score between {convertedPercentage - 5}% - {convertedPercentage}%.
+              </strong>
+            </p>
+            <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md mt-4">Chapter 1-3</button>
+          </div>
+
+          {/* Struggling Areas */}
+          <div className="p-4 bg-white rounded-lg mb-4">
+            <h4 className="font-semibold text-xl text-gray-800">Struggling Areas</h4>
+            <p className="text-lg text-gray-700">
+              You are showing difficulty in <strong>{lowestChapter1}</strong> and <strong>{lowestChapter2}</strong>.
+            </p>
+            <div className="mt-2 p-4 bg-gray-100 rounded-lg border border-gray-300 shadow-sm">
+              <p className="text-md text-gray-800 font-semibold mb-4">
+                {description1 && (
+                  <>
+                    <span className="font-bold text-blue-800">{lowestChapter1}</span>:
+                    <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
+                      <li>
+                        📝 <span className="font-bold">Key Concept:</span> {description1.split(".")[0]}
+                      </li>
+                      {description1.split(".").slice(1).join(". ")}
+                    </ul>
+                  </>
+                )}
+              </p>
+
+              <p className="text-md text-gray-800 font-semibold mt-4">
+                {description2 && (
+                  <>
+                    <span className="font-bold text-blue-800">{lowestChapter2}</span>:
+                    <ul className="list-disc list-inside mt-2 text-gray-700 text-lg">
+                      <li>
+                        📝 <span className="font-bold">Key Concept:</span> {description2.split(".")[0]}
+                      </li>
+                      {description2.split(".").slice(1).join(". ")}
+                    </ul>
+                  </>
+                )}
+              </p>
+            </div>
+
+            <div className="flex space-x-2 mt-4">
+              <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md">{lowestChapter1}</button>
+              <button className="bg-blue-900 text-white font-bold py-2 px-4 rounded-md">{lowestChapter2}</button>
             </div>
           </div>
 
-          <button
-            onClick={handleGoToAnalysis}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mt-4"
-          >
-            Go to Analysis
-          </button>
+          {/* Categorization */}
+          <div className="p-4 bg-white rounded-lg">
+            <h4 className="font-semibold text-xl text-gray-800">Categorization</h4>
+            <p className="text-lg text-gray-700">
+              You are categorized as a
+              <strong className="text-red-700">{parsedUserData?.performer_type || "Medium Performer"}</strong>.
+            </p>
+            <div className="flex space-x-2 mt-4">
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  parsedUserData.performer_type === "Excellent Performer"
+                    ? "bg-blue-900 text-white font-bold"
+                    : "bg-blue-200 text-gray-800 font-bold"
+                }`}
+              >
+                Excellent
+              </button>
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  parsedUserData.performer_type === "Medium Performer"
+                    ? "bg-blue-900 text-white font-bold"
+                    : "bg-blue-200 text-gray-800 font-bold"
+                }`}
+              >
+                Medium
+              </button>
+              <button
+                className={`py-2 px-4 rounded-md ${
+                  parsedUserData.performer_type === "Low Performer"
+                    ? "bg-blue-900 text-white font-bold"
+                    : "bg-blue-200 text-gray-800 font-bold"
+                }`}
+              >
+                Low
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </main>

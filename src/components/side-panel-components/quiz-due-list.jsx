@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
+import { showDialog } from "@/store/dialogSlice";
 import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { setDueQuizzes } from "@/store/quizzesDueSlice";
 import DueQuizCard from "../cards/due-quiz-card";
 import Tabs from "../common/Tabs";
-import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+import QuizDueListSkeleton from "../skeletons/quiz-due-list";
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const QuizDueList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const shouldRefreshQuizzes = useSelector((state) => state.quizzesDue.shouldRefreshQuizzes); // Listen to refresh flag
 
   const handleBackClick = () => {
     dispatch(switchView("quiz-deck"));
@@ -81,6 +84,10 @@ const QuizDueList = () => {
     fetchQuizzes();
   }, []);
 
+  useEffect(() => {
+    fetchQuizzes();
+  }, [shouldRefreshQuizzes]);
+
   // Don't exclude locked quizzes from being displayed
   const filteredQuizzes =
     selectedTab === "all-due"
@@ -90,24 +97,30 @@ const QuizDueList = () => {
   // Exclude locked quizzes from practice session
   const handleAllDuePractice = () => {
     const unlockedQuizzes = quizzes.filter((quiz) => !checkIfLocked(quiz));
-    dispatch(setDueQuizzes(unlockedQuizzes)); // Send only unlocked quizzes for practice
-    dispatch(showMCQPane());
+
+    if (unlockedQuizzes.length === 0) {
+      dispatch(showDialog({ dialogId: "quiz-deck" }));
+    } else {
+      dispatch(setDueQuizzes(unlockedQuizzes));
+      dispatch(showMCQPane());
+    }
   };
 
   const handleNewLapsedPractice = () => {
     const filteredQuizzes = quizzes.filter(
       (quiz) => (quiz.status === "new" || quiz.status === "lapsed") && !checkIfLocked(quiz)
     );
-    dispatch(setDueQuizzes(filteredQuizzes)); // Send only unlocked quizzes for practice
-    dispatch(showMCQPane());
+
+    if (filteredQuizzes.length === 0) {
+      dispatch(showDialog({ dialogId: "quiz-deck" }));
+    } else {
+      dispatch(setDueQuizzes(filteredQuizzes));
+      dispatch(showMCQPane());
+    }
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <AnimatingDots />
-      </div>
-    );
+    return <QuizDueListSkeleton />;
   }
 
   if (error) {
