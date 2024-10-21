@@ -17,14 +17,7 @@ const Navbar = () => {
       style={{ boxShadow: "3px 1px 5.8px rgba(0, 0, 0, 0.25)" }}
     >
       {/* Monitoring status */}
-      <div className="flex items-center gap-1">
-        {location.pathname !== "/" && (
-          <>
-            <div className="rounded-full bg-red-600 w-3 h-3 mb-0.5" style={{ animation: "blink 10s infinite" }} />{" "}
-            <div className="font-josfin-sans text-sm">Monitoring.</div>
-          </>
-        )}
-      </div>
+      <div className="flex items-center gap-1">{location.pathname !== "/" && <></>}</div>
       <div className="flex items-center gap-6 select-none">
         <button className="font-inter text-sm px-4 py-1.5 bg-primary-green text-white rounded-xl">
           Track Progress
