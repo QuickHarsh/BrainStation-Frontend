@@ -1,5 +1,6 @@
 import { useState } from "react";
 import mindMapIcon from "@/assets/images/mind-mapping.png";
+import Loader from "@/components/common/loader";
 import Ontology from "@/pages/ontology";
 import { checkOntologyExists, createOntology } from "@/service/ontology";
 import DialogBox from "../common/dialog";
@@ -9,6 +10,7 @@ import OntologyPopup from "../ontology/ontology-popup";
 const ContentCard = ({ content, lectureId }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showDialog, setShowDialog] = useState(false); // Controls dialog visibility
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleClose = () => setIsVisible(false);
 
@@ -20,18 +22,19 @@ const ContentCard = ({ content, lectureId }) => {
   const checkOntology = async () => {
     const result = await checkOntologyExists(data);
     if (result === true) {
-      setIsVisible(true); // Directly show the main popup
+      setIsVisible(true);
     } else {
-      setShowDialog(true); // Show the dialog box
+      setShowDialog(true);
     }
   };
 
-  // Handle the "Okay" click in the dialog
   const handleOkay = () => {
     const generateOntology = async () => {
+      setLoading(true); // Start loading animation
+      setShowDialog(false); // Hide dialog box while loading
       await createOntology(data);
-      setShowDialog(false);
-      setIsVisible(true); // Show the main popup after confirmation
+      setLoading(false); // Stop loading animation
+      setIsVisible(true);
     };
 
     generateOntology();
@@ -44,8 +47,8 @@ const ContentCard = ({ content, lectureId }) => {
 
   return (
     <>
-      <ScrollView>
-        <div className="flex flex-col gap-6">
+      <ScrollView initialMaxHeight="13rem">
+        <div className="w-full flex flex-col gap-6">
           <div className="prose prose-lg text-gray-800" dangerouslySetInnerHTML={{ __html: content }} />
           <button
             className="fixed bottom-16 right-8 bg-horizontal-gradient text-white py-3 px-3 rounded-full shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
@@ -56,14 +59,24 @@ const ContentCard = ({ content, lectureId }) => {
         </div>
       </ScrollView>
 
-      <DialogBox
-        isVisible={showDialog}
-        message="Do you want to generate an Ontology for this lecture?"
-        onOkay={handleOkay}
-        onCancel={handleCancel}
-        okayLabel="Yes"
-        cancelLabel="No"
-      />
+      {/* Display Loader when loading is true */}
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <Loader /> {/* Show loading component in the center of the screen */}
+        </div>
+      )}
+
+      {/* Show DialogBox only when not loading */}
+      {!loading && (
+        <DialogBox
+          isVisible={showDialog}
+          message="Do you want to generate an Ontology for this lecture?"
+          onOkay={handleOkay}
+          onCancel={handleCancel}
+          okayLabel="Yes"
+          cancelLabel="No"
+        />
+      )}
 
       <OntologyPopup isVisible={isVisible} onClose={handleClose} lectureId={lectureId}>
         <Ontology lectureId={lectureId} />

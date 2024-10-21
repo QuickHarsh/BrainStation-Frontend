@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
 import { GetQuizzesDueByToday } from "@/service/quiz";
@@ -8,11 +8,11 @@ import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { setDueQuizzes } from "@/store/quizzesDueSlice";
 import DueQuizCard from "../cards/due-quiz-card";
-import Tabs from "../common/Tabs";
-import AnimatingDots from "../common/animating-dots";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
+import Tabs from "../common/tabs";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+import QuizDueListSkeleton from "../skeletons/quiz-due-list";
 
 const QuizDueList = () => {
   const dispatch = useDispatch();
@@ -20,6 +20,8 @@ const QuizDueList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const shouldRefreshQuizzes = useSelector((state) => state.quizzesDue.shouldRefreshQuizzes); // Listen to refresh flag
 
   const handleBackClick = () => {
     dispatch(switchView("quiz-deck"));
@@ -82,6 +84,10 @@ const QuizDueList = () => {
     fetchQuizzes();
   }, []);
 
+  useEffect(() => {
+    fetchQuizzes();
+  }, [shouldRefreshQuizzes]);
+
   // Don't exclude locked quizzes from being displayed
   const filteredQuizzes =
     selectedTab === "all-due"
@@ -114,11 +120,7 @@ const QuizDueList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <AnimatingDots />
-      </div>
-    );
+    return <QuizDueListSkeleton />;
   }
 
   if (error) {
