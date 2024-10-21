@@ -8,9 +8,9 @@ import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { setDueQuizzes } from "@/store/quizzesDueSlice";
 import DueQuizCard from "../cards/due-quiz-card";
-import Tabs from "../common/Tabs";
 import Button from "../common/button";
 import ScrollView from "../common/scrollable-view";
+import Tabs from "../common/tabs";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
 import QuizDueListSkeleton from "../skeletons/quiz-due-list";
 
