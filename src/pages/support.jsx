@@ -1,6 +1,8 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getPredictionsForAllModules } from "@/service/progress";  // Adjust the path if needed
+import { useSearchParams } from "react-router-dom";
+import { getPredictionsForAllModules } from "@/service/progress";
+
+// Adjust the path if needed
 
 // Function to clean up descriptions by removing unwanted phrases
 function cleanDescription(description) {
@@ -13,18 +15,18 @@ function cleanDescription(description) {
 }
 
 function Support() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [parsedUserData, setParsedUserData] = useState(null);  // Store parsed user data
-  const [selectedModule, setSelectedModule] = useState(null);  // Store the selected module for prediction display
+  const [parsedUserData, setParsedUserData] = useState(null); // Store parsed user data
+  const [selectedModule, setSelectedModule] = useState(null); // Store the selected module for prediction display
 
   // Function to fetch prediction data from the API
   useEffect(() => {
     const fetchData = async () => {
-      const userId = searchParams.get("userId");  // Assuming you're using userId
+      const userId = searchParams.get("userId"); // Assuming you're using userId
       try {
         const response = await getPredictionsForAllModules(userId);
-        setParsedUserData(response);  // Save fetched data
+        setParsedUserData(response); // Save fetched data
         console.log(response);
       } catch (error) {
         console.error("Error fetching prediction data:", error);
@@ -34,7 +36,7 @@ function Support() {
   }, [searchParams]);
 
   if (!parsedUserData) {
-    return <p>Loading...</p>;  // Show loading message while fetching data
+    return <p>Loading...</p>; // Show loading message while fetching data
   }
 
   // Handler to display a specific module's prediction
@@ -112,8 +114,12 @@ function Support() {
           {selectedModule && (
             <div className="p-4 bg-white rounded-lg mb-4">
               <h4 className="font-semibold text-xl text-gray-800">Selected Module Prediction</h4>
-              <p><strong>Module Name:</strong> {selectedModule.moduleName}</p>
-              <p><strong>Predicted Exam Score:</strong> {selectedModule.predictedExamScore}</p>
+              <p>
+                <strong>Module Name:</strong> {selectedModule.moduleName}
+              </p>
+              <p>
+                <strong>Predicted Exam Score:</strong> {selectedModule.predictedExamScore}
+              </p>
             </div>
           )}
 
@@ -124,8 +130,10 @@ function Support() {
               <div>
                 {parsedUserData.lowestTwoChapters.map((chapter, index) => (
                   <div key={index}>
-                    <p><strong>Chapter:</strong> {chapter.chapter}</p>
-                   
+                    <p>
+                      <strong>Chapter:</strong> {chapter.chapter}
+                    </p>
+
                     <p>{cleanDescription(chapter.chapterDescription)}</p>
                   </div>
                 ))}
@@ -138,8 +146,12 @@ function Support() {
           {/* Highest and Lowest Scoring Modules */}
           <div className="p-4 bg-white rounded-lg mb-4">
             <h4 className="font-semibold text-xl text-gray-800">Highest and Lowest Scoring Modules</h4>
-            <p><strong>Highest Scoring Module:</strong> {parsedUserData.highestScoreModule?.moduleName || 'N/A'}</p>
-            <p><strong>Lowest Scoring Module:</strong> {parsedUserData.lowestScoreModule?.moduleName || 'N/A'}</p>
+            <p>
+              <strong>Highest Scoring Module:</strong> {parsedUserData.highestScoreModule?.moduleName || "N/A"}
+            </p>
+            <p>
+              <strong>Lowest Scoring Module:</strong> {parsedUserData.lowestScoreModule?.moduleName || "N/A"}
+            </p>
           </div>
 
           {/* Study Recommendations */}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const PredictModules = () => {
   const [predictions, setPredictions] = useState(null);
@@ -8,18 +8,18 @@ const PredictModules = () => {
 
   useEffect(() => {
     // Get the user ID from the authorization token (assuming you're using JWT)
-    const token = localStorage.getItem('token'); // Replace with your method of getting the token
+    const token = localStorage.getItem("token"); // Replace with your method of getting the token
 
     if (token) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode the JWT to get user data
+      const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the JWT to get user data
       const userId = decodedToken.userId; // Assuming `userId` is in the token payload
 
       // Make the API call
       axios
         .get(`http://localhost:3000/api/progress/predict-all-modules/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
-          },
+            Authorization: `Bearer ${token}` // Pass the token in the Authorization header
+          }
         })
         .then((response) => {
           setPredictions(response.data); // Set the predictions data

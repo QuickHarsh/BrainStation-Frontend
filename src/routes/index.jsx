@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { DefaultLayout } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
+import PredictModules from "@/pages/PredictModules";
 import CompletedTasks from "@/pages/completed-tasks";
 import Dashboard from "@/pages/dashboard";
 import Signin from "@/pages/login";
@@ -11,7 +12,7 @@ import QuizDeck from "@/pages/quiz-deck";
 import Signup from "@/pages/signup";
 import support from "@/pages/support";
 import Task from "@/pages/task";
-import PredictModules from "@/pages/PredictModules";
+
 // Ensure Loader is imported correctly
 
 const coreRoutes = [
@@ -58,7 +59,7 @@ const coreRoutes = [
     component: Dashboard
   },
 
- {
+  {
     path: "/ontology/:lectureId",
     title: "ontology",
     component: Ontology
