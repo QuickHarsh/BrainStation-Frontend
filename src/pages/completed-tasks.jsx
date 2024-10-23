@@ -1,32 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react"; // Import React hooks
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; // Import axios for API requests
 
 function CompletedTasks() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Access taskId passed from Task.jsx
   const taskId = location.state?.taskId || ""; // Retrieve taskId from the previous page's state
-  const studentId = location.state?.studentId || ""; // Retrieve studentId from the previous page's state
 
-  const [completedSubtasks, setCompletedSubtasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [completedSubtasks, setCompletedSubtasks] = useState([]); // State for completed subtasks
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
-  // Fetch completed subtasks from the backend using taskId and studentId
+  // Fetch completed subtasks from the backend using taskId
   useEffect(() => {
-    if (!taskId || !studentId) {
-      setError("No valid task or student ID provided.");
+    if (!taskId) {
+      setError("No valid task ID provided.");
       setLoading(false);
       return;
     }
-
+  
     const fetchCompletedSubtasks = async () => {
       try {
-        // Ensure the correct taskId and studentId are passed in the API call
-        const response = await axios.get(`http://localhost:3000/api/progress/completed-tasks/${taskId}`, {
-          params: { studentId } // Send studentId as a query parameter
+        const token = localStorage.getItem('authToken');
+        console.log('Auth token:', token); // Check if the token is available
+  
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+  
+        const response = await axios.get(`http://localhost:3000/api/task/completed-tasks/${taskId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Include the Authorization token in the headers
+          },
         });
-
+  
         if (response.status === 200 && response.data.completedTasks) {
           setCompletedSubtasks(response.data.completedTasks); // Store the completed tasks
         } else {
@@ -38,10 +47,10 @@ function CompletedTasks() {
         setLoading(false);
       }
     };
-
-    fetchCompletedSubtasks(); // Trigger the fetch on component mount
-  }, [taskId, studentId]);
-
+  
+    fetchCompletedSubtasks();
+  }, [taskId]);
+  
   if (loading) return <div>Loading completed subtasks...</div>;
   if (error) return <div>{error}</div>;
 

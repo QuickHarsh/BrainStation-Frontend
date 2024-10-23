@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { getPredictionsForAllModules } from "@/service/progress";
 
 // Adjust the path if needed
@@ -15,7 +15,7 @@ function cleanDescription(description) {
 }
 
 function Support() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [parsedUserData, setParsedUserData] = useState(null); // Store parsed user data
   const [selectedModule, setSelectedModule] = useState(null); // Store the selected module for prediction display
@@ -23,9 +23,8 @@ function Support() {
   // Function to fetch prediction data from the API
   useEffect(() => {
     const fetchData = async () => {
-      const userId = searchParams.get("userId"); // Assuming you're using userId
       try {
-        const response = await getPredictionsForAllModules(userId);
+        const response = await getPredictionsForAllModules();
         setParsedUserData(response); // Save fetched data
         console.log(response);
       } catch (error) {
@@ -39,11 +38,28 @@ function Support() {
     return <p>Loading...</p>; // Show loading message while fetching data
   }
 
-  // Handler to display a specific module's prediction
   const handleModuleClick = (moduleId) => {
     const selected = parsedUserData.modulePredictions.find((module) => module.moduleId === moduleId);
     setSelectedModule(selected);
   };
+
+  
+  // Handler to display a specific module's prediction
+  const handleNavigate = async () => {
+    if (parsedUserData) {
+      const taskData = {
+        performerType: parsedUserData.performerType,
+        strugglingAreas: parsedUserData.lowestTwoChapters.map((chapter) => chapter.chapter),
+      };
+      // const response = await axiosInstance.post("/recommend-task", taskData);
+      // console.log("Tasks generated:", response.data);
+      navigate("/task", { state: taskData });
+    }
+  };
+  const handleCompletedTasksButtonClick = () => {
+    navigate("/completed-tasks", { state: { taskId } });
+  };
+
 
   return (
     <main className="flex h-screen flex-col items-center justify-between p-10 bg-gray-100">
@@ -69,17 +85,20 @@ function Support() {
               </div>
             </div>
             <div className="flex space-x-4">
-              <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
+            <button onClick={handleCompletedTasksButtonClick} className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
                 Completed Tasks
               </button>
-              <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
-                View Tasks
-              </button>
+              <button onClick={handleNavigate} className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
+        Generate Tasks
+      </button>
             </div>
             <div className="mt-4">
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md">
-                Go To Dashboard
-              </button>
+             <button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md"
+            onClick={() => navigate("/dashboard")}
+          >
+            Go To Dashboard
+          </button>
             </div>
           </div>
         </div>

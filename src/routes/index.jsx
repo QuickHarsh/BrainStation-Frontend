@@ -41,24 +41,21 @@ const coreRoutes = [
     title: "support",
     component: support
   },
-
   {
     path: "/Task",
     title: "Task",
     component: Task
   },
   {
-    path: "/CompletedTasks",
-    title: "CompletedTasks",
+    path: "/Completed-Tasks",
+    title: "Completed-Tasks",
     component: CompletedTasks
   },
-
   {
     path: "/Dashboard",
     title: "Dashboard",
     component: Dashboard
   },
-
   {
     path: "/ontology/:lectureId",
     title: "ontology",

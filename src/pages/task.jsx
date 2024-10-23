@@ -1,24 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { getTaskRecommendations } from "@/service/task";
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
   const [taskId, setTaskId] = useState(""); // Store the taskId
-  // eslint-disable-next-line no-unused-vars
   const [completedSubtasks, setCompletedSubtasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  // Get performerType, lowest chapters, and studentId from URL
-  const performerType = searchParams.get("performerType")?.replace(" Performer", "");
-  const lowestChapter1 = searchParams.get("chapter1");
-  const lowestChapter2 = searchParams.get("chapter2");
-  const studentId = searchParams.get("studentId"); // This line is correct, only needs to appear once
-
-  // Prevent duplicate fetching
+  const location = useLocation();
+  const { performerType, strugglingAreas } = location.state || { performerType: '', strugglingAreas: '' };
+  const lowestChapter1 = strugglingAreas[0];
+  const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
   // Load completed subtasks from local storage and task set from local storage
@@ -34,7 +29,6 @@ function Task() {
     }
   }, []);
 
-  // Fetch tasks from backend if not saved in local storage
   useEffect(() => {
     if (hasFetched.current || tasks.weeklyTasks.length > 0 || tasks.dailyTasks.length > 0) return;
     hasFetched.current = true;
@@ -43,43 +37,29 @@ function Task() {
       try {
         const payload = {
           performer_type: performerType,
-          lowest_two_chapters: [{ chapter: lowestChapter1 }, { chapter: lowestChapter2 }],
-          Student_id: studentId // Pass the studentId from the URL here
+          lowest_two_chapters: strugglingAreas,
         };
 
-        console.log("Sending POST request with payload: ", payload); // Log the payload to confirm studentId is passed
-        const response = await axios.post("http://localhost:3000/api/progress/task-recommendation", payload);
+        const response = await getTaskRecommendations(payload);
 
-        if ((response.status === 200 || response.status === 201) && response.data.data && response.data.data.tasks) {
-          console.log("Response received: ", response.data);
-
-          // Capture and set taskId from response
-          setTaskId(response.data.data._id); // Ensure taskId is saved properly
-          setTasks(response.data.data.tasks); // Set tasks separately
-          localStorage.setItem("taskSet", JSON.stringify(response.data.data.tasks)); // Save task set
-          localStorage.setItem("taskId", response.data.data._id); // Save task ID
-        } else {
-          throw new Error("No tasks found or invalid response from the server.");
-        }
+        setTaskId(response.data._id); 
+        setTasks(response.data.tasks); 
+        localStorage.setItem("taskSet", JSON.stringify(response.data.tasks));
+        localStorage.setItem("taskId", response.data._id); 
       } catch (error) {
-        console.error("Error fetching tasks:", error);
         setError(error.response ? error.response.data.message : error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTasks(); // Trigger fetch tasks
-  }, [performerType, lowestChapter1, lowestChapter2, tasks, studentId]);
+    fetchTasks();
+  }, [performerType, lowestChapter1, lowestChapter2, tasks]);
 
-  // Handle task completion and update
-  const handleCheckboxChange = async (task, subTask, taskType, taskIndex, subTaskIndex, isChecked) => {
-    console.log("Checkbox checked:", isChecked);
-    console.log("Task details:", { taskId, taskType, taskIndex, subTaskIndex });
 
+  const handleCheckboxChange = async (taskId, taskType, taskIndex, subTaskIndex, isChecked) => {
     if (!isChecked) return;
 
-    // Optimistically update UI before sending the request
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
       updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter(
@@ -89,18 +69,18 @@ function Task() {
     });
 
     try {
-      const response = await axios.post("http://localhost:3000/api/progress/delete-subtask", {
-        taskId, // Ensure taskId is correct
-        taskType, // Should be either 'weeklyTasks' or 'dailyTasks'
-        taskIndex, // Task index
-        subTaskIndex // Subtask index
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('User is not authenticated. No token found.');
+      }
+
+      const response = await axios.post("http://localhost:3000/api/task/delete-subtask", {
+        taskId, taskType, taskIndex, subTaskIndex
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      if (response.status === 200) {
-        console.log("Subtask deleted successfully:", response.data);
-      } else {
-        console.error("Failed to delete subtask, status:", response.status);
-        // Revert UI changes if failed
+      if (response.status !== 200) {
         throw new Error("Failed to delete subtask.");
       }
     } catch (error) {
@@ -114,9 +94,26 @@ function Task() {
       });
     }
   };
-
+  
   const handleCompletedTasksButtonClick = () => {
-    navigate("/completedtasks", { state: { taskId, studentId } });
+    navigate("/completed-tasks", { state: { taskId } });
+  };
+
+  const renderSubTask = (subTask) => {
+    // Check if the subtask contains a URL (simple regex for detecting a URL)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    if (urlRegex.test(subTask)) {
+      return subTask.split(urlRegex).map((part, index) =>
+        urlRegex.test(part) ? (
+          <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+            {part}
+          </a>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      );
+    }
+    return subTask;
   };
 
   if (loading) return <div>Loading tasks...</div>;
@@ -134,7 +131,6 @@ function Task() {
             tasks.weeklyTasks.map((task, taskIndex) => (
               <div key={taskIndex} className="p-6 bg-gray-100 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
-
                 {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subTaskIndex) => (
                     <div key={subTaskIndex} className="flex items-start space-x-2 mb-4">
@@ -142,17 +138,10 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(
-                            task.task,
-                            subTask,
-                            "weeklyTasks",
-                            taskIndex,
-                            subTaskIndex,
-                            e.target.checked
-                          )
+                          handleCheckboxChange(task.task, subTask, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
                       />
-                      <label className="text-black font-bold text-xl">{subTask}</label>
+                      <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>
                     </div>
                   ))
                 ) : (
@@ -172,7 +161,6 @@ function Task() {
             tasks.dailyTasks.map((task, taskIndex) => (
               <div key={taskIndex} className="p-6 bg-gray-100 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
-
                 {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subTaskIndex) => (
                     <div key={subTaskIndex} className="flex items-start space-x-2 mb-4">
@@ -180,17 +168,10 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(
-                            task.task,
-                            subTask,
-                            "dailyTasks",
-                            taskIndex,
-                            subTaskIndex,
-                            e.target.checked
-                          )
+                          handleCheckboxChange(task.task, subTask, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
                       />
-                      <label className="text-black font-bold text-xl">{subTask}</label>
+                      <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>
                     </div>
                   ))
                 ) : (
