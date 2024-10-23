@@ -12,7 +12,7 @@ import QuizDeck from "@/pages/quiz-deck";
 import Signup from "@/pages/signup";
 import support from "@/pages/support";
 import Task from "@/pages/task";
-
+import analysis from "@/pages/analysis";
 // Ensure Loader is imported correctly
 
 const coreRoutes = [
@@ -61,6 +61,12 @@ const coreRoutes = [
     title: "ontology",
     component: Ontology
   },
+  {
+    path: "/analysis",
+    title: "analysis",
+    component: analysis
+  },
+  
   {
     path: "/PredictModules",
     title: "PredictModules",

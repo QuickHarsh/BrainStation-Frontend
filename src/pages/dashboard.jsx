@@ -1,213 +1,229 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Loader } from "@/components";
-import ModuleCard from "@/components/cards/module-card";
-import ScrollView from "@/components/common/scrollable-view";
-import useFetchData from "@/hooks/fetch-data";
-import { getAllModules } from "@/service/module";
-import { setCurrentModule } from "@/store/lecturesSlice";
-import { setModules } from "@/store/moduleSlice";
-import AppUsageProgress from "../components/charts/AppUsageProgress";
-import ChapterPerformence from "../components/charts/ChapterPerformence";
-import CurrentProgressGauge from "../components/charts/CurrentProgressGauge";
-import DailyAverage from "../components/charts/DailyAverage";
-import ExamReadinessGauge from "../components/charts/ExamReadinessGauge";
-import MarksComparison from "../components/charts/MarksComparison";
-import QuizMarksLatestAttempt from "../components/charts/QuizMarksLatestAttempt";
-import TimeSpentChapter from "../components/charts/TimeSpentChapter";
+import { useEffect, useState } from "react";
+import { Bar, Bubble, Line, Pie } from "react-chartjs-2";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  LineElement,
+  LinearScale,
+  PointElement
+} from "chart.js";
 
-const Main = () => {
-  const dispatch = useDispatch();
+// Register necessary chart elements
+ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, PointElement, LineElement);
+
+const Dashboard = () => {
+  const [completedTasksCount, setCompletedTasksCount] = useState(0);
+  const [performerType, setPerformerType] = useState("");
+  const [lowestChapter1, setLowestChapter1] = useState("");
+  const [lowestChapter2, setLowestChapter2] = useState("");
+  const [chapterMarks, setChapterMarks] = useState([]);
+  const [focusStudyData, setFocusStudyData] = useState([]);
+  const [taskPerformanceData, setTaskPerformanceData] = useState([]);
+  const [cumulativeAverageData, setCumulativeAverageData] = useState([]); // Cumulative average data
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const modules = useSelector((state) => state.modules.modules);
+  const location = useLocation();
 
-  // Fetch modules data
-  const modulesData = useFetchData(getAllModules);
+  // Get studentId passed from URL
+  const studentId = new URLSearchParams(location.search).get("studentId");
 
-  // Check if modulesData is available and contains docs before proceeding
-  if (modulesData && modulesData.data?.docs && modules.length === 0) {
-    const modulesWithProgress = modulesData.data.docs.map((module) => ({
-      ...module,
-      progress: 50 // Add progress field to each module
-    }));
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch completed tasks count
+        const countResponse = await axios.get(`http://localhost:3000/api/progress/completed-tasks-count/${studentId}`);
+        setCompletedTasksCount(countResponse.data.completedTasksCount);
 
-    dispatch(setModules(modulesWithProgress));
+        // Fetch dynamic performerType and lowest chapters
+        const predictionResponse = await axios.post(`http://localhost:3000/api/progress/predict`, {
+          Student_id: studentId
+        });
+        const predictionData = predictionResponse.data.data;
+        setPerformerType(predictionData.performer_type);
+        setLowestChapter1(predictionData.lowest_two_chapters[0].chapter);
+        setLowestChapter2(predictionData.lowest_two_chapters[1].chapter);
 
-    const currentModule = localStorage.getItem("currentModule");
-    if (!currentModule && modulesWithProgress.length > 0) {
-      localStorage.setItem("currentModule", modulesWithProgress[0]._id);
-    }
-  }
+        // Fetch chapter performance data
+        const studentResponse = await axios.get(`http://localhost:3000/api/progress/student/${studentId}`);
+        const studentData = studentResponse.data.data;
 
-  const handleModuleClick = (moduleId) => {
-    dispatch(setCurrentModule(moduleId)); // Set the selected module
-    navigate(`/study/${moduleId}`); // Navigate to the Study page with moduleId
+        // Set chapter marks
+        const marksData = [
+          { name: "Introduction OS", marks: studentData.Quiz_IntroductionOS_Marks },
+          { name: "Processes & Threads", marks: studentData["Quiz_Processes&Threads_Marks"] },
+          { name: "Deadlocks", marks: studentData.Quiz_Deadlocks_Marks },
+          { name: "Virtual Memory", marks: studentData.Quiz_VirtualMemory_Marks }
+        ];
+        setChapterMarks(marksData);
+
+        // Prepare focus vs study time vs average marks data (average marks can be derived from chapter marks)
+        const averageMarks =
+          (studentData.Quiz_IntroductionOS_Marks +
+            studentData["Quiz_Processes&Threads_Marks"] +
+            studentData.Quiz_Deadlocks_Marks +
+            studentData.Quiz_VirtualMemory_Marks) /
+          4;
+        setFocusStudyData([{ studyTime: 180, focusLevel: studentData.Focus_Level, averageMarks: averageMarks }]);
+
+        // Mock task completion vs performance data
+        setTaskPerformanceData([
+          { taskName: "Task 1", completion: 80, performance: 90 },
+          { taskName: "Task 2", completion: 60, performance: 70 }
+        ]);
+
+        // Calculate cumulative average marks
+        let runningTotal = 0;
+        const cumulativeAverages = marksData.map((mark, index) => {
+          runningTotal += mark.marks;
+          return {
+            assessment: mark.name,
+            cumulativeAverage: (runningTotal / (index + 1)).toFixed(2)
+          };
+        });
+        setCumulativeAverageData(cumulativeAverages);
+      } catch (error) {
+        setError("Failed to fetch dashboard data");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [studentId]);
+
+  // Handle the view tasks button click
+  const handleViewTasks = () => {
+    const taskUrl = `/task?performerType=${encodeURIComponent(performerType)}&chapter1=${encodeURIComponent(
+      lowestChapter1
+    )}&chapter2=${encodeURIComponent(lowestChapter2)}&studentId=${encodeURIComponent(studentId)}`;
+    navigate(taskUrl);
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  // Data for Chapter Performance (Pie Chart)
+  const chapterPerformanceData = {
+    labels: chapterMarks.map((chapter) => chapter.name),
+    datasets: [
+      {
+        label: "Chapter Marks",
+        data: chapterMarks.map((chapter) => chapter.marks),
+        backgroundColor: ["#1f3c88", "#f1c40f", "#1f3c88", "#f1c40f"] // Dark blue and dark yellow
+      }
+    ]
+  };
+
+  // Data for Focus Level vs. Study Time vs. Average Marks (Bubble Chart)
+  const focusStudyBubbleData = {
+    datasets: [
+      {
+        label: "Focus vs. Study Time vs. Average Marks",
+        data: focusStudyData.map((item) => ({
+          x: item.studyTime, // Study time in minutes
+          y: item.focusLevel, // Focus level
+          r: item.averageMarks / 10 // Bubble size based on average marks (scaled down)
+        })),
+        backgroundColor: "#1f3c88", // Dark blue for bubbles
+        borderColor: "#f1c40f" // Dark yellow for bubble outlines
+      }
+    ]
+  };
+
+  // Data for Task Completion vs. Performance (Bar Chart)
+  const taskCompletionPerformanceData = {
+    labels: taskPerformanceData.map((item) => item.taskName),
+    datasets: [
+      {
+        label: "Task Completion (%)",
+        data: taskPerformanceData.map((item) => item.completion),
+        backgroundColor: "#1f3c88" // Dark blue
+      },
+      {
+        label: "Performance (%)",
+        data: taskPerformanceData.map((item) => item.performance),
+        backgroundColor: "#f1c40f" // Dark yellow
+      }
+    ]
+  };
+
+  // Data for Cumulative Average Marks (Line Chart)
+  const cumulativeAverageChartData = {
+    labels: cumulativeAverageData.map((item) => item.assessment),
+    datasets: [
+      {
+        label: "Cumulative Average Marks",
+        data: cumulativeAverageData.map((item) => item.cumulativeAverage),
+        fill: false,
+        borderColor: "#1f3c88", // Dark blue line
+        backgroundColor: "#f1c40f", // Yellow dots
+        tension: 0.1
+      }
+    ]
   };
 
   return (
-    <div className="p-4 px-6">
-      <h1 className="font-inter font-bold text-2xl p-3">Welcome, Choose a module to get started!</h1>
+    <div
+      className="dashboard-container"
+      style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", padding: "20px" }}
+    >
+      <div
+        className="section"
+        style={{ backgroundColor: "transparent", color: "#34495e", padding: "20px", borderRadius: "10px" }}
+      >
+        <h1 className="text-3xl font-bold">Your Current Progress</h1>
+        <p>Completed Tasks: {completedTasksCount}</p>
+        <button
+          onClick={handleViewTasks}
+          style={{ backgroundColor: "#f1c40f", color: "#fff", padding: "10px 20px", borderRadius: "5px" }}
+        >
+          View Current Task
+        </button>
+      </div>
 
-      {!modulesData || modulesData.loading ? (
-        <div className="flex justify-center items-center">
-          <Loader />
-        </div>
-      ) : (
-        <ScrollView>
-          {/*<div className="grid grid-cols-3 gap-4 mt-8 mb-4 mx-1">*/}
-          <div className=" ">
-            {modules.length > 0 ? (
-              modules.map((module) => (
-                <ModuleCard
-                  key={module._id}
-                  moduleId={module._id}
-                  title={module.name}
-                  progress={module.progress}
-                  onClick={() => handleModuleClick(module._id)} // Handle click on module
-                />
-              ))
-            ) : (
-              <>
-                {/*<div className="text-center text-lg font-bold">No modules available.</div>*/}
+      {/* Chapter Performance (Pie Chart) */}
+      <div
+        className="section"
+        style={{ backgroundColor: "transparent", color: "#34495e", padding: "20px", borderRadius: "10px" }}
+      >
+        <h2>Chapter Performance</h2>
+        <Pie data={chapterPerformanceData} />
+      </div>
 
-                <div className="h-screen flex flex-col md:flex-row gap-10">
-                  <div className="md:w-1/2 w-full ">
-                    {/* Flexbox for Left Side Split */}
-                    <div className="flex gap-10">
-                      {/* Left Side with Red Background */}
-                      <div className="w-1/2 flex flex-col ">
-                        <div className="h-full  p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center gap-10 ">
-                          <div className="flex flex-col items-center  ">
-                            <h6 className="mb-3 font-bold">Your Current Progress</h6>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center"
-                              }}
-                            >
-                              <CurrentProgressGauge />
-                            </div>
-                          </div>
+      {/* Focus Level vs. Study Time vs. Average Marks (Bubble Chart) */}
+      <div
+        className="section"
+        style={{ backgroundColor: "transparent", color: "#34495e", padding: "20px", borderRadius: "10px" }}
+      >
+        <h2>Focus Level vs. Study Time vs. Average Marks</h2>
+        <Bubble data={focusStudyBubbleData} />
+      </div>
 
-                          <div className="flex flex-col items-center justify-center">
-                            <h6 className="mb-3 font-bold">Your Current Progress</h6>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center"
-                              }}
-                            >
-                              <ExamReadinessGauge />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+      {/* Task Completion vs. Performance (Bar Chart) */}
+      <div
+        className="section"
+        style={{ backgroundColor: "transparent", color: "#34495e", padding: "20px", borderRadius: "10px" }}
+      >
+        <h2>Task Completion vs. Performance</h2>
+        <Bar data={taskCompletionPerformanceData} />
+      </div>
 
-                      {/* Right Side with Orange Background */}
-                      <div className="w-full flex flex-col">
-                        <div className="h-full  p-6 bg-white border border-gray-200 rounded-lg  flex flex-col justify-center items-center">
-                          <h6 className="mb-3 font-bold">Task Completion Status</h6>
-
-                          <div className=" w-full p-5 bg-white border border-gray-200 rounded-lg  flex  justify-center flex-col gap-2">
-                            <div>
-                              <p>Completed Tasks = 20</p>
-                            </div>
-
-                            <div className="flex gap-2">
-                              <div>Current Task group Tasks =</div>
-                              <div>
-                                <div className="rounded-md bg-blue-100 text-blue-800 font-bold py-0.5 px-2.5 border border-transparent text-sm   transition-all">
-                                  View
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex justify-between gap-2 mt-2">
-                              <div className="rounded-md bg-blue-100 font-bold py-0.5 px-2.5 border border-transparent text-sm text-slate-600 transition-all">
-                                Pending = 4
-                              </div>
-
-                              <div className="rounded-md bg-blue-100 font-bold py-0.5 px-2.5 border border-transparent text-sm text-slate-600 transition-all">
-                                Completed = 2
-                              </div>
-                            </div>
-                          </div>
-
-                          <h6 className="mb-3 mt-5 font-bold">App usage Progress</h6>
-
-                          <div className="h-72">
-                            <AppUsageProgress />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Full-Width Bottom Section */}
-                    <div className="mt-4 ">
-                      <div className="w-full h-full bg-white border border-gray-200 rounded-lg p-8 ">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p>Daily Average (Study Hours with focus)</p>
-                            <h2 className="text-2xl font-bold">2h 20m</h2>
-                          </div>
-
-                          <div>
-                            <span className="text-orange-600 mx-1">+30m</span> this week
-                          </div>
-                        </div>
-
-                        <div className="h-96 w-full mt-3">
-                          <DailyAverage />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="md:w-1/2 w-full  h-full  ">
-                    <div className="p-6 bg-white border border-gray-200 rounded-lg ">
-                      <div className="flex">
-                        <div className="w-1/2 p-4">
-                          <h2 className="text-center font-bold mb-3">Quiz Marks Comparing with Latest Attempt</h2>
-                          <QuizMarksLatestAttempt />
-                        </div>
-
-                        <div className="w-1/2  p-4 ">
-                          <div className="flex items-center justify-between flex-col gap-5">
-                            <h2 className="text-center font-bold ">Time Spent On each Chapter (Quiz)</h2>
-                            <div className="w-full h-72 flex justify-center">
-                              <TimeSpentChapter />
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between flex-col gap-5 mt-5 align-baseline">
-                            <h2 className="text-center font-bold">Chapter Performence</h2>
-                            <div className="w-full h-72 flex justify-center">
-                              <ChapterPerformence />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-5">
-                        <h2 className="text-center font-bold mb-2">
-                          Focus Level ,Study Hours & Average Chapter Marks Comparison
-                        </h2>
-                        <div className="h-96 w-full">
-                          <MarksComparison />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </ScrollView>
-      )}
+      {/* Cumulative Average Marks (Line Chart) */}
+      <div
+        className="section"
+        style={{ backgroundColor: "transparent", color: "#34495e", padding: "20px", borderRadius: "10px" }}
+      >
+        <h2>Cumulative Average Marks</h2>
+        <Line data={cumulativeAverageChartData} />
+      </div>
     </div>
   );
 };
 
-export default Main;
+export default Dashboard;

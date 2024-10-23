@@ -1,31 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getTaskRecommendations } from "@/service/task";
+import { getTaskRecommendations, deleteSubtaskFromTaskController } from "@/service/task";
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
   const [taskId, setTaskId] = useState(""); // Store the taskId
-  // const [completedSubtasks, setCompletedSubtasks] = useState([]); // Declare completedSubtasks and setCompletedSubtasks
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: "" };
+  const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: [] };
   const lowestChapter1 = strugglingAreas[0];
   const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
-  // Load completed subtasks from local storage and task set from local storage
+  // Load completed subtasks and task set from local storage
   useEffect(() => {
-    //const savedCompletedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
-    // setCompletedSubtasks(savedCompletedSubtasks);
-
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));
     if (savedTasks) {
       setTasks(savedTasks);
       setTaskId(localStorage.getItem("taskId"));
-      setLoading(false); // Stop loading if we have saved tasks
+      setLoading(false);
     }
   }, []);
 
@@ -57,8 +53,9 @@ function Task() {
   }, [performerType, lowestChapter1, lowestChapter2, tasks]);
 
   const handleCheckboxChange = async (taskId, taskType, taskIndex, subTaskIndex, isChecked) => {
-    if (!isChecked) return;
+    if (!isChecked) return; // Only act if the checkbox is checked
 
+    // Optimistically update the UI
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
       updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter(
@@ -68,45 +65,38 @@ function Task() {
     });
 
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("User is not authenticated. No token found.");
+      const response = await deleteSubtaskFromTaskController({
+        taskId,
+        taskType,
+        taskIndex,
+        subTaskIndex
+      });
+
+      if (!response.success) {
+        throw new Error("Failed to delete subtask. API error.");
       }
 
-      const response = await axios.post(
-        "http://localhost:3000/api/task/delete-subtask",
-        {
-          taskId,
-          taskType,
-          taskIndex,
-          subTaskIndex
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      console.log("Subtask deleted and moved to completed collection:", response);
 
-      if (response.status !== 200) {
-        throw new Error("Failed to delete subtask.");
-      }
-    } catch (error) {
-      console.error("Error deleting subtask:", error.response?.data || error.message);
+    } catch (err) {
+      // Revert UI changes on error
+      console.error("Error deleting subtask:", err.message || err);
       setError("Failed to delete subtask. Please try again.");
-      // Revert UI changes in case of error
       setTasks((prevTasks) => {
         const revertedTasks = { ...prevTasks };
-        revertedTasks[taskType][taskIndex].subTasks = [...prevTasks[taskType][taskIndex].subTasks];
+        revertedTasks[taskType][taskIndex].subTasks = [
+          ...prevTasks[taskType][taskIndex].subTasks
+        ];
         return revertedTasks;
       });
     }
   };
 
   const handleCompletedTasksButtonClick = () => {
-    navigate("/completed-tasks", { state: { taskId } });
+    navigate("/completed-tasks");
   };
 
   const renderSubTask = (subTask) => {
-    // Check if the subtask contains a URL (simple regex for detecting a URL)
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(subTask)) {
       return subTask.split(urlRegex).map((part, index) =>
@@ -145,8 +135,7 @@ function Task() {
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
                           handleCheckboxChange(
-                            task.task,
-                            subTask,
+                            taskId,
                             "weeklyTasks",
                             taskIndex,
                             subTaskIndex,
@@ -182,8 +171,7 @@ function Task() {
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
                           handleCheckboxChange(
-                            task.task,
-                            subTask,
+                            taskId,
                             "dailyTasks",
                             taskIndex,
                             subTaskIndex,
