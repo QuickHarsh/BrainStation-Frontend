@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getPredictionsForAllModules } from "@/service/progress";
 
 // Adjust the path if needed
@@ -43,13 +43,12 @@ function Support() {
     setSelectedModule(selected);
   };
 
-  
   // Handler to display a specific module's prediction
   const handleNavigate = async () => {
     if (parsedUserData) {
       const taskData = {
         performerType: parsedUserData.performerType,
-        strugglingAreas: parsedUserData.lowestTwoChapters.map((chapter) => chapter.chapter),
+        strugglingAreas: parsedUserData.lowestTwoChapters.map((chapter) => chapter.chapter)
       };
       // const response = await axiosInstance.post("/recommend-task", taskData);
       // console.log("Tasks generated:", response.data);
@@ -57,9 +56,8 @@ function Support() {
     }
   };
   const handleCompletedTasksButtonClick = () => {
-    navigate("/completed-tasks", { state: { taskId } });
+    navigate("/completed-tasks", { state: {} });
   };
-
 
   return (
     <main className="flex h-screen flex-col items-center justify-between p-10 bg-gray-100">
@@ -85,20 +83,26 @@ function Support() {
               </div>
             </div>
             <div className="flex space-x-4">
-            <button onClick={handleCompletedTasksButtonClick} className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
+              <button
+                onClick={handleCompletedTasksButtonClick}
+                className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md"
+              >
                 Completed Tasks
               </button>
-              <button onClick={handleNavigate} className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md">
-        Generate Tasks
-      </button>
+              <button
+                onClick={handleNavigate}
+                className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-md"
+              >
+                Generate Tasks
+              </button>
             </div>
             <div className="mt-4">
-             <button 
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md"
-            onClick={() => navigate("/dashboard")}
-          >
-            Go To Dashboard
-          </button>
+              <button
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md"
+                onClick={() => navigate("/dashboard")}
+              >
+                Go To Dashboard
+              </button>
             </div>
           </div>
         </div>

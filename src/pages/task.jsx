@@ -1,25 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getTaskRecommendations } from "@/service/task";
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
   const [taskId, setTaskId] = useState(""); // Store the taskId
-  const [completedSubtasks, setCompletedSubtasks] = useState([]);
+  // const [completedSubtasks, setCompletedSubtasks] = useState([]); // Declare completedSubtasks and setCompletedSubtasks
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { performerType, strugglingAreas } = location.state || { performerType: '', strugglingAreas: '' };
+  const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: "" };
   const lowestChapter1 = strugglingAreas[0];
   const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
   // Load completed subtasks from local storage and task set from local storage
   useEffect(() => {
-    const savedCompletedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
-    setCompletedSubtasks(savedCompletedSubtasks);
+    //const savedCompletedSubtasks = JSON.parse(localStorage.getItem("completedSubtasks")) || [];
+    // setCompletedSubtasks(savedCompletedSubtasks);
 
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));
     if (savedTasks) {
@@ -37,15 +37,15 @@ function Task() {
       try {
         const payload = {
           performer_type: performerType,
-          lowest_two_chapters: strugglingAreas,
+          lowest_two_chapters: strugglingAreas
         };
 
         const response = await getTaskRecommendations(payload);
 
-        setTaskId(response.data._id); 
-        setTasks(response.data.tasks); 
+        setTaskId(response.data._id);
+        setTasks(response.data.tasks);
         localStorage.setItem("taskSet", JSON.stringify(response.data.tasks));
-        localStorage.setItem("taskId", response.data._id); 
+        localStorage.setItem("taskId", response.data._id);
       } catch (error) {
         setError(error.response ? error.response.data.message : error.message);
       } finally {
@@ -55,7 +55,6 @@ function Task() {
 
     fetchTasks();
   }, [performerType, lowestChapter1, lowestChapter2, tasks]);
-
 
   const handleCheckboxChange = async (taskId, taskType, taskIndex, subTaskIndex, isChecked) => {
     if (!isChecked) return;
@@ -69,16 +68,23 @@ function Task() {
     });
 
     try {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       if (!token) {
-        throw new Error('User is not authenticated. No token found.');
+        throw new Error("User is not authenticated. No token found.");
       }
 
-      const response = await axios.post("http://localhost:3000/api/task/delete-subtask", {
-        taskId, taskType, taskIndex, subTaskIndex
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/task/delete-subtask",
+        {
+          taskId,
+          taskType,
+          taskIndex,
+          subTaskIndex
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
 
       if (response.status !== 200) {
         throw new Error("Failed to delete subtask.");
@@ -94,7 +100,7 @@ function Task() {
       });
     }
   };
-  
+
   const handleCompletedTasksButtonClick = () => {
     navigate("/completed-tasks", { state: { taskId } });
   };
@@ -138,7 +144,14 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(task.task, subTask, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
+                          handleCheckboxChange(
+                            task.task,
+                            subTask,
+                            "weeklyTasks",
+                            taskIndex,
+                            subTaskIndex,
+                            e.target.checked
+                          )
                         }
                       />
                       <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>
@@ -168,7 +181,14 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(task.task, subTask, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
+                          handleCheckboxChange(
+                            task.task,
+                            subTask,
+                            "dailyTasks",
+                            taskIndex,
+                            subTaskIndex,
+                            e.target.checked
+                          )
                         }
                       />
                       <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>

@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react"; // Import React hooks
+import { useEffect, useState } from "react";
+// Import React hooks
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios for API requests
+import axios from "axios";
+
+// Import axios for API requests
 
 function CompletedTasks() {
   const navigate = useNavigate();
@@ -20,22 +23,22 @@ function CompletedTasks() {
       setLoading(false);
       return;
     }
-  
+
     const fetchCompletedSubtasks = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        console.log('Auth token:', token); // Check if the token is available
-  
+        const token = localStorage.getItem("authToken");
+        console.log("Auth token:", token); // Check if the token is available
+
         if (!token) {
           throw new Error("User is not authenticated. No token found.");
         }
-  
+
         const response = await axios.get(`http://localhost:3000/api/task/completed-tasks/${taskId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`, // Include the Authorization token in the headers
-          },
+            Authorization: `Bearer ${token}` // Include the Authorization token in the headers
+          }
         });
-  
+
         if (response.status === 200 && response.data.completedTasks) {
           setCompletedSubtasks(response.data.completedTasks); // Store the completed tasks
         } else {
@@ -47,10 +50,10 @@ function CompletedTasks() {
         setLoading(false);
       }
     };
-  
+
     fetchCompletedSubtasks();
   }, [taskId]);
-  
+
   if (loading) return <div>Loading completed subtasks...</div>;
   if (error) return <div>{error}</div>;
 
