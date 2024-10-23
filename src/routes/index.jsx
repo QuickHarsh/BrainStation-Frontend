@@ -3,6 +3,7 @@ import { DefaultLayout } from "@/components";
 import { Main, Study } from "@/pages";
 import NotFound from "@/pages/404";
 import PredictModules from "@/pages/PredictModules";
+import analysis from "@/pages/analysis";
 import CompletedTasks from "@/pages/completed-tasks";
 import Dashboard from "@/pages/dashboard";
 import Signin from "@/pages/login";
@@ -12,7 +13,7 @@ import QuizDeck from "@/pages/quiz-deck";
 import Signup from "@/pages/signup";
 import support from "@/pages/support";
 import Task from "@/pages/task";
-import analysis from "@/pages/analysis";
+
 // Ensure Loader is imported correctly
 
 const coreRoutes = [
@@ -66,7 +67,7 @@ const coreRoutes = [
     title: "analysis",
     component: analysis
   },
-  
+
   {
     path: "/PredictModules",
     title: "PredictModules",

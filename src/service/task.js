@@ -11,11 +11,7 @@ export const deleteSubtaskFromTaskController = async (data) => {
   return await apiRequest(() => axiosInstance.post("api/task/delete-subtask", data));
 };
 
-
-
 export const getCompletedTasksByUserIdController = async (data) => {
   // console.log('Request received at backend:', req.body);
   return await apiRequest(() => axiosInstance.get("api/task/completed-tasks", data));
 };
-
- 

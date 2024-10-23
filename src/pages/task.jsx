@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { getTaskRecommendations, deleteSubtaskFromTaskController } from "@/service/task";
+import { deleteSubtaskFromTaskController, getTaskRecommendations } from "@/service/task";
+
+// Remove this if not needed
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
@@ -77,16 +78,13 @@ function Task() {
       }
 
       console.log("Subtask deleted and moved to completed collection:", response);
-
     } catch (err) {
       // Revert UI changes on error
       console.error("Error deleting subtask:", err.message || err);
       setError("Failed to delete subtask. Please try again.");
       setTasks((prevTasks) => {
         const revertedTasks = { ...prevTasks };
-        revertedTasks[taskType][taskIndex].subTasks = [
-          ...prevTasks[taskType][taskIndex].subTasks
-        ];
+        revertedTasks[taskType][taskIndex].subTasks = [...prevTasks[taskType][taskIndex].subTasks];
         return revertedTasks;
       });
     }
@@ -134,13 +132,7 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(
-                            taskId,
-                            "weeklyTasks",
-                            taskIndex,
-                            subTaskIndex,
-                            e.target.checked
-                          )
+                          handleCheckboxChange(taskId, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
                       />
                       <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>
@@ -170,13 +162,7 @@ function Task() {
                         type="checkbox"
                         className="h-5 w-5 text-blue-600 border-gray-300 rounded"
                         onChange={(e) =>
-                          handleCheckboxChange(
-                            taskId,
-                            "dailyTasks",
-                            taskIndex,
-                            subTaskIndex,
-                            e.target.checked
-                          )
+                          handleCheckboxChange(taskId, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
                       />
                       <label className="text-black font-bold text-xl">{renderSubTask(subTask)}</label>

@@ -1,18 +1,14 @@
-import { useDispatch } from "react-redux";
-import { Loader } from "@/components";
 import ScrollView from "@/components/common/scrollable-view";
 import AppUsageProgress from "../components/charts/AppUsageProgress";
+import ChapterPerformence from "../components/charts/ChapterPerformence";
+import CurrentProgressGauge from "../components/charts/CurrentProgressGauge";
 import DailyAverage from "../components/charts/DailyAverage";
+import ExamReadinessGauge from "../components/charts/ExamReadinessGauge";
+import MarksComparison from "../components/charts/MarksComparison";
 import QuizMarksLatestAttempt from "../components/charts/QuizMarksLatestAttempt";
 import TimeSpentChapter from "../components/charts/TimeSpentChapter";
-import ChapterPerformence from "../components/charts/ChapterPerformence";
-import MarksComparison from "../components/charts/MarksComparison";
-import CurrentProgressGauge from "../components/charts/CurrentProgressGauge";
-import ExamReadinessGauge from "../components/charts/ExamReadinessGauge";
 
 const analysis = () => {
-  const dispatch = useDispatch();
-  
   return (
     <div className="p-4 px-6">
       <h1 className="font-inter font-bold text-2xl p-3">Analysis Dashboard</h1>
@@ -124,7 +120,9 @@ const analysis = () => {
               </div>
 
               <div className="mt-5">
-                <h2 className="text-center font-bold mb-2">Focus Level, Study Hours & Average Chapter Marks Comparison</h2>
+                <h2 className="text-center font-bold mb-2">
+                  Focus Level, Study Hours & Average Chapter Marks Comparison
+                </h2>
                 <div className="h-96 w-full">
                   <MarksComparison />
                 </div>
