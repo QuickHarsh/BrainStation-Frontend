@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Loader } from "@/components";
 import ModuleCard from "@/components/cards/module-card";
 import ScrollView from "@/components/common/scrollable-view";
+import MainSkeleton from "@/components/skeletons/main";
 import useFetchData from "@/hooks/fetch-data";
 import { getAllModules } from "@/service/module";
 import { setCurrentModule } from "@/store/lecturesSlice";
@@ -41,9 +41,7 @@ const Main = () => {
       <h1 className="font-inter font-bold text-2xl">Welcome, Choose a module to get started!</h1>
 
       {!modulesData || modulesData.loading ? (
-        <div className="flex justify-center items-center">
-          <Loader />
-        </div>
+        <MainSkeleton />
       ) : (
         <ScrollView>
           <div className="grid grid-cols-3 gap-4 mt-8 mb-4 mx-1">
