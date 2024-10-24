@@ -6,9 +6,9 @@ import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { nextQuiz, setQuizzesForLecture } from "@/store/quizzesSlice";
 import QuizCard from "../cards/quiz-card";
-import AnimatingDots from "../common/animating-dots";
 import ScrollView from "../common/scrollable-view";
 import LeftArrowLongIcon from "../icons/left-arrow-long-icon";
+import QuizListSkeleton from "../skeletons/quiz-list";
 
 const QuizList = () => {
   const dispatch = useDispatch();
@@ -40,11 +40,7 @@ const QuizList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <AnimatingDots />
-      </div>
-    );
+    return <QuizListSkeleton />;
   }
 
   if (error) {
