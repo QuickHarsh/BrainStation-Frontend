@@ -20,6 +20,10 @@ export const getQuizFeedback = async (data) => {
   return await apiRequest(() => axiosInstance.post(`/api/quizzes/feedback`, data));
 };
 
-export const GetQuizzesDueByToday = async () => {
+export const getQuizzesDueByToday = async () => {
   return await apiRequest(() => axiosInstance.get(`/api/quizzes/due`));
+};
+
+export const getAttemptQuiz = async (lectureId) => {
+  return await apiRequest(() => axiosInstance.get(`/api/quizzes/attempt/${lectureId}`));
 };
