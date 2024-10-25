@@ -24,6 +24,10 @@ export const getQuizzesDueByToday = async () => {
   return await apiRequest(() => axiosInstance.get(`/api/quizzes/due`));
 };
 
+export const getQuizzesDueDetails = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/quizzes/due/details`));
+};
+
 export const getAttemptQuiz = async (lectureId) => {
   return await apiRequest(() => axiosInstance.get(`/api/quizzes/attempt/${lectureId}`));
 };
