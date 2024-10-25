@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { checkIfLocked } from "@/helper/checkLockedQuizzes";
-import { GetQuizzesDueByToday } from "@/service/quiz";
+import { getQuizzesDueByToday } from "@/service/quiz";
 import { showDialog } from "@/store/dialogSlice";
 import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
@@ -54,7 +54,7 @@ const QuizDueList = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await GetQuizzesDueByToday();
+      const response = await getQuizzesDueByToday();
       if (response.success) {
         setQuizzes(response.data.docs);
 
