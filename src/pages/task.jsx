@@ -16,6 +16,9 @@ function Task() {
   const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
+  console.log("Received performerType:", performerType);
+console.log("Received strugglingAreas:", strugglingAreas[0]);
+console.log("Received strugglingAreas:", strugglingAreas[1]);
   // Load completed subtasks and task set from local storage
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));

@@ -59,6 +59,19 @@ function Support() {
     navigate("/completed-tasks", { state: {} });
   };
 
+  const handledashboard = async () => {
+    if (parsedUserData) {
+      const taskData = {
+        performerType: parsedUserData.performerType,
+        strugglingAreas: parsedUserData.lowestTwoChapters.map((chapter) => chapter.chapter)
+      };
+      // const response = await axiosInstance.post("/recommend-task", taskData);
+      // console.log("Tasks generated:", response.data);
+      navigate("/analysis", { state: taskData });
+      console.log(taskData)
+    }
+  };
+
   return (
     <main className="flex h-screen flex-col items-center justify-between p-10 bg-gray-100">
       <div className="w-full md:w-3/4 bg-white shadow-lg rounded-lg p-6">
@@ -99,7 +112,7 @@ function Support() {
             <div className="mt-4">
               <button
                 className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-md"
-                onClick={() => navigate("/analysis")}
+                onClick={handledashboard}
               >
                 Go To Dashboard
               </button>

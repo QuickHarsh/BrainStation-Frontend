@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCompletedTasksByUserIdController } from "@/service/task";
+import { getCompletedTasks } from "@/service/task";
 
 function CompletedTasks() {
   const navigate = useNavigate(); // For navigation
@@ -13,7 +13,7 @@ function CompletedTasks() {
     const fetchCompletedSubtasks = async () => {
       try {
         // Proceed with the API request if the token exists
-        const response = await getCompletedTasksByUserIdController();
+        const response = await getCompletedTasks();
         console.log(response);
         setCompletedSubtasks(response.completedTasks); // Store the completed tasks
       } catch (err) {
