@@ -13,7 +13,7 @@ const abbreviateLectureName = (name) => {
     "Machine Learning": "ML",
     "Artificial Intelligence": "AI",
     "Introduction to Programming": "ITP",
-    "Computer Vision": "CV",
+    "Computer Vision": "CV"
     // Add more as needed
   };
 

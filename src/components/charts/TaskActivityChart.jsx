@@ -1,10 +1,10 @@
-import { Line } from 'react-chartjs-2';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
 
 function aggregateTasksByDate(completedTasks) {
   const taskCountByDate = {};
 
-  completedTasks.forEach(task => {
+  completedTasks.forEach((task) => {
     const date = new Date(task.completedAt).toLocaleDateString();
     if (taskCountByDate[date]) {
       taskCountByDate[date]++;
@@ -13,7 +13,7 @@ function aggregateTasksByDate(completedTasks) {
     }
   });
 
-  return Object.keys(taskCountByDate).map(date => ({
+  return Object.keys(taskCountByDate).map((date) => ({
     date,
     count: taskCountByDate[date]
   }));
@@ -28,17 +28,17 @@ export default function TaskActivityChart({ completedTasks = [] }) {
   useEffect(() => {
     if (completedTasks.length > 0) {
       const aggregatedData = aggregateTasksByDate(completedTasks);
-      const dates = aggregatedData.map(item => item.date);
-      const counts = aggregatedData.map(item => item.count);
+      const dates = aggregatedData.map((item) => item.date);
+      const counts = aggregatedData.map((item) => item.count);
 
       setChartData({
         labels: dates,
         datasets: [
           {
-            label: 'Tasks Completed',
+            label: "Tasks Completed",
             data: counts,
-            borderColor: '#4e73df',
-            backgroundColor: 'rgba(78, 115, 223, 0.2)',
+            borderColor: "#4e73df",
+            backgroundColor: "rgba(78, 115, 223, 0.2)",
             fill: true,
             tension: 0.4
           }
@@ -48,18 +48,18 @@ export default function TaskActivityChart({ completedTasks = [] }) {
   }, [completedTasks]);
 
   return (
-    <div style={{ width: '100%', height: '300px' }}>
+    <div style={{ width: "100%", height: "300px" }}>
       {completedTasks.length > 0 ? (
         <Line
           data={chartData}
           options={{
             responsive: true,
             plugins: {
-              legend: { display: true },
+              legend: { display: true }
             },
             scales: {
-              x: { title: { display: true, text: 'Date' } },
-              y: { title: { display: true, text: 'Tasks Completed' } },
+              x: { title: { display: true, text: "Date" } },
+              y: { title: { display: true, text: "Tasks Completed" } }
             }
           }}
         />

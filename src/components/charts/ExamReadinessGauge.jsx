@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { getStudentCumulativeAverage } from "@/service/task";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
-import { getStudentCumulativeAverage } from "@/service/task"; // Import the API call
+
+// Import the API call
 
 const settings = {
   width: 200,
-  height: 100, 
-  startAngle: -90, 
-  endAngle: 90 
+  height: 100,
+  startAngle: -90,
+  endAngle: 90
 };
 
 export default function ExamReadinessGauge() {
@@ -18,7 +20,7 @@ export default function ExamReadinessGauge() {
       try {
         const response = await getStudentCumulativeAverage(); // Fetch the cumulative average
         const roundedValue = Math.round(response.cumulativeAverage / 10) * 10; // Round to nearest 10
-        setGaugeValue(roundedValue); 
+        setGaugeValue(roundedValue);
       } catch (error) {
         console.error("Error fetching cumulative average:", error);
       }
@@ -54,9 +56,7 @@ export default function ExamReadinessGauge() {
           textAlign: "center"
         }}
       >
-        <div style={{ fontSize: "32px", fontWeight: "bold", color: "#333" }}>
-          {gaugeValue}%
-        </div>
+        <div style={{ fontSize: "32px", fontWeight: "bold", color: "#333" }}>{gaugeValue}%</div>
       </div>
     </div>
   );

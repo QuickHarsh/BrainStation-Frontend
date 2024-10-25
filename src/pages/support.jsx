@@ -68,7 +68,7 @@ function Support() {
       // const response = await axiosInstance.post("/recommend-task", taskData);
       // console.log("Tasks generated:", response.data);
       navigate("/analysis", { state: taskData });
-      console.log(taskData)
+      console.log(taskData);
     }
   };
 

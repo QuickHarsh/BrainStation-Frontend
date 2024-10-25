@@ -18,24 +18,16 @@ export const getCompletedTasks = async (data) => {
 
 export const getCompletedTasksCount = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/task/completed-tasks-count", data));
-
 };
 
 export const getLecturePerformance = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/progress/lecture-performance", data));
-
 };
 
 export const getStudentCumulativeAverage = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/progress/cumulative-average", data));
-
 };
-
 
 export const getStudentAlerts = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/progress/alerts", data));
-
 };
-
-
-

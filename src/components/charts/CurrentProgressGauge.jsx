@@ -4,7 +4,7 @@ import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
 // Define the default settings for the gauge
 const defaultSettings = {
   width: 200,
-  height: 200,
+  height: 200
 };
 
 export default function CurrentProgressGauge({ progress }) {
