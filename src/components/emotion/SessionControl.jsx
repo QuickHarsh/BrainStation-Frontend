@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
-import { checkAssrsResultExists, getAssrsResultByUser, createAssrsResult } from "@/service/asrs";
+import { checkAssrsResultExists, createAssrsResult, getAssrsResultByUser } from "@/service/asrs";
 import { saveSession } from "@/service/session";
 
 const SessionControl = ({ moduleId }) => {
@@ -210,11 +210,7 @@ const SessionControl = ({ moduleId }) => {
 
       <video ref={videoRef} className="hidden" autoPlay />
 
-      <SurveyModal
-        isVisible={showSurvey}
-        onClose={() => setShowSurvey(false)}
-        onContinue={handleSurveyComplete}
-      />
+      <SurveyModal isVisible={showSurvey} onClose={() => setShowSurvey(false)} onContinue={handleSurveyComplete} />
 
       {showPopup && finalResult && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[200]">
