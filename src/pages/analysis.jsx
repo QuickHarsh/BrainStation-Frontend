@@ -1,138 +1,175 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ScrollView from "@/components/common/scrollable-view";
-import AppUsageProgress from "../components/charts/AppUsageProgress";
+import { getCompletedTasks, getCompletedTasksCount, getStudentAlerts } from "@/service/task";
 import ChapterPerformence from "../components/charts/ChapterPerformence";
 import CurrentProgressGauge from "../components/charts/CurrentProgressGauge";
-import DailyAverage from "../components/charts/DailyAverage";
-import ExamReadinessGauge from "../components/charts/ExamReadinessGauge";
 import MarksComparison from "../components/charts/MarksComparison";
 import QuizMarksLatestAttempt from "../components/charts/QuizMarksLatestAttempt";
-import TimeSpentChapter from "../components/charts/TimeSpentChapter";
+import TaskActivityChart from "../components/charts/TaskActivityChart";
+import MotivationalQuote from "../components/dashboard/MotivationalQuote";
 
-const analysis = () => {
+function Analysis() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: [] };
+
+  const [completedTasksCount, setCompletedTasksCount] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [completedTasks, setCompletedTasks] = useState([]);
+
+  useEffect(() => {
+    async function fetchAlertMessage() {
+      try {
+        const response = await getStudentAlerts();
+        setAlertMessage(response.alertMessage);
+      } catch (error) {
+        console.error("Error fetching alert message:", error);
+      }
+    }
+    fetchAlertMessage();
+  }, []);
+
+  useEffect(() => {
+    switch (performerType) {
+      case "Excellent Performer":
+        setProgress(100);
+        break;
+      case "Medium Performer":
+        setProgress(50);
+        break;
+      case "Low Performer":
+        setProgress(25);
+        break;
+      default:
+        setProgress(0);
+    }
+  }, [performerType]);
+
+  useEffect(() => {
+    const fetchCompletedTasksCount = async () => {
+      try {
+        const response = await getCompletedTasksCount();
+        setCompletedTasksCount(response.completedTasksCount);
+      } catch (error) {
+        console.error("Error fetching completed tasks count:", error);
+      }
+    };
+    fetchCompletedTasksCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchCompletedTasks = async () => {
+      try {
+        const response = await getCompletedTasks();
+        setCompletedTasks(response.completedTasks || []); // Default to empty array
+      } catch (error) {
+        console.error("Error fetching completed tasks:", error);
+      }
+    };
+    fetchCompletedTasks();
+  }, []);
+
+  const alertStyle = {
+    backgroundColor: alertMessage === "Nice work! Keep it up!" ? "#D4EDDA" : "#F8D7DA",
+    color: alertMessage === "Nice work! Keep it up!" ? "#155724" : "#721C24",
+    border: alertMessage === "Nice work! Keep it up!" ? "1px solid #C3E6CB" : "1px solid #F5C6CB",
+    padding: "16px",
+    borderRadius: "8px",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: "18px"
+  };
+
+  const handleCompletedTasksClick = () => navigate("/completed-tasks", { state: {} });
+  const handleNavigateToTask = () => navigate("/task", { state: { performerType, strugglingAreas } });
+
   return (
     <div className="p-4 px-6">
-      <h1 className="font-inter font-bold text-2xl p-3">Analysis Dashboard</h1>
+      <button
+        className="bg-transparent text-blue-400 font-bold py-1 px-4 rounded-full ml-4 mt-4 flex items-center border border-blue-400 hover:bg-blue-100"
+        onClick={() => navigate(-1)}
+      >
+        Go Back
+      </button>
+      <h1 className="font-inter font-extrabold text-2xl p-3 text-center">Analysis Dashboard</h1>
 
       <ScrollView>
-        <div className="h-screen flex flex-col md:flex-row gap-10">
-          <div className="md:w-1/2 w-full ">
-            {/* Flexbox for Left Side Split */}
-            <div className="flex gap-10">
-              {/* Left Side */}
-              <div className="w-1/2 flex flex-col ">
-                <div className="h-full p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center gap-10 ">
-                  <div className="flex flex-col items-center ">
-                    <h6 className="mb-3 font-bold">Your Current Progress</h6>
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                      <CurrentProgressGauge />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-center justify-center">
-                    <h6 className="mb-3 font-bold">Exam Readiness</h6>
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                      <ExamReadinessGauge />
-                    </div>
-                  </div>
-                </div>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h2 className="font-bold text-center text-xl mb-3">Student Status</h2>
+              <div className="flex justify-center">
+                <CurrentProgressGauge progress={progress} />
               </div>
-
-              {/* Right Side */}
-              <div className="w-full flex flex-col">
-                <div className="h-full p-6 bg-white border border-gray-200 rounded-lg flex flex-col justify-center items-center">
-                  <h6 className="mb-3 font-bold">Task Completion Status</h6>
-
-                  <div className="w-full p-5 bg-white border border-gray-200 rounded-lg flex justify-center flex-col gap-2">
-                    <div>
-                      <p>Completed Tasks = 20</p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <div>Current Task group Tasks =</div>
-                      <div>
-                        <div className="rounded-md bg-blue-100 text-blue-800 font-bold py-0.5 px-2.5 border border-transparent text-sm transition-all">
-                          View
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between gap-2 mt-2">
-                      <div className="rounded-md bg-blue-100 font-bold py-0.5 px-2.5 border border-transparent text-sm text-slate-600 transition-all">
-                        Pending = 4
-                      </div>
-                      <div className="rounded-md bg-blue-100 font-bold py-0.5 px-2.5 border border-transparent text-sm text-slate-600 transition-all">
-                        Completed = 2
-                      </div>
-                    </div>
-                  </div>
-
-                  <h6 className="mb-3 mt-5 font-bold">App usage Progress</h6>
-                  <div className="h-72">
-                    <AppUsageProgress />
-                  </div>
-                </div>
-              </div>
+              <h6 className="font-bold text-center mt-4 mb-3">Alert</h6>
+              <div style={alertStyle}>{alertMessage || "Loading alert..."}</div>
             </div>
 
-            {/* Full-Width Bottom Section */}
-            <div className="mt-4">
-              <div className="w-full h-full bg-white border border-gray-200 rounded-lg p-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p>Daily Average (Study Hours with focus)</p>
-                    <h2 className="text-2xl font-bold">2h 20m</h2>
-                  </div>
-                  <div>
-                    <span className="text-orange-600 mx-1">+30m</span> this week
-                  </div>
-                </div>
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h2 className="font-bold text-center text-xl mb-3">Task Completion Status</h2>
 
-                <div className="h-96 w-full mt-3">
-                  <DailyAverage />
-                </div>
+              <p className="text-lg text-center">
+                Completed Tasks: <span className="font-bold">{completedTasksCount}</span>
+              </p>
+
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <button
+                  className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+                  onClick={handleNavigateToTask}
+                >
+                  View Task
+                </button>
+                <button
+                  className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+                  onClick={handleCompletedTasksClick}
+                >
+                  Completed Task
+                </button>
+              </div>
+
+              <h6 className="font-bold text-center text-xl mt-6 mb-3">Motivation</h6>
+              <MotivationalQuote />
+            </div>
+
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h6 className="font-bold text-center text-xl mb-3">Chapter Performance</h6>
+              <div className="h-64 w-full flex justify-center">
+                {" "}
+                <ChapterPerformence />
               </div>
             </div>
           </div>
 
-          <div className="md:w-1/2 w-full h-full">
-            <div className="p-6 bg-white border border-gray-200 rounded-lg">
-              <div className="flex">
-                <div className="w-1/2 p-4">
-                  <h2 className="text-center font-bold mb-3">Quiz Marks vs Latest Attempt</h2>
-                  <QuizMarksLatestAttempt />
-                </div>
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h2 className="text-center font-bold text-xl mb-3">Task Activity</h2>
+              <TaskActivityChart completedTasks={completedTasks} />
+            </div>
 
-                <div className="w-1/2 p-4">
-                  <div className="flex items-center justify-between flex-col gap-5">
-                    <h2 className="text-center font-bold">Time Spent on Each Chapter</h2>
-                    <div className="w-full h-72 flex justify-center">
-                      <TimeSpentChapter />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between flex-col gap-5 mt-5 align-baseline">
-                    <h2 className="text-center font-bold">Chapter Performance</h2>
-                    <div className="w-full h-72 flex justify-center">
-                      <ChapterPerformence />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5">
-                <h2 className="text-center font-bold mb-2">
-                  Focus Level, Study Hours & Average Chapter Marks Comparison
-                </h2>
-                <div className="h-96 w-full">
-                  <MarksComparison />
-                </div>
+            <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h2 className="text-center font-bold text-xl mb-2">
+                Focus Level, Study Hours & Average Chapter Marks Comparison
+              </h2>
+              <div className="h-96 w-full">
+                <MarksComparison />
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h6 className="font-bold text-center text-xl mb-3">Quiz Marks vs Latest Attempt</h6>
+              <QuizMarksLatestAttempt />
+            </div>
+
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg"></div>
           </div>
         </div>
       </ScrollView>
     </div>
   );
-};
+}
 
-export default analysis;
+export default Analysis;
