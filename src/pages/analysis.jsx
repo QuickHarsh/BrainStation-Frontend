@@ -18,6 +18,7 @@ function Analysis() {
   const [progress, setProgress] = useState(0);
   const [alertMessage, setAlertMessage] = useState("");
   const [completedTasks, setCompletedTasks] = useState([]);
+
   useEffect(() => {
     async function fetchAlertMessage() {
       try {
@@ -86,98 +87,93 @@ function Analysis() {
 
   return (
     <div className="p-4 px-6">
-      <h1 className="font-inter font-bold text-2xl p-3">Analysis Dashboard</h1>
+<h1 className="font-inter font-extrabold text-2xl p-3 text-center">Analysis Dashboard</h1>
 
       <ScrollView>
-        <div className="h-screen flex flex-col lg:flex-row gap-10">
-          <div className="lg:w-1/2 w-full flex flex-col gap-6">
-            {/* Left Side */}
-            <div className="flex flex-col md:flex-row gap-4">
-              {/* Current Progress & Alert Card */}
-              <div className="flex-1 p-6 bg-white border border-gray-200 rounded-lg flex flex-col items-center gap-10">
-                <div className="flex flex-col items-center">
-                  <h6 className="mb-3 font-bold">Your Current Progress</h6>
-                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <CurrentProgressGauge progress={progress} />
-                  </div>
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                  <h6 className="mb-3 font-bold">Alert</h6>
-                  <div style={alertStyle}>{alertMessage || "Loading alert..."}</div>
-                </div>
+        <div className="flex flex-col gap-6">
+          
+          {/* Line 1: Your Current Progress + Alert, Task Completion Status + Motivation, Chapter Performance */}
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            
+            {/* Your Current Progress and Alert */}
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+            <h2 className="font-bold text-center text-xl mb-3">Student Status</h2>
+              <div className="flex justify-center">
+                <CurrentProgressGauge progress={progress} />
               </div>
-
-              {/* Task Completion Status & Motivational Quote Section */}
-              <div className="flex flex-col gap-4 flex-1">
-                {/* Task Completion Status Card */}
-                <div
-                  className="p-4 bg-white border border-gray-200 rounded-lg flex flex-col items-center gap-4"
-                  style={{ minWidth: "300px" }}
-                >
-                  <h2 className="mb-3 font-bold text-lg">Task Completion Status</h2>
-                  <p className="text-lg">
-                    Completed Tasks = <span className="font-bold">{completedTasksCount}</span>
-                  </p>
-                  <div className="mt-4 flex flex-col items-center gap-3">
-                    <button
-                      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-4 text-lg transition-all w-40"
-                      onClick={handleNavigateToTask}
-                    >
-                      View Task
-                    </button>
-                    <button
-                      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-4 text-lg transition-all w-40"
-                      onClick={handleCompletedTasksClick}
-                    >
-                      Completed Task
-                    </button>
-                  </div>
-                </div>
-
-                {/* Motivational Quote Card */}
-                <div
-                  className="p-4 bg-white border border-gray-200 rounded-lg shadow-lg flex flex-col justify-center items-center"
-                  style={{ minWidth: "300px" }}
-                >
-                  <h2 className="mb-3 font-bold text-lg text-center">Motivation</h2>
-                  <MotivationalQuote />
-                </div>
-              </div>
+              <h6 className="font-bold text-center mt-4 mb-3">Alert</h6>
+              <div style={alertStyle}>{alertMessage || "Loading alert..."}</div>
             </div>
 
-            {/* Task Activity Section */}
-            <div className="w-full bg-white border border-gray-200 rounded-lg p-8 mt-4">
-              <h2 className="text-center font-bold mb-3">Task Activity</h2>
-              <TaskActivityChart completedTasks={completedTasks} />
-            </div>
+    {/* Task Completion Status + Motivational Quote */}
+<div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+<h2 className="font-bold text-center text-xl mb-3">Task Completion Status</h2>
+
+  <p className="text-lg text-center">
+  Completed Tasks: <span className="font-bold">{completedTasksCount}</span>
+</p>
+
+  {/* Flexbox for button alignment with same size */}
+  <div className="mt-4 flex items-center justify-center gap-4">
+    <button
+      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+      onClick={handleNavigateToTask}
+    >
+      View Task
+    </button>
+    <button
+      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+      onClick={handleCompletedTasksClick}
+    >
+      Completed Task
+    </button>
+  </div>
+
+  {/* Motivational Quote */}
+ 
+  <h6 className="font-bold text-center text-xl mt-6 mb-3">Motivation</h6>
+  <MotivationalQuote />
+</div>
+
+           {/* Chapter Performance */}
+<div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+<h6 className="font-bold text-center text-xl mb-3">Chapter Performance</h6>
+  <div className="h-64 w-full flex justify-center"> {/* Slightly bigger than h-48 */}
+    <ChapterPerformence />
+  </div>
+</div>
           </div>
 
-          {/* Right Side Charts */}
-          <div className="lg:w-1/2 w-full h-full flex flex-col gap-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex flex-wrap">
-                <div className="w-full md:w-1/2 p-4">
-                  <h2 className="text-center font-bold mb-3">Quiz Marks vs Latest Attempt</h2>
-                  <QuizMarksLatestAttempt />
-                </div>
-
-                <div className="w-full md:w-1/2 p-4">
-                  <h2 className="text-center font-bold">Chapter Performance</h2>
-                  <div className="h-72 w-full flex justify-center">
-                    <ChapterPerformence />
-                  </div>
-                </div>
-              </div>
+          {/* Line 2: Task Activity + Focus Level, Study Hours & Average Chapter Marks Comparison */}
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            {/* Task Activity */}
+            <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+            <h2 className="text-center font-bold text-xl mb-3">Task Activity</h2>
+              <TaskActivityChart completedTasks={completedTasks} />
             </div>
 
-            {/* Marks Comparison Chart */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-center font-bold mb-2">
-                Focus Level, Study Hours & Average Chapter Marks Comparison
-              </h2>
+            {/* Focus Level, Study Hours & Average Chapter Marks Comparison */}
+            <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+            <h2 className="text-center font-bold text-xl mb-2">
+  Focus Level, Study Hours & Average Chapter Marks Comparison
+</h2>
               <div className="h-96 w-full">
                 <MarksComparison />
               </div>
+            </div>
+          </div>
+
+          {/* Line 3: Other Charts */}
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+            {/* Quiz Marks vs Latest Attempt */}
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+            <h6 className="font-bold text-center text-xl mb-3">Quiz Marks vs Latest Attempt</h6>
+              <QuizMarksLatestAttempt />
+            </div>
+
+            {/* Additional smaller charts */}
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              {/* Add chart component */}
             </div>
           </div>
         </div>

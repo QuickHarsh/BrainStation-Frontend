@@ -2,23 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { deleteSubtaskFromTaskController, getTaskRecommendations } from "@/service/task";
 
-// Remove this if not needed
-
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
   const [taskId, setTaskId] = useState(""); // Store the taskId
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // For navigation, including the back button
   const location = useLocation();
   const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: [] };
   const lowestChapter1 = strugglingAreas[0];
   const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
-  console.log("Received performerType:", performerType);
-  console.log("Received strugglingAreas:", strugglingAreas[0]);
-  console.log("Received strugglingAreas:", strugglingAreas[1]);
   // Load completed subtasks and task set from local storage
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));
@@ -57,9 +52,8 @@ function Task() {
   }, [performerType, lowestChapter1, lowestChapter2, tasks]);
 
   const handleCheckboxChange = async (taskId, taskType, taskIndex, subTaskIndex, isChecked) => {
-    if (!isChecked) return; // Only act if the checkbox is checked
+    if (!isChecked) return;
 
-    // Optimistically update the UI
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
       updatedTasks[taskType][taskIndex].subTasks = updatedTasks[taskType][taskIndex].subTasks.filter(
@@ -82,8 +76,6 @@ function Task() {
 
       console.log("Subtask deleted and moved to completed collection:", response);
     } catch (err) {
-      // Revert UI changes on error
-      console.error("Error deleting subtask:", err.message || err);
       setError("Failed to delete subtask. Please try again.");
       setTasks((prevTasks) => {
         const revertedTasks = { ...prevTasks };
@@ -97,43 +89,57 @@ function Task() {
     navigate("/completed-tasks");
   };
 
+  // Properly render links inside subtasks by encoding URLs properly
   const renderSubTask = (subTask) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    if (urlRegex.test(subTask)) {
-      return subTask.split(urlRegex).map((part, index) =>
-        urlRegex.test(part) ? (
-          <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+
+    return subTask.split(urlRegex).map((part, index) => {
+      if (urlRegex.test(part)) {
+        const encodedURL = encodeURI(part.trim()); // Properly encode the URL to handle spaces
+        return (
+          <a key={index} href={encodedURL} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
             {part}
           </a>
-        ) : (
-          <span key={index}>{part}</span>
-        )
-      );
-    }
-    return subTask;
+        );
+      } else {
+        return <span key={index}>{part}</span>;
+      }
+    });
   };
 
   if (loading) return <div>Loading tasks...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <main className="flex h-screen flex-col items-center justify-between p-6 bg-gray-100">
-      <div className="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-3xl font-bold text-blue-900 mb-6">Task Board</h2>
+    <main className="flex flex-col h-screen">
+      {/* Back Button */}
+      <button
+  className="bg-transparent text-blue-400 font-bold py-1 px-4 rounded-full ml-4 mt-4 flex items-center border border-blue-400 hover:bg-blue-100"
+  style={{ width: "fit-content" }} // Fit button size to its content
+  onClick={() => navigate(-1)} // Go back to the previous page
+>
+  <span className="mr-2"></span> Back
+</button>
+
+
+      {/* Upper Half */}
+      <div className="flex-grow w-full bg-white p-6 md:w-3/4 shadow-md rounded-lg mx-auto">
+        <h2 className="text-3xl font-bold text-black text-center mb-6">Task Board</h2>
 
         {/* Weekly Tasks Section */}
         <section className="mb-8">
           <h3 className="text-2xl font-semibold text-blue-900 mb-4">Weekly Tasks</h3>
           {tasks?.weeklyTasks?.length > 0 ? (
             tasks.weeklyTasks.map((task, taskIndex) => (
-              <div key={taskIndex} className="p-6 bg-gray-100 rounded-lg mb-4">
+              <div key={taskIndex} className="p-6 bg-gray-200 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
                 {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subTaskIndex) => (
                     <div key={subTaskIndex} className="flex items-start space-x-2 mb-4">
                       <input
                         type="checkbox"
-                        className="h-5 w-5 text-blue-600 border-gray-300 rounded"
+                        className="custom-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded"
+                        style={{ width: '20px', height: '20px' }} // Explicit width and height for all checkboxes
                         onChange={(e) =>
                           handleCheckboxChange(taskId, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
@@ -156,14 +162,15 @@ function Task() {
           <h3 className="text-2xl font-semibold text-blue-900 mb-4">Daily Tasks</h3>
           {tasks?.dailyTasks?.length > 0 ? (
             tasks.dailyTasks.map((task, taskIndex) => (
-              <div key={taskIndex} className="p-6 bg-gray-100 rounded-lg mb-4">
+              <div key={taskIndex} className="p-6 bg-gray-200 rounded-lg mb-4">
                 <h4 className="text-2xl font-extrabold text-blue-800 mb-4">{task.task}</h4>
                 {task.subTasks?.length > 0 ? (
                   task.subTasks.map((subTask, subTaskIndex) => (
                     <div key={subTaskIndex} className="flex items-start space-x-2 mb-4">
                       <input
                         type="checkbox"
-                        className="h-5 w-5 text-blue-600 border-gray-300 rounded"
+                        className="custom-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded"
+                        style={{ width: '20px', height: '20px' }} // Explicit width and height for all checkboxes
                         onChange={(e) =>
                           handleCheckboxChange(taskId, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
@@ -188,6 +195,9 @@ function Task() {
           View Completed Subtasks
         </button>
       </div>
+
+      {/* Lower Half: Darker gray background */}
+      <div className="w-full h-1/2 bg-gray-300"></div>
     </main>
   );
 }

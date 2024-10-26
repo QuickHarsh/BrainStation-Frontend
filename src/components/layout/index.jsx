@@ -8,7 +8,7 @@ const DefaultLayout = () => {
   const [isPanelVisible, setIsPanelVisible] = useState(true);
   const location = useLocation();
 
-  const whiteListPaths = ["/", "/progress", "/support", "/analysis", "/task", "completed-task"];
+  const whiteListPaths = ["/", "/progress", "/support", "/analysis", "/task", "/completed-task"];
 
   useEffect(() => {
     if (whiteListPaths.includes(location.pathname)) {
