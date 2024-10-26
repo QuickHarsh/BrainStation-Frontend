@@ -86,8 +86,16 @@ function Analysis() {
   const handleNavigateToTask = () => navigate("/task", { state: { performerType, strugglingAreas } });
 
   return (
+
     <div className="p-4 px-6">
+        <button
+          className="bg-transparent text-blue-400 font-bold py-1 px-4 rounded-full ml-4 mt-4 flex items-center border border-blue-400 hover:bg-blue-100"
+          onClick={() => navigate(-1)}
+        >
+          Go Back
+        </button>
       <h1 className="font-inter font-extrabold text-2xl p-3 text-center">Analysis Dashboard</h1>
+
 
       <ScrollView>
         <div className="flex flex-col gap-6">
