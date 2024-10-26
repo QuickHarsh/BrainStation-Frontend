@@ -1,8 +1,6 @@
-//  DailyAverage.js
 import { useEffect, useRef } from "react";
 import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from "chart.js";
 
-// Register required Chart.js components
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const DailyAverage = () => {
@@ -17,13 +15,13 @@ const DailyAverage = () => {
         {
           label: "Daily Average",
           data: [
-            { x: "MON", y: [0, 50] }, // Start at 0, end at 50
-            { x: "TUE", y: [0, 100] }, // Start at 0, end at 100
-            { x: "WED", y: [0, 150] }, // Start at 50, end at 150
-            { x: "THU", y: [0, 75] }, // Start at 0, end at 75
-            { x: "FRI", y: [0, 125] }, // Start at 25, end at 125
-            { x: "SAT", y: [0, 30] }, // Start at 0, end at 30
-            { x: "SUN", y: [0, 60] } // Start at 0, end at 60
+            { x: "MON", y: [0, 50] },
+            { x: "TUE", y: [0, 100] },
+            { x: "WED", y: [0, 150] },
+            { x: "THU", y: [0, 75] },
+            { x: "FRI", y: [0, 125] },
+            { x: "SAT", y: [0, 30] },
+            { x: "SUN", y: [0, 60] }
           ],
           backgroundColor: "#0B54A0"
         }
@@ -33,32 +31,32 @@ const DailyAverage = () => {
     const options = {
       scales: {
         y: {
-          min: 0, // Minimum value on the Y-axis
-          max: 150, // Maximum value on the Y-axis
+          min: 0,
+          max: 150,
           ticks: {
-            stepSize: 50, // Y-axis values increment by 50
-            display: true // Display Y-axis labels
+            stepSize: 50,
+            display: true
           }
         },
         x: {
           title: {
             display: true,
-            text: "Days of the Week" // X-axis title
+            text: "Days of the Week"
           }
         }
       },
       plugins: {
         legend: {
-          display: false // Show the legend
+          display: false
         },
         tooltip: {
           callbacks: {
             label: function (tooltipItem) {
               const value = tooltipItem.raw;
-              return `Range: ${value[0]} - ${value[1]}`; // Custom tooltip display
+              return `Range: ${value[0]} - ${value[1]}`;
             },
             title: function () {
-              return ""; // Prevent showing a title in the tooltip
+              return "";
             }
           }
         }

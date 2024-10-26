@@ -1,4 +1,3 @@
-// MarksComparison.js
 import { useEffect, useRef } from "react";
 import { CategoryScale, Chart, Legend, LineElement, LinearScale, PointElement, Tooltip } from "chart.js";
 

@@ -1,4 +1,3 @@
-// MotivationalQuote.js
 import { useEffect, useState } from "react";
 
 // Array of motivational quotes
@@ -14,22 +13,18 @@ const quotes = [
   "The harder you work for something, the greater you’ll feel when you achieve it."
 ];
 
-// Function to randomly select a quote
 const getRandomQuote = () => quotes[Math.floor(Math.random() * quotes.length)];
 
 export default function MotivationalQuote() {
   const [quote, setQuote] = useState(getRandomQuote());
 
-  // Set up interval to update the quote every 10 seconds
   useEffect(() => {
-    const intervalId = setInterval(() => setQuote(getRandomQuote()), 10000); // Change quote every 10 seconds
-    return () => clearInterval(intervalId); // Clear interval on component unmount
+    const intervalId = setInterval(() => setQuote(getRandomQuote()), 10000);
+    return () => clearInterval(intervalId);
   }, []);
   return (
     <div className="motivational-quote p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
-      <p className="text-lg font-semibold italic">
-        &ldquo;{quote}&rdquo; {/* Escaping quotes using &ldquo; and &rdquo; */}
-      </p>
+      <p className="text-lg font-semibold italic">&ldquo;{quote}&rdquo;</p>
     </div>
   );
 }

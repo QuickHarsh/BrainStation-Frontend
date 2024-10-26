@@ -14,8 +14,6 @@ import Signup from "@/pages/signup";
 import support from "@/pages/support";
 import Task from "@/pages/task";
 
-// Ensure Loader is imported correctly
-
 const coreRoutes = [
   {
     path: "/",

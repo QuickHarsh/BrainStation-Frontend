@@ -7,22 +7,20 @@ const PredictModules = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Get the user ID from the authorization token (assuming you're using JWT)
-    const token = localStorage.getItem("token"); // Replace with your method of getting the token
-
+    const token = localStorage.getItem("token");
     if (token) {
-      const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the JWT to get user data
-      const userId = decodedToken.userId; // Assuming `userId` is in the token payload
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      const userId = decodedToken.userId;
 
       // Make the API call
       axios
         .get(`http://localhost:3000/api/progress/predict-all-modules/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}` // Pass the token in the Authorization header
+            Authorization: `Bearer ${token}`
           }
         })
         .then((response) => {
-          setPredictions(response.data); // Set the predictions data
+          setPredictions(response.data);
           setLoading(false);
         })
         .catch((error) => {

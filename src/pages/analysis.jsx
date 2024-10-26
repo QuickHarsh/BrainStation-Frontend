@@ -87,17 +87,13 @@ function Analysis() {
 
   return (
     <div className="p-4 px-6">
-<h1 className="font-inter font-extrabold text-2xl p-3 text-center">Analysis Dashboard</h1>
+      <h1 className="font-inter font-extrabold text-2xl p-3 text-center">Analysis Dashboard</h1>
 
       <ScrollView>
         <div className="flex flex-col gap-6">
-          
-          {/* Line 1: Your Current Progress + Alert, Task Completion Status + Motivation, Chapter Performance */}
           <div className="flex flex-wrap lg:flex-nowrap gap-4">
-            
-            {/* Your Current Progress and Alert */}
             <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-            <h2 className="font-bold text-center text-xl mb-3">Student Status</h2>
+              <h2 className="font-bold text-center text-xl mb-3">Student Status</h2>
               <div className="flex justify-center">
                 <CurrentProgressGauge progress={progress} />
               </div>
@@ -105,76 +101,64 @@ function Analysis() {
               <div style={alertStyle}>{alertMessage || "Loading alert..."}</div>
             </div>
 
-    {/* Task Completion Status + Motivational Quote */}
-<div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-<h2 className="font-bold text-center text-xl mb-3">Task Completion Status</h2>
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h2 className="font-bold text-center text-xl mb-3">Task Completion Status</h2>
 
-  <p className="text-lg text-center">
-  Completed Tasks: <span className="font-bold">{completedTasksCount}</span>
-</p>
+              <p className="text-lg text-center">
+                Completed Tasks: <span className="font-bold">{completedTasksCount}</span>
+              </p>
 
-  {/* Flexbox for button alignment with same size */}
-  <div className="mt-4 flex items-center justify-center gap-4">
-    <button
-      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
-      onClick={handleNavigateToTask}
-    >
-      View Task
-    </button>
-    <button
-      className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
-      onClick={handleCompletedTasksClick}
-    >
-      Completed Task
-    </button>
-  </div>
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <button
+                  className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+                  onClick={handleNavigateToTask}
+                >
+                  View Task
+                </button>
+                <button
+                  className="rounded-md bg-blue-600 text-white font-bold py-1.5 px-6 text-lg transition-all w-32 text-center"
+                  onClick={handleCompletedTasksClick}
+                >
+                  Completed Task
+                </button>
+              </div>
 
-  {/* Motivational Quote */}
- 
-  <h6 className="font-bold text-center text-xl mt-6 mb-3">Motivation</h6>
-  <MotivationalQuote />
-</div>
+              <h6 className="font-bold text-center text-xl mt-6 mb-3">Motivation</h6>
+              <MotivationalQuote />
+            </div>
 
-           {/* Chapter Performance */}
-<div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-<h6 className="font-bold text-center text-xl mb-3">Chapter Performance</h6>
-  <div className="h-64 w-full flex justify-center"> {/* Slightly bigger than h-48 */}
-    <ChapterPerformence />
-  </div>
-</div>
+            <div className="flex-1 p-6 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h6 className="font-bold text-center text-xl mb-3">Chapter Performance</h6>
+              <div className="h-64 w-full flex justify-center">
+                {" "}
+                <ChapterPerformence />
+              </div>
+            </div>
           </div>
 
-          {/* Line 2: Task Activity + Focus Level, Study Hours & Average Chapter Marks Comparison */}
           <div className="flex flex-wrap lg:flex-nowrap gap-4">
-            {/* Task Activity */}
             <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-            <h2 className="text-center font-bold text-xl mb-3">Task Activity</h2>
+              <h2 className="text-center font-bold text-xl mb-3">Task Activity</h2>
               <TaskActivityChart completedTasks={completedTasks} />
             </div>
 
-            {/* Focus Level, Study Hours & Average Chapter Marks Comparison */}
             <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-            <h2 className="text-center font-bold text-xl mb-2">
-  Focus Level, Study Hours & Average Chapter Marks Comparison
-</h2>
+              <h2 className="text-center font-bold text-xl mb-2">
+                Focus Level, Study Hours & Average Chapter Marks Comparison
+              </h2>
               <div className="h-96 w-full">
                 <MarksComparison />
               </div>
             </div>
           </div>
 
-          {/* Line 3: Other Charts */}
           <div className="flex flex-wrap lg:flex-nowrap gap-4">
-            {/* Quiz Marks vs Latest Attempt */}
             <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-            <h6 className="font-bold text-center text-xl mb-3">Quiz Marks vs Latest Attempt</h6>
+              <h6 className="font-bold text-center text-xl mb-3">Quiz Marks vs Latest Attempt</h6>
               <QuizMarksLatestAttempt />
             </div>
 
-            {/* Additional smaller charts */}
-            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-              {/* Add chart component */}
-            </div>
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg"></div>
           </div>
         </div>
       </ScrollView>

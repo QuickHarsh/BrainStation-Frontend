@@ -1,6 +1,4 @@
-// AppUsageProgress.js
-// eslint-disable-next-line no-unused-vars
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BarElement, CategoryScale, Chart, LinearScale } from "chart.js";
 
 // Register required Chart.js components

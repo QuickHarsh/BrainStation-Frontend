@@ -2,27 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 import { getLecturePerformance } from "@/service/task";
 
-// Register required Chart.js components
 Chart.register(ArcElement, Tooltip, Legend);
 
-// Helper function to abbreviate long lecture names
 const abbreviateLectureName = (name) => {
-  // Define abbreviations for common terms
   const abbreviations = {
     "Data Science": "DS",
     "Machine Learning": "ML",
     "Artificial Intelligence": "AI",
     "Introduction to Programming": "ITP",
     "Computer Vision": "CV"
-    // Add more as needed
   };
 
-  // Check if the name is in abbreviations, else shorten to initials if it's over 30 characters
   if (abbreviations[name]) return abbreviations[name];
   if (name.length > 30) {
     return name
       .split(" ")
-      .map((word) => word[0]) // Take the first letter of each word
+      .map((word) => word[0])
       .join("");
   }
   return name;
@@ -45,7 +40,6 @@ const ChapterPerformence = () => {
           return;
         }
 
-        // Map API data to chart format, using abbreviations for labels
         const labels = lecturePerformance.map((item) => abbreviateLectureName(item.lectureTitle));
         const scores = lecturePerformance.map((item) => item.score);
 

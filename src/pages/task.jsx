@@ -4,17 +4,16 @@ import { deleteSubtaskFromTaskController, getTaskRecommendations } from "@/servi
 
 function Task() {
   const [tasks, setTasks] = useState({ weeklyTasks: [], dailyTasks: [] });
-  const [taskId, setTaskId] = useState(""); // Store the taskId
+  const [taskId, setTaskId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // For navigation, including the back button
+  const navigate = useNavigate();
   const location = useLocation();
   const { performerType, strugglingAreas } = location.state || { performerType: "", strugglingAreas: [] };
   const lowestChapter1 = strugglingAreas[0];
   const lowestChapter2 = strugglingAreas[1];
   const hasFetched = useRef(false);
 
-  // Load completed subtasks and task set from local storage
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem("taskSet"));
     if (savedTasks) {
@@ -89,15 +88,20 @@ function Task() {
     navigate("/completed-tasks");
   };
 
-  // Properly render links inside subtasks by encoding URLs properly
   const renderSubTask = (subTask) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
 
     return subTask.split(urlRegex).map((part, index) => {
       if (urlRegex.test(part)) {
-        const encodedURL = encodeURI(part.trim()); // Properly encode the URL to handle spaces
+        const encodedURL = encodeURI(part.trim());
         return (
-          <a key={index} href={encodedURL} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+          <a
+            key={index}
+            href={encodedURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
             {part}
           </a>
         );
@@ -112,21 +116,17 @@ function Task() {
 
   return (
     <main className="flex flex-col h-screen">
-      {/* Back Button */}
       <button
-  className="bg-transparent text-blue-400 font-bold py-1 px-4 rounded-full ml-4 mt-4 flex items-center border border-blue-400 hover:bg-blue-100"
-  style={{ width: "fit-content" }} // Fit button size to its content
-  onClick={() => navigate(-1)} // Go back to the previous page
->
-  <span className="mr-2"></span> Back
-</button>
+        className="bg-transparent text-blue-400 font-bold py-1 px-4 rounded-full ml-4 mt-4 flex items-center border border-blue-400 hover:bg-blue-100"
+        style={{ width: "fit-content" }}
+        onClick={() => navigate(-1)}
+      >
+        <span className="mr-2"></span> Back
+      </button>
 
-
-      {/* Upper Half */}
       <div className="flex-grow w-full bg-white p-6 md:w-3/4 shadow-md rounded-lg mx-auto">
         <h2 className="text-3xl font-bold text-black text-center mb-6">Task Board</h2>
 
-        {/* Weekly Tasks Section */}
         <section className="mb-8">
           <h3 className="text-2xl font-semibold text-blue-900 mb-4">Weekly Tasks</h3>
           {tasks?.weeklyTasks?.length > 0 ? (
@@ -139,7 +139,7 @@ function Task() {
                       <input
                         type="checkbox"
                         className="custom-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        style={{ width: '20px', height: '20px' }} // Explicit width and height for all checkboxes
+                        style={{ width: "20px", height: "20px" }}
                         onChange={(e) =>
                           handleCheckboxChange(taskId, "weeklyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
@@ -170,7 +170,7 @@ function Task() {
                       <input
                         type="checkbox"
                         className="custom-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded"
-                        style={{ width: '20px', height: '20px' }} // Explicit width and height for all checkboxes
+                        style={{ width: "20px", height: "20px" }}
                         onChange={(e) =>
                           handleCheckboxChange(taskId, "dailyTasks", taskIndex, subTaskIndex, e.target.checked)
                         }
@@ -195,8 +195,6 @@ function Task() {
           View Completed Subtasks
         </button>
       </div>
-
-      {/* Lower Half: Darker gray background */}
       <div className="w-full h-1/2 bg-gray-300"></div>
     </main>
   );
