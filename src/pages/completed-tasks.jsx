@@ -15,14 +15,16 @@ function CompletedTasks() {
         const response = await getCompletedTasks();
         console.log(response);
         setCompletedSubtasks(response.completedTasks);
+        setLoading(false); // Ensure loading is set to false after successful fetch
       } catch (err) {
         setError(err.response?.data?.message || err.message);
-        setLoading(false);
+        setLoading(false); // Also set loading to false if there's an error
       }
     };
-
+  
     fetchCompletedSubtasks();
   }, []);
+  
 
   const toggleTaskExpansion = (index) => {
     setExpandedTask(expandedTask === index ? null : index);
