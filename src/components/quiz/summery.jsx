@@ -10,18 +10,21 @@ import SummeryTable from "./summery-table";
 const QuizSummery = ({ onClose, summeryData, isFromDue = false }) => {
   const practiceHistory = useSelector((state) => state.practice.practiceHistory);
   const { currentLectureId } = useSelector((state) => state.lectures);
-  const userId = "66d97b6fc30a1f78cf41b620";
-  const [feedback, setFeedback] = useState({ strength: [], weakness: [] }); // Set default arrays
+  const userId = localStorage.getItem("userId").replace(/"/g, "");
+  const [feedback, setFeedback] = useState({ strength: [], weakness: [] });
   const [loading, setLoading] = useState(true);
   const [mergedData, setMergedData] = useState([]);
 
   const fetchFeedbackAndQuizzes = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
-      // Fetch feedback
-      const feedbackResponse = await getQuizFeedback({ practiceHistory });
-      setFeedback(feedbackResponse.data[0] || { strength: [], weakness: [] }); // Ensure feedback has valid arrays
+      const feedbackResponse = await getQuizFeedback(
+        currentLectureId,
+        { practiceHistory },
+        { from: isFromDue ? "due" : "lecture" }
+      );
+      setFeedback(feedbackResponse.data[0] || { strength: [], weakness: [] });
 
       const filters = {
         "filter[userId]": userId,
@@ -32,12 +35,10 @@ const QuizSummery = ({ onClose, summeryData, isFromDue = false }) => {
         delete filters["filter[lectureId]"];
       }
 
-      // Fetch quiz data from the quizzes API
       const quizResponse = await getQuizzes(filters);
 
       const quizzes = quizResponse.data.docs;
 
-      // Merge practice history with quiz data
       const mergedData = practiceHistory.map((practice) => {
         const matchedQuiz = quizzes.find((quiz) => quiz.questionDetails.question === practice.question);
 
@@ -50,12 +51,12 @@ const QuizSummery = ({ onClose, summeryData, isFromDue = false }) => {
         };
       });
 
-      setMergedData(mergedData); // Set merged data
+      setMergedData(mergedData);
     } catch (error) {
       console.error("Error fetching data:", error);
       setFeedback({ strength: [], weakness: ["Error retrieving feedback."] });
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -63,7 +64,6 @@ const QuizSummery = ({ onClose, summeryData, isFromDue = false }) => {
     fetchFeedbackAndQuizzes();
   }, [practiceHistory, currentLectureId, userId]);
 
-  // Calculate correct and incorrect answers from practice history
   const correctAnswers = practiceHistory.filter((item) => item.difficulty !== "wrong").length;
   const incorrectAnswers = practiceHistory.filter((item) => item.difficulty === "wrong").length;
 

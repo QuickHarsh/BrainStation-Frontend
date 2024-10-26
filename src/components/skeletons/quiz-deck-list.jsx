@@ -2,23 +2,27 @@ import SkeletonBox from "../common/skeleton-box";
 
 const QuizDeckListSkeleton = () => {
   return (
-    <div className="p-2 flex-1 overflow-hidden">
+    <div className="p-2 mx-2 flex-1 overflow-hidden">
       {/* Heading Skeleton */}
-      <SkeletonBox className="w-40 h-6 mb-4 ml-2" />
+      <SkeletonBox className="h-6 w-24 mb-4 " />
 
       {/* Quiz Summary Card Skeleton */}
-      <SkeletonBox className="w-full h-24 mb-4 cursor-pointer" />
+      <div className="cursor-pointer">
+        <div className="mt-4 h-[10rem] relative rounded-xl">
+          <SkeletonBox className="h-full w-full rounded-xl" />
+        </div>
+      </div>
 
       {/* Divider Skeleton */}
-      <SkeletonBox className="w-full h-1 mb-2" />
+      <SkeletonBox className="w-full h-0.5 mt-4 mb-2" />
 
-      {/* "All" label Skeleton */}
-      <SkeletonBox className="w-16 h-6 mb-4 ml-2" />
+      {/* Subtitle Skeleton */}
+      <SkeletonBox className="h-4 w-16 mb-4" />
 
       {/* Quiz Cards Skeleton */}
-      <div className="overflow-hidden">
+      <div className="grid grid-cols-1 gap-4">
         {Array.from({ length: 5 }).map((_, index) => (
-          <SkeletonBox key={index} className="w-full h-20 mb-4" />
+          <SkeletonBox key={index} className="h-16 w-full rounded-lg" />
         ))}
       </div>
     </div>
