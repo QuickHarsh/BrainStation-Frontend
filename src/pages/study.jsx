@@ -74,7 +74,6 @@ const Study = () => {
             <ContentCard title={currentSlide.title} content={currentSlide.content} lectureId={currentLectureId} />
           </div>
           <div className="px-4 py-1">
-            {/* <Ontology userId={'66d97b6fc30a1f78cf41b620'} lectureId={currentLectureId} /> */}
             <BottomBar />
           </div>
           <MCQPane isVisible={isMCQPaneVisible} onClose={handleCloseMCQPane} lectureTitle={currentLectureTitle} />
