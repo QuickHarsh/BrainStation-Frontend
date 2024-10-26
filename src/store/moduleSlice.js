@@ -15,6 +15,9 @@ const moduleSlice = createSlice({
     setModules: (state, action) => {
       state.modules = action.payload;
     },
+    setCurrentModuleId: (state, action) => {
+      state.currentModuleId = action.payload;
+    },
     setCurrentModule: (state, action) => {
       const selectedModule = state.modules.find((module) => module._id === action.payload);
       if (selectedModule) {
@@ -33,6 +36,6 @@ const moduleSlice = createSlice({
   }
 });
 
-export const { setModules, setCurrentModule, clearCurrentModule } = moduleSlice.actions;
+export const { setModules, setCurrentModule, clearCurrentModule, setCurrentModuleId } = moduleSlice.actions;
 
 export default moduleSlice.reducer;

@@ -16,8 +16,12 @@ export const getUserScoreBasedOnLecture = async (userId, lectureId) => {
   return await apiRequest(() => axiosInstance.get(`/api/quizzes/score/${userId}/${lectureId}`));
 };
 
-export const getQuizFeedback = async (data) => {
-  return await apiRequest(() => axiosInstance.post(`/api/quizzes/feedback`, data));
+export const getQuizFeedback = async (lectureId, data, params = {}) => {
+  const queryString = new URLSearchParams(params).toString();
+
+  const endpoint = `/api/quizzes/feedback/${lectureId}${queryString ? `?${queryString}` : ""}`;
+
+  return await apiRequest(() => axiosInstance.post(endpoint, data));
 };
 
 export const getQuizzesDueByToday = async () => {

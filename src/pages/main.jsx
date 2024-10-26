@@ -13,14 +13,12 @@ const Main = () => {
   const navigate = useNavigate();
   const modules = useSelector((state) => state.modules.modules);
 
-  // Fetch modules data
   const modulesData = useFetchData(getAllModules);
 
-  // Check if modulesData is available and contains docs before proceeding
   if (modulesData && modulesData.data?.docs && modules.length === 0) {
     const modulesWithProgress = modulesData.data.docs.map((module) => ({
       ...module,
-      progress: 50 // Add progress field to each module
+      progress: 50
     }));
 
     dispatch(setModules(modulesWithProgress));
@@ -32,8 +30,8 @@ const Main = () => {
   }
 
   const handleModuleClick = (moduleId) => {
-    dispatch(setCurrentModule(moduleId)); // Set the selected module
-    navigate(`/study/${moduleId}`); // Navigate to the Study page with moduleId
+    dispatch(setCurrentModule(moduleId));
+    navigate(`/study/${moduleId}`);
   };
 
   return (
