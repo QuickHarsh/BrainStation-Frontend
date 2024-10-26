@@ -75,7 +75,8 @@ function Support() {
           <div>
             <h2 className="text-4xl font-extrabold text-blue-900">Welcome back!</h2>
             <p className="text-2xl font-bold text-blue-700">
-              Remember, consistency is key. Stay focused, and keep improving your results. Your next goal is within reach!
+              Remember, consistency is key. Stay focused, and keep improving your results. Your next goal is within
+              reach!
             </p>
           </div>
           <div className="flex flex-col items-center space-y-2">
@@ -86,7 +87,7 @@ function Support() {
               </div>
               <div className="text-center">
                 <span className="block text-3xl font-bold text-blue-900">Task remaining</span>
-                <span className="block text-5xl font-extrabold text-red-700">5</span>*/} 
+                <span className="block text-5xl font-extrabold text-red-700">5</span>*/}
               </div>
             </div>
             <div className="flex space-x-4">
@@ -142,8 +143,7 @@ function Support() {
             <p className="text-2xl font-semibold text-blue-900">
               {selectedModule.predictedExamScore && !isNaN(selectedModule.predictedExamScore) ? (
                 <>
-                  Based on your quiz scores so far, if the next exam covers these chapters, you're likely to score
-                  between{" "}
+                  Based on your quiz scores so far, if the next exam covers these chapters, you likely to score between{" "}
                   <strong className="text-red-600 font-medium">
                     {convertToPercentage(selectedModule.predictedExamScore) - 5}% -{" "}
                     {convertToPercentage(selectedModule.predictedExamScore)}%
@@ -222,21 +222,27 @@ function Support() {
           <div className="flex space-x-4 mt-4">
             <button
               className={`font-bold py-3 px-6 rounded-md ${
-                parsedUserData.performerType === "Excellent Performer" ? "bg-blue-900 text-white" : "bg-blue-300 text-gray-700"
+                parsedUserData.performerType === "Excellent Performer"
+                  ? "bg-blue-900 text-white"
+                  : "bg-blue-300 text-gray-700"
               }`}
             >
               Excellent
             </button>
             <button
               className={`font-bold py-3 px-6 rounded-md ${
-                parsedUserData.performerType === "Medium Performer" ? "bg-blue-900 text-white" : "bg-blue-300 text-gray-700"
+                parsedUserData.performerType === "Medium Performer"
+                  ? "bg-blue-900 text-white"
+                  : "bg-blue-300 text-gray-700"
               }`}
             >
               Medium
             </button>
             <button
               className={`font-bold py-3 px-6 rounded-md ${
-                parsedUserData.performerType === "Low Performer" ? "bg-blue-900 text-white" : "bg-blue-300 text-gray-700"
+                parsedUserData.performerType === "Low Performer"
+                  ? "bg-blue-900 text-white"
+                  : "bg-blue-300 text-gray-700"
               }`}
             >
               Low
