@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { shuffleArray } from "@/helper/shuffleArray";
 import { respondToQuiz } from "@/service/quiz";
 import { addPracticeResult, clearPracticeHistory } from "@/store/practiceSlice";
-import { nextQuiz, resetQuizSession } from "@/store/quizzesSlice";
+import { nextQuiz, resetQuizSession, setQuizzesForLecture } from "@/store/quizzesSlice";
 import MCQCard from "./mcq-card";
 import QuizSummery from "./summery";
 
@@ -21,6 +21,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSummery, setShowSummery] = useState(false);
+  const [localAttemptCounts, setLocalAttemptCounts] = useState({});
 
   const { moduleId } = useParams();
 
@@ -40,15 +41,44 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
     }
   }, [currentQuiz]);
 
+  const getQuestionToDisplay = () => {
+    if (!currentQuiz) return "";
+
+    const { question, alternative_questions, attempt_question } = currentQuiz;
+
+    if (attempt_question == 0) {
+      return question;
+    }
+
+    const altIndex = attempt_question - 1;
+    return alternative_questions && altIndex < alternative_questions.length
+      ? alternative_questions[altIndex]
+      : question;
+  };
+
   const sendQuizResponse = (response) => {
+    const alternativeQuestions = currentQuiz.alternative_questions || [];
+    let newAttempt = (currentQuiz.attempt_question ?? 0) + 1;
+
+    // Reset attempt_question to 0 if it reaches the end of alternative questions
+    if (newAttempt > alternativeQuestions.length) {
+      newAttempt = 0;
+    }
+
+    // Update the localAttemptCounts for the current quiz
+    setLocalAttemptCounts((prev) => ({
+      ...prev,
+      [currentQuiz._id]: newAttempt
+    }));
+
     const data = {
       lectureId: currentLectureId,
       questionId: currentQuiz._id,
       moduleId,
-      response
+      response,
+      attempt_question: newAttempt
     };
 
-    // Call the respondToQuiz service
     respondToQuiz(data)
       .then(() => {
         console.log("Quiz response sent successfully:", response);
@@ -57,6 +87,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
         console.error("Error sending quiz response:", error);
       });
 
+    // Save the practice result in the store
     dispatch(
       addPracticeResult({
         id: currentQuiz._id,
@@ -99,6 +130,13 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
   };
 
   const handleSummeryClose = () => {
+    const updatedQuizzes = quizzes.map((quiz) => ({
+      ...quiz,
+      attempt_question: localAttemptCounts[quiz._id] ?? quiz.attempt_question
+    }));
+
+    dispatch(setQuizzesForLecture(updatedQuizzes));
+
     dispatch(resetQuizSession());
     onClose();
     setTimeout(() => setShowSummery(false), 300);
@@ -149,7 +187,7 @@ const MCQPane = ({ isVisible = true, onClose, lectureTitle }) => {
       >
         <div className="h-full w-full relative p-6">
           <p className="text-sm text-[#A4A4A4]">{lectureTitle}</p>
-          <p className="mt-2 text-[24px] font-inter font-semibold">{currentQuiz.question}</p>
+          <p className="mt-2 text-[24px] font-inter font-semibold">{getQuestionToDisplay()}</p>
           <div className="flex items-center h-[calc(100%-150px)]">
             <div className="w-full grid grid-cols-2 gap-2 md:gap-4 items-center my-4">
               {shuffledAnswers.map((answer, index) => {
