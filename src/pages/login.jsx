@@ -1,40 +1,25 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import Logo from "@/components/common/logo";
-import { login } from "@/service/auth";
+import { loginUser } from "@/store/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // For redirecting after successful login
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  const { loading } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const response = await login({ email, password });
-      if (response.success) {
-        console.log("Login successful:", response.data);
+    const result = await dispatch(loginUser({ email, password }));
 
-        localStorage.setItem("token", response.data.access_token);
-        localStorage.setItem("refresh_token", response.data.refresh_token);
-        navigate("/");
-      }
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+    if (loginUser.fulfilled.match(result)) {
+      console.log("Login successful:", result.payload);
+      navigate("/");
     }
   };
 
@@ -51,7 +36,7 @@ const Login = () => {
           <input
             type="email"
             value={email}
-            onChange={handleEmailChange}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
             required
           />
@@ -59,7 +44,7 @@ const Login = () => {
           <input
             type="password"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
             required
           />
