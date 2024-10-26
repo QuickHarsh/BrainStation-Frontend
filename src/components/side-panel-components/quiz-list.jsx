@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useFetchData from "@/hooks/fetch-data";
 import { getQuestions } from "@/service/question";
+import { getAttemptQuiz } from "@/service/quiz";
 import { switchView } from "@/store/lecturesSlice";
 import { showMCQPane } from "@/store/mcqSlice";
 import { nextQuiz, setQuizzesForLecture } from "@/store/quizzesSlice";
@@ -20,15 +21,38 @@ const QuizList = () => {
 
   const questionsData = useFetchData(getQuestions, { "filter[lectureId]": currentLectureId });
 
-  useEffect(() => {
+  const fetchAndMergeAttempts = async () => {
     if (questionsData && questionsData.success) {
-      dispatch(setQuizzesForLecture(questionsData.data.docs));
-      setLoading(false);
+      try {
+        const attemptResponse = await getAttemptQuiz(currentLectureId);
+        const attempts = attemptResponse.data || [];
+
+        const attemptMap = attempts.reduce((acc, attempt) => {
+          acc[attempt.questionId] = attempt.attempt_question;
+          return acc;
+        }, {});
+
+        const updatedQuizzes = questionsData.data.docs.map((quiz) => ({
+          ...quiz,
+          attempt_question: attemptMap[quiz._id] ?? 0
+        }));
+
+        dispatch(setQuizzesForLecture(updatedQuizzes));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching attempt data:", error);
+        setError("Failed to fetch questions");
+        setLoading(false);
+      }
     } else if (questionsData && !questionsData.success) {
       setError("Failed to fetch questions");
       setLoading(false);
     }
-  }, [questionsData, dispatch, quizzes]);
+  };
+
+  useEffect(() => {
+    fetchAndMergeAttempts();
+  }, [questionsData, dispatch]);
 
   const handleBackClick = () => {
     dispatch(switchView("lecturer"));

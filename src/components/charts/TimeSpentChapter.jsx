@@ -1,4 +1,3 @@
-//  TimeSpentChapter.js
 import { useEffect, useRef } from "react";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 

@@ -1,4 +1,3 @@
-//  QuizMarksLatestAttempt.js
 import { useEffect, useRef } from "react";
 import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from "chart.js";
 
