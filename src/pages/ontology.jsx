@@ -10,12 +10,10 @@ const Ontology = ({ lectureId }) => {
 
   useEffect(() => {
     const data = {
-      userId: "66d97b6fc30a1f78cf41b620",
       lectureId: lectureId
     };
 
     const getOntologyData = async () => {
-      console.log(lectureId);
       const markdownData = await getOntology(data);
 
       if (refMm.current) return;
