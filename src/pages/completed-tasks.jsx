@@ -21,10 +21,9 @@ function CompletedTasks() {
         setLoading(false); // Also set loading to false if there's an error
       }
     };
-  
+
     fetchCompletedSubtasks();
   }, []);
-  
 
   const toggleTaskExpansion = (index) => {
     setExpandedTask(expandedTask === index ? null : index);
