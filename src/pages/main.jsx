@@ -43,7 +43,7 @@ const Main = () => {
       {!modulesData || modulesData.loading ? (
         <MainSkeleton />
       ) : (
-        <ScrollView>
+        <ScrollView initialMaxHeight="0rem">
           <div className="grid grid-cols-3 gap-4 mt-8 mb-4 mx-1">
             {modules.length > 0 ? (
               modules.map((module) => (
