@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className="flex items-center gap-1">{location.pathname !== "/" && <></>}</div>
       <div className="flex items-center gap-6 select-none">
         <NavLink
-          to="/progress"
+          to="/support"
           className={({ isActive }) =>
             `font-inter text-sm px-4 py-1.5 rounded-xl flex flex-col items-center ${
               isActive ? "bg-primary-blue text-white" : "bg-primary-green text-white"

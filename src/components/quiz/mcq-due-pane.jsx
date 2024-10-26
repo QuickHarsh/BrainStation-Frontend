@@ -19,10 +19,11 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [showSummery, setShowSummery] = useState(false);
+  const [localAttemptCounts, setLocalAttemptCounts] = useState({});
 
   useEffect(() => {
-    console.log("currentQuiz", currentQuiz);
-  }, [currentQuiz]);
+    console.log("dueQuizes", dueQuizzes);
+  }, [dueQuizzes]);
 
   useEffect(() => {
     if (isVisible) {
@@ -42,22 +43,50 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
     }
   }, [currentQuiz]);
 
+  // Determine the question to display based on attempt_question
+  const getQuestionToDisplay = () => {
+    if (!currentQuiz) return "";
+
+    const { questionDetails, attempt_question } = currentQuiz;
+    const { question, alternative_questions } = questionDetails;
+
+    if (attempt_question === 0) {
+      return question;
+    }
+
+    const altIndex = attempt_question - 1;
+    return alternative_questions && altIndex < alternative_questions.length
+      ? alternative_questions[altIndex]
+      : question; // Fallback to main question if out of bounds
+  };
+
   const sendQuizResponse = (response) => {
+    const alternativeQuestions = currentQuiz.questionDetails.alternative_questions || [];
+    let newAttempt = (currentQuiz.attempt_question ?? 0) + 1;
+
+    // Reset to 0 if it exceeds alternative questions
+    if (newAttempt > alternativeQuestions.length) {
+      newAttempt = 0;
+    }
+
+    // Update local attempt counts
+    setLocalAttemptCounts((prev) => ({
+      ...prev,
+      [currentQuiz.questionId]: newAttempt
+    }));
+
+    // Prepare data for the response
     const data = {
       questionId: currentQuiz.questionId,
       lectureId: currentQuiz.lectureId,
       moduleId: currentQuiz.moduleId,
-      response
+      response,
+      attempt_question: newAttempt
     };
 
-    // Call the respondToQuiz service
     respondToQuiz(data)
-      .then(() => {
-        console.log("Quiz response sent successfully:", response);
-      })
-      .catch((error) => {
-        console.error("Error sending quiz response:", error);
-      });
+      .then(() => console.log("Quiz response sent successfully:", response))
+      .catch((error) => console.error("Error sending quiz response:", error));
 
     dispatch(
       addPracticeResult({
@@ -101,8 +130,14 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
   };
 
   const handleSummeryClose = () => {
+    const updatedDueQuizzes = dueQuizzes.map((quiz) => ({
+      ...quiz,
+      attempt_question: localAttemptCounts[quiz.questionId] ?? quiz.attempt_question
+    }));
+
+    dispatch(triggerQuizRefresh(updatedDueQuizzes));
+
     dispatch(resetDueQuizSession());
-    dispatch(triggerQuizRefresh());
     onClose();
     setTimeout(() => setShowSummery(false), 300);
   };
@@ -140,7 +175,7 @@ const MCQDuePane = ({ isVisible = true, onClose }) => {
         style={{ transitionProperty: "transform, opacity" }}
       >
         <div className="h-full w-full relative p-6">
-          <p className="mt-2 text-[24px] font-inter font-semibold">{currentQuiz.questionDetails.question}</p>
+          <p className="mt-2 text-[24px] font-inter font-semibold">{getQuestionToDisplay()}</p>
           <div className="flex items-center h-[calc(100%-150px)]">
             <div className="w-full grid grid-cols-2 gap-2 md:gap-4 items-center my-4">
               {shuffledAnswers.map((answer, index) => {

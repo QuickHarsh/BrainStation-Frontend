@@ -1,48 +1,51 @@
-import axios from "axios";
-
-// Define the base URL for the API
-const baseURL = `${import.meta.env.VITE_BRAINSTATION_BE_URL}/api/sessions/`;
+import { apiRequest, axiosInstance } from "./core/axios";
 
 // Function to save the session data to the backend
 export const saveSession = async (sessionData) => {
-  try {
-    const response = await axios.post(`${baseURL}`, sessionData);
-    return response.data;
-  } catch (error) {
-    console.error("Error saving session data:", error);
-    throw error;
-  }
+  return await apiRequest(() => axiosInstance.post("/api/sessions", sessionData));
 };
 
 // Function to get session by ID
 export const getSessionById = async (sessionId) => {
-  try {
-    const response = await axios.get(`${baseURL}${sessionId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching session by ID:", error);
-    throw error;
-  }
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/${sessionId}`));
 };
 
-// Function to get sessions by user ID
-export const getSessionsByUser = async (userId) => {
-  try {
-    const response = await axios.get(`${baseURL}user/${userId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching sessions by user:", error);
-    throw error;
-  }
+// Function to get all sessions by the authenticated user
+export const getSessionsByUser = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/user`));
 };
 
-// Function to get user data (related to sessions, if applicable)
-export const getUserData = async (userId) => {
-  try {
-    const response = await axios.get(`${baseURL}user/${userId}/data`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    throw error;
-  }
+// Function to get all sessions by the authenticated user for a specific module
+export const getSessionsByUserModule = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/userByModule`));
+};
+
+// Function to get start and end times of sessions per module for the authenticated user
+export const getStartEndTimesByUserModule = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/start-end-times`));
+};
+
+// Function to get total focus time by the authenticated user per module
+export const getTotalFocusTimeByUserModule = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/total-focus-time`));
+};
+
+// Function to get average focus time by the authenticated user per module
+export const getAverageFocusTimeByUserModule = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/average-focus-time`));
+};
+
+// Function to get session data for the authenticated user
+export const getSessionDataByUser = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/sessionData`));
+};
+
+// Function to get the average focus time by the authenticated user (without module ID)
+export const getAverageFocusTimeByUser = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/average-focus-time-by-user`));
+};
+
+// Function to get the total session duration by the authenticated user
+export const getTotalSessionDurationByUser = async () => {
+  return await apiRequest(() => axiosInstance.get(`/api/sessions/total-session-duration-by-user`));
 };

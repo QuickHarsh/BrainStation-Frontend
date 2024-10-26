@@ -11,12 +11,9 @@ import { getModuleById } from "@/service/module";
 import { setCurrentModule, switchView } from "@/store/lecturesSlice";
 import { hideMCQPane } from "@/store/mcqSlice";
 
-// Import the new component
-
 const Study = () => {
   const dispatch = useDispatch();
   const { moduleId } = useParams();
-  const userId = "66d97b6fc30a1f78cf41b615"; // Replace this with the actual user ID
 
   // Fetch module data using the custom hook
   const moduleData = useFetchData(getModuleById, moduleId);
@@ -65,8 +62,8 @@ const Study = () => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Use the SessionControl component and pass userId and moduleId */}
-      <SessionControl userId={userId} moduleId={moduleId} />
+      {/* SessionControl component no longer needs userId passed */}
+      <SessionControl moduleId={moduleId} />
 
       {currentSlide ? (
         <>
