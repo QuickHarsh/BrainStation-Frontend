@@ -1,6 +1,5 @@
-import React from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
 
 // Register the components with ChartJS
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -42,7 +41,7 @@ function QuizMarksLatestAttempt({ performanceData }) {
       {
         label: "Performance Type",
         data: dataValues, // 1 = Low, 2 = Medium, 3 = Excellent
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Colors for bars
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"] // Colors for bars
       }
     ]
   };

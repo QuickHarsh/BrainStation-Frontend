@@ -30,4 +30,3 @@ export const getStudentAlerts = async (data) => {
 export const getOldPerformanceTypes = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/progress/performance-types", data));
 };
-
