@@ -24,7 +24,7 @@ const SessionControl = ({ moduleId }) => {
   // eslint-disable-next-line no-unused-vars
   const [stopTime, setStopTime] = useState(null);
   const [sessionDate, setSessionDate] = useState(null);
-  const [isBarVisible, setIsBarVisible] = useState(true);
+  const [isBarVisible, setIsBarVisible] = useState(false);
 
   const toggleBarVisibility = () => setIsBarVisible(!isBarVisible);
 
@@ -210,7 +210,7 @@ const SessionControl = ({ moduleId }) => {
   return (
     <>
       <div
-        className={`absolute top-4 right-4 min-w-[17rem] z-[1000]   rounded-md p-4 transition-all duration-300 ease-in-out ${
+        className={`absolute top-4 right-4 min-w-[17rem] z-[50]   rounded-md p-4 transition-all duration-300 ease-in-out ${
           isBarVisible ? "max-h-[200px] bg-white shadow-lg" : "max-h-[50px] bg-primary-paper shadow-sm"
         }`}
       >
