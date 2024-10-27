@@ -24,6 +24,9 @@ const SessionControl = ({ moduleId }) => {
   // eslint-disable-next-line no-unused-vars
   const [stopTime, setStopTime] = useState(null);
   const [sessionDate, setSessionDate] = useState(null);
+  const [isBarVisible, setIsBarVisible] = useState(true);
+
+  const toggleBarVisibility = () => setIsBarVisible(!isBarVisible);
 
   const baseURL = import.meta.env.VITE_BRAINSTATION_EMOTIONURL;
 
@@ -205,27 +208,46 @@ const SessionControl = ({ moduleId }) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center p-4">
-        <div className="flex items-center space-x-2">
-          <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: dotColor }}></div>
-          <p>{sessionStatus}</p>
+    <>
+      <div
+        className={`absolute top-4 right-4 min-w-[17rem] z-[1000] bg-white shadow-lg rounded-md p-4 transition-all duration-300 ease-in-out ${
+          isBarVisible ? "max-h-[200px]" : "max-h-[50px]"
+        }`}
+      >
+        {/* Always visible part with status indicator */}
+        <div className="flex">
+          <div className="flex items-center gap-1">
+            <div className={`w-2.5 h-2.5 rounded-full`} style={{ backgroundColor: dotColor }}></div>
+            <p className="text-sm">{sessionStatus}</p>
+          </div>
+
+          {/* Toggle button to show/hide the session control buttons */}
+          <button className="ml-auto text-sm text-gray-500 hover:text-gray-700" onClick={toggleBarVisibility}>
+            {isBarVisible ? "Hide" : "Show"}
+          </button>
         </div>
 
-        <div className="flex space-x-4">
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-            onClick={handleStartSessionClick}
-          >
-            Start Session
-          </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-            onClick={stopSession}
-            disabled={sessionStatus === "Not started" || sessionStatus === "Stopped"}
-          >
-            Stop Session
-          </button>
+        {/* Conditional session control buttons with animation */}
+        <div
+          className={`mt-2 transition-opacity duration-300 ease-in-out ${
+            isBarVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="flex space-x-4">
+            <button
+              className="bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-700"
+              onClick={handleStartSessionClick}
+            >
+              Start Session
+            </button>
+            <button
+              className="bg-red-500 text-white text-sm px-4 py-2 rounded hover:bg-red-700"
+              onClick={stopSession}
+              disabled={sessionStatus === "Not started" || sessionStatus === "Stopped"}
+            >
+              Stop Session
+            </button>
+          </div>
         </div>
       </div>
 
@@ -267,7 +289,7 @@ const SessionControl = ({ moduleId }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
