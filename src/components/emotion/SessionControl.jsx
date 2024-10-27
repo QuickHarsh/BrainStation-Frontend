@@ -1,7 +1,13 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
-import { checkAssrsResultExists, createAssrsResult, getAssrsResultByUser } from "@/service/asrs";
+import {
+  checkAssrsResultAge,
+  checkAssrsResultExists,
+  createAssrsResult,
+  getAssrsResultByUser,
+  updateAssrsResult
+} from "@/service/asrs";
 import { saveSession } from "@/service/session";
 
 const SessionControl = ({ moduleId }) => {
@@ -10,7 +16,7 @@ const SessionControl = ({ moduleId }) => {
   const [webSocket, setWebSocket] = useState(null);
   const [finalResult, setFinalResult] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [showSurvey, setShowSurvey] = useState(false); // Define showSurvey state
+  const [showSurvey, setShowSurvey] = useState(false);
   const [sessionStatus, setSessionStatus] = useState("Not started");
   const [dotColor, setDotColor] = useState("red");
 
@@ -21,14 +27,25 @@ const SessionControl = ({ moduleId }) => {
 
   const baseURL = import.meta.env.VITE_BRAINSTATION_EMOTIONURL;
 
-  // Fetch ASRS result without showing survey if it exists
-  const fetchASRSResult = async () => {
-    const exists = await checkAssrsResultExists();
+  // Main function to handle ASRS checks and fetch result if needed
+  const fetchASRSResultForSession = async () => {
+    const { exists } = await checkAssrsResultExists();
     if (exists) {
-      const asrsResult = await getAssrsResultByUser();
-      return asrsResult?.data?.assrsResult;
+      const isCurrent = await checkAssrsResultAge();
+      if (isCurrent) {
+        // If ASRS result is current, fetch and return it
+        const asrsResult = await getAssrsResultByUser();
+        return asrsResult?.data?.assrsResult;
+      } else {
+        // If ASRS result exists but is outdated, show survey to update it
+        setShowSurvey(true);
+        return null;
+      }
+    } else {
+      // If ASRS result does not exist, show survey to create a new one
+      setShowSurvey(true);
+      return null;
     }
-    return null;
   };
 
   const initVideoStream = async () => {
@@ -157,12 +174,10 @@ const SessionControl = ({ moduleId }) => {
 
   const handleStartSessionClick = async () => {
     try {
-      const asrsResult = await fetchASRSResult();
+      const asrsResult = await fetchASRSResultForSession();
 
       if (asrsResult) {
         startSession(asrsResult);
-      } else {
-        setShowSurvey(true);
       }
     } catch (error) {
       console.error("Error in session start flow:", error);
@@ -171,15 +186,21 @@ const SessionControl = ({ moduleId }) => {
 
   const handleSurveyComplete = async (surveyResult) => {
     setShowSurvey(false);
-    console.log("Survey result:", surveyResult);
 
     try {
-      const newAsrsResult = await createAssrsResult(surveyResult);
-      const asrsValue = newAsrsResult?.data;
-
-      startSession(asrsValue);
+      if (surveyResult.update) {
+        // Update the existing ASRS result
+        const updatedResult = await updateAssrsResult({ asrs_result: "Positive" });
+        const asrsValue = updatedResult?.data;
+        startSession(asrsValue);
+      } else {
+        // Create a new ASRS result
+        const newAsrsResult = await createAssrsResult(surveyResult);
+        const asrsValue = newAsrsResult?.data;
+        startSession(asrsValue);
+      }
     } catch (error) {
-      console.error("Error saving ASRS result:", error);
+      console.error("Error updating or creating ASRS result:", error);
     }
   };
 
