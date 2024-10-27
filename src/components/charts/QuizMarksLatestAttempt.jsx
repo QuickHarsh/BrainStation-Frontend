@@ -1,87 +1,86 @@
-import { useEffect, useRef } from "react";
-import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from "chart.js";
 
-// Register required Chart.js components
-Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+// Register the components with ChartJS
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const QuizMarksLatestAttempt = () => {
-  const chartRef = useRef(null);
+function QuizMarksLatestAttempt({ performanceData }) {
+  // Check if performanceData is available and has data
+  if (!performanceData || performanceData.length === 0) {
+    return <p>No data available for performance types.</p>; // Display this message when no data is available
+  }
 
-  useEffect(() => {
-    const ctx = chartRef.current.getContext("2d");
+  // Generate labels like "Initial", "Mid", and "Latest"
+  const labels = performanceData.map((data, index) => {
+    if (index === 0) {
+      return "Initial"; // First entry
+    } else if (index === performanceData.length - 1) {
+      return "Latest"; // Last entry
+    }
+    return `Mid ${index}`; // Intermediate entries
+  });
 
-    const data = {
-      labels: ["1 Chapter", "2 Chapter", "3 Chapter", "4 Chapter"],
-      datasets: [
-        {
-          label: "Start",
-          data: [
-            { x: "1 Chapter", y: [0, 50] }, // Start at 0, end at 50
-            { x: "2 Chapter", y: [0, 75] }, // Start at 25, end at 75
-            { x: "3 Chapter", y: [0, 100] }, // Start at 0, end at 100
-            { x: "4 Chapter", y: [0, 100] } // Start at 50, end at 100
-          ],
-          backgroundColor: "#020B3E"
-        },
-        {
-          label: "End",
-          data: [
-            { x: "1 Chapter", y: [0, 30] }, // Start at 0, end at 30
-            { x: "2 Chapter", y: [0, 60] }, // Start at 0, end at 60
-            { x: "3 Chapter", y: [0, 80] }, // Start at 50, end at 80
-            { x: "4 Chapter", y: [0, 70] } // Start at 30, end at 70
-          ],
-          backgroundColor: "#0B54A0"
-        }
-      ]
-    };
+  const dataValues = performanceData.map((data) => {
+    // Check for performerType and map to values
+    switch (data.performerType.toLowerCase()) {
+      case "low performer": // Match "Low Performer" correctly
+        return 1;
+      case "medium":
+        return 2;
+      case "excellent":
+      case "high":
+        return 3;
+      default:
+        return 0;
+    }
+  });
 
-    const options = {
-      scales: {
-        y: {
-          min: 0, // Minimum value on the Y-axis
-          max: 100, // Maximum value on the Y-axis
-          ticks: {
-            stepSize: 25, // Y-axis values increment by 25
-            callback: function (value) {
-              return value; // Display the Y-axis values as they are (0, 25, 50, 75, 100)
-            }
-          }
-        }
+  const chartData = {
+    labels, // Use "Initial", "Mid", and "Latest" as labels
+    datasets: [
+      {
+        label: "Performance Type",
+        data: dataValues, // 1 = Low, 2 = Medium, 3 = Excellent
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"] // Colors for bars
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top"
       },
-      plugins: {
-        legend: {
-          display: false // Hide the legend
-        },
-        tooltip: {
-          callbacks: {
-            label: function (tooltipItem) {
-              const value = tooltipItem.raw;
-              return `Range: ${value[0]} - ${value[1]}`; // Custom tooltip display
-            },
-            title: function () {
-              return ""; // Prevent showing a title in the tooltip
+      title: {
+        display: true,
+        text: "Performance Type Progress (Initial to Latest)"
+      }
+    },
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true,
+          stepSize: 1,
+          callback: function (value) {
+            switch (value) {
+              case 1:
+                return "Low";
+              case 2:
+                return "Medium";
+              case 3:
+                return "Excellent";
+              default:
+                return "";
             }
           }
         }
       }
-    };
+    }
+  };
 
-    const myChart = new Chart(ctx, {
-      type: "bar",
-      data: data,
-      options: {
-        ...options,
-        responsive: true
-      }
-    });
-
-    return () => {
-      myChart.destroy();
-    };
-  }, []);
-
-  return <canvas id=" QuizMarksLatestAttempt" ref={chartRef} width="100%" height="100%"></canvas>;
-};
+  return <Bar data={chartData} options={options} />;
+}
 
 export default QuizMarksLatestAttempt;
