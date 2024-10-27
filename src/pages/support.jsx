@@ -58,12 +58,12 @@ function Support() {
   };
 
   const handledashboard = async () => {
-    if (parsedUserData) {
+    if (parsedUserData && parsedUserData.performerType) {
       const taskData = {
         performerType: parsedUserData.performerType,
         strugglingAreas: parsedUserData.lowestTwoChapters.map((chapter) => chapter.chapter)
       };
-      navigate("/analysis", { state: taskData });
+      navigate("/analysis", {  state: taskData });
       console.log(taskData);
     }
   };
