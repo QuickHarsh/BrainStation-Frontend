@@ -210,8 +210,8 @@ const SessionControl = ({ moduleId }) => {
   return (
     <>
       <div
-        className={`absolute top-4 right-4 min-w-[17rem] z-[1000] bg-white shadow-lg rounded-md p-4 transition-all duration-300 ease-in-out ${
-          isBarVisible ? "max-h-[200px]" : "max-h-[50px]"
+        className={`absolute top-4 right-4 min-w-[17rem] z-[1000]   rounded-md p-4 transition-all duration-300 ease-in-out ${
+          isBarVisible ? "max-h-[200px] bg-white shadow-lg" : "max-h-[50px] bg-[#FFFFFF80] shadow-sm"
         }`}
       >
         {/* Always visible part with status indicator */}
