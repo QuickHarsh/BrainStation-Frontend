@@ -35,3 +35,7 @@ export const getQuizzesDueDetails = async () => {
 export const getAttemptQuiz = async (lectureId) => {
   return await apiRequest(() => axiosInstance.get(`/api/quizzes/attempt/${lectureId}`));
 };
+
+export const getLectureQuizSummary = async (moduleId) => {
+  return await apiRequest(() => axiosInstance.get(`/api/quizzes/summary/${moduleId}`));
+};
