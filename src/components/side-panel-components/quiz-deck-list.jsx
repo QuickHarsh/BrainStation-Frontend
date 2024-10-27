@@ -1,8 +1,8 @@
-// QuizDeckList.jsx
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getQuestionsCountByModule } from "@/service/question";
 import { getQuizzesDueDetails } from "@/service/quiz";
+import { fetchLectureSummaries, setSelectedLectureSummary } from "@/store/lectureSummarySlice";
 import { switchView } from "@/store/lecturesSlice";
 import QuizDeckCard from "../cards/quiz-deck-card";
 import QuizSummeryCard from "../cards/quize-summery-card";
@@ -12,6 +12,7 @@ import QuizDeckListSkeleton from "../skeletons/quiz-deck-list";
 const QuizDeckList = () => {
   const dispatch = useDispatch();
   const { currentModuleId } = useSelector((state) => state.lectures);
+  const { selectedLectureSummary, loading: summaryLoading } = useSelector((state) => state.lectureSummary);
 
   const [quizDetails, setQuizDetails] = useState({ dueTodayCount: 0, learningPhaseCount: 0 });
   const [lectureData, setLectureData] = useState([]);
@@ -45,14 +46,21 @@ const QuizDeckList = () => {
 
     if (currentModuleId) {
       fetchLectureData();
+      dispatch(fetchLectureSummaries(currentModuleId));
     }
-  }, [currentModuleId]);
+  }, [currentModuleId, dispatch]);
 
   const handleQuizSummaryClick = () => {
     dispatch(switchView("due-quiz"));
   };
 
-  if (loading) {
+  const handleLectureClick = (lectureId, disabled) => {
+    if (!disabled) {
+      dispatch(setSelectedLectureSummary(lectureId));
+    }
+  };
+
+  if (loading || summaryLoading) {
     return <QuizDeckListSkeleton />;
   }
 
@@ -73,14 +81,20 @@ const QuizDeckList = () => {
       {/* Quiz Cards */}
       <ScrollView initialMaxHeight="340px">
         {lectureData.length > 0 ? (
-          lectureData.map((lecture, index) => (
-            <QuizDeckCard
-              key={lecture.lectureId}
-              label={`Lecture ${index + 1}`}
-              title={lecture.lectureTitle}
-              questionCount={lecture.questionCount}
-            />
-          ))
+          lectureData.map((lecture, index) => {
+            const disabled = lecture.questionCount === 0;
+            return (
+              <div key={lecture.lectureId} onClick={() => handleLectureClick(lecture.lectureId, disabled)}>
+                <QuizDeckCard
+                  label={`Lecture ${index + 1}`}
+                  title={lecture.lectureTitle}
+                  questionCount={lecture.questionCount}
+                  isSelected={selectedLectureSummary && selectedLectureSummary.lectureId === lecture.lectureId}
+                  disabled={disabled}
+                />
+              </div>
+            );
+          })
         ) : (
           <p className="text-center mt-10 text-lg font-medium text-gray-400">
             No lectures available for selected module.
