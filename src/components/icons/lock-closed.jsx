@@ -1,5 +1,6 @@
 const LockIcon = ({ size = 5, color = "black" }) => {
   const sizeMap = {
+    2: "12px", // w-2, h-2
     3: "14px", // w-3, h-3
     4: "16px", // w-4, h-4
     5: "20px", // w-5, h-5
