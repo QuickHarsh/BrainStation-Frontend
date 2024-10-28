@@ -8,7 +8,7 @@ const Navbar = () => {
   const [isTrackBtnVisible, setIsTrackBtnVisible] = useState(false);
 
   useEffect(() => {
-    if (location.pathname.startsWith("/study")) {
+    if (location.pathname.startsWith("/", "/study")) {
       setIsTrackBtnVisible(true);
     } else {
       setIsTrackBtnVisible(false);
