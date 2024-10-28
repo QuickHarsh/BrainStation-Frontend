@@ -50,8 +50,10 @@ const SessionControl = ({ moduleId }) => {
   };
 
   useEffect(() => {
-    fetchFeedback();
-  }, []);
+    if (showPopup) {
+      fetchFeedback();
+    }
+  }, [showPopup]);
 
   const getImageSource = (classification) => {
     switch (classification) {
