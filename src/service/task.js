@@ -27,3 +27,6 @@ export const getStudentCumulativeAverage = async (data) => {
 export const getStudentAlerts = async (data) => {
   return await apiRequest(() => axiosInstance.get("api/progress/alerts", data));
 };
+export const getOldPerformanceTypes = async (data) => {
+  return await apiRequest(() => axiosInstance.get("api/progress/performance-types", data));
+};

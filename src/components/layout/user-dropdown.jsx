@@ -8,6 +8,8 @@ const UserDropdown = () => {
 
   const dispatch = useDispatch();
 
+  const name = localStorage.getItem("userName")?.split(" ")[0] || "User";
+
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
   };
@@ -31,7 +33,7 @@ const UserDropdown = () => {
     <div className="relative">
       <div className="flex items-center cursor-pointer gap-2" onClick={toggleDropdown}>
         <img src="https://cdn-icons-png.freepik.com/512/219/219966.png" alt="User" className="w-8 h-8 rounded-full" />
-        <span className="font-josfin-sans text-sm">Hi, Danuja</span>
+        <span className="font-josfin-sans text-sm">Hi, {name}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

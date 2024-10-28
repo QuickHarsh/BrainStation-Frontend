@@ -35,6 +35,7 @@ const Main = () => {
 
   const handleModuleClick = (moduleId) => {
     dispatch(setCurrentModule(moduleId));
+    localStorage.setItem("currentModule", moduleId);
     navigate(`/study/${moduleId}`);
   };
 
@@ -46,7 +47,7 @@ const Main = () => {
         <MainSkeleton />
       ) : (
         <ScrollView initialMaxHeight="0rem">
-          <div className="grid grid-cols-3 gap-4 mt-8 mb-4 mx-1">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mt-8 mb-4 mx-1 place-items-center">
             {modules.length > 0 ? (
               modules.map((module) => (
                 <ModuleCard

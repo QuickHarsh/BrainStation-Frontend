@@ -30,3 +30,8 @@ export const getAssrsResultByUser = async (params = {}) => {
   const endpoint = `/api/assrs/getByUser${queryString ? `?${queryString}` : ""}`;
   return await apiRequest(() => axiosInstance.get(endpoint));
 };
+
+// Service to retrieve alternate ASRS questions
+export const getAlternativeAssrsQuestions = async () => {
+  return await apiRequest(() => axiosInstance.get("/api/assrs/alternate-questions"));
+};

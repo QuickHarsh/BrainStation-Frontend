@@ -1,21 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAlternativeAssrsQuestions } from "@/service/asrs";
+import { Loader } from "..";
+
+// Import the new API function
 
 const SurveyModal = ({ isVisible, onClose, onContinue }) => {
-  const [surveyData, setSurveyData] = useState({
-    question1: null,
-    question2: null,
-    question3: null,
-    question4: null,
-    question5: null,
-    question6: null
-  });
+  const [surveyData, setSurveyData] = useState({});
+  const [questions, setQuestions] = useState([]); // State to store fetched questions
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showThankYouPopup, setShowThankYouPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState(""); // State to handle incomplete submission
-  const [showThankYouPopup, setShowThankYouPopup] = useState(false); // State to control "Thank You" popup visibility
+  useEffect(() => {
+    if (isVisible) {
+      setIsLoading(true);
+      getAlternativeAssrsQuestions()
+        .then((response) => {
+          console.log("API Response:", response.data); // Log the response to check its structure
 
-  if (!isVisible) return null;
+          const questionList = response.data.alternatives; // Access the alternatives array
 
-  // Helper function to handle changes in survey answers
+          if (Array.isArray(questionList)) {
+            setQuestions(questionList);
+            setSurveyData(questionList.reduce((acc, _, index) => ({ ...acc, [`question${index + 1}`]: null }), {}));
+          } else {
+            console.error("Unexpected response format:", response.data);
+            setQuestions([]); // Clear questions if format is incorrect
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch questions:", error);
+          setQuestions([]);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [isVisible]);
+
   const handleChange = (questionKey, value) => {
     setSurveyData((prevData) => ({
       ...prevData,
@@ -23,12 +45,10 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
     }));
   };
 
-  // Function to validate if all questions are answered
   const validateSurvey = () => {
     return Object.values(surveyData).every((value) => value !== null);
   };
 
-  // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -37,14 +57,23 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
       return;
     }
 
-    setErrorMessage(""); // Clear error message
-    setShowThankYouPopup(true); // Show the "Thank You" popup
-    onContinue(surveyData); // Call the parent function to continue after survey is completed
+    setErrorMessage("");
+    setShowThankYouPopup(true);
+    onContinue(surveyData);
   };
+
+  if (!isVisible) return null;
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Main Survey Modal */}
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
         <div className="bg-white p-8 rounded shadow-lg w-2/3">
           <div className="flex justify-between items-center mb-4">
@@ -56,10 +85,9 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
 
           <form onSubmit={handleSubmit}>
             <table className="table-auto w-full border-collapse border border-gray-300">
-              {/* Table Header */}
               <thead>
                 <tr>
-                  <th className="border border-gray-300 w-1/2"></th> {/* Blank header */}
+                  <th className="border border-gray-300 w-1/2"></th>
                   <th className="border border-gray-300 p-2" style={{ height: "150px" }}>
                     <div className="transform -rotate-90 flex items-center justify-center h-full">Never</div>
                   </th>
@@ -78,16 +106,8 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
                 </tr>
               </thead>
 
-              {/* Table Body with Questions */}
               <tbody>
-                {[
-                  "How often do you attend lectures?",
-                  "How often do you ask questions during lectures?",
-                  "How often do you complete your assignments on time?",
-                  "How often do you review lecture notes after class?",
-                  "How often do you participate in class discussions?",
-                  "How often do you use additional resources for learning?"
-                ].map((question, index) => (
+                {questions.map((question, index) => (
                   <tr key={index}>
                     <td className="border border-gray-300 p-2">{question}</td>
                     {[...Array(5)].map((_, columnIndex) => (
@@ -117,7 +137,6 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
         </div>
       </div>
 
-      {/* Thank You Popup (after survey completion) */}
       {showThankYouPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1100]">
           <div className="bg-white p-6 rounded shadow-lg text-center w-[400px] border-l-8 border-blue-400">

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   lectures: [],
-  currentModuleId: null,
+  currentModuleId: localStorage.getItem("currentModule") || null,
   currentLectureId: null,
   currentSlideId: null,
   currentView: "lecturer"

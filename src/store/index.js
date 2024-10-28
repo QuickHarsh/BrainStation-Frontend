@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import dialogReducer from "./dialogSlice";
+import lectureSummaryReducer from "./lectureSummarySlice";
 import lecturesReducer from "./lecturesSlice";
 import mcqReducer from "./mcqSlice";
 import modulesReducer from "./moduleSlice";
@@ -17,7 +18,8 @@ const store = configureStore({
     modules: modulesReducer,
     practice: practiceReducer,
     dialog: dialogReducer,
-    auth: authReducer
+    auth: authReducer,
+    lectureSummary: lectureSummaryReducer
   }
 });
 
