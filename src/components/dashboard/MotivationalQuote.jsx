@@ -23,8 +23,10 @@ export default function MotivationalQuote() {
     return () => clearInterval(intervalId);
   }, []);
   return (
-    <div className="motivational-quote p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
-      <p className="text-lg font-semibold italic">&ldquo;{quote}&rdquo;</p>
+    <div className="motivational-quote h-32 w-full flex items-center p-6 bg-yellow-50 border border-yellow-200 rounded-xl shadow-md">
+      <p className="text-base font-semibold italic text-yellow-800 leading-relaxed tracking-wide">
+        &ldquo;{quote}&rdquo;
+      </p>
     </div>
   );
 }
