@@ -40,20 +40,22 @@ const SessionControl = ({ moduleId }) => {
 
   const baseURL = import.meta.env.VITE_BRAINSTATION_EMOTIONURL;
 
-  const fetchFeedback = async () => {
+  const fetchFeedback = async (classification) => {
     try {
-      const response = await getClassificationFeedback();
-      setFeedback(response.data?.feedback); // Assuming the feedback is stored under `feedback`
+      const response = await getClassificationFeedback({
+        classification
+      });
+      setFeedback(response.data?.feedback);
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
   };
 
   useEffect(() => {
-    if (showPopup) {
-      fetchFeedback();
+    if (showPopup && finalResult.final_classification) {
+      fetchFeedback(finalResult.final_classification);
     }
-  }, [showPopup]);
+  }, [showPopup, finalResult]);
 
   const getImageSource = (classification) => {
     switch (classification) {
@@ -192,6 +194,8 @@ const SessionControl = ({ moduleId }) => {
       await saveSession(sessionData);
 
       setFinalResult(response.data);
+      console.log("Final result:", response.data);
+
       setShowPopup(true);
 
       localStorage.setItem("finalResult", JSON.stringify(response.data));
