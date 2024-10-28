@@ -5,7 +5,7 @@ const quotes = [
   "Believe in yourself and all that you are.",
   "Success is not the key to happiness; happiness is the key to success.",
   "Stay positive, work hard, make it happen.",
-  "Your limitation—it’s only your imagination.",
+  "Your limitation it’s only your imagination.",
   "Push yourself, because no one else is going to do it for you.",
   "Great things never come from comfort zones.",
   "Dream it. Wish it. Do it.",
