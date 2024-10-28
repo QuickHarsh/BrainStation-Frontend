@@ -11,7 +11,7 @@ const Root = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 1100);
+      setIsSmallScreen(window.innerWidth <= 400);
     };
 
     handleResize();
