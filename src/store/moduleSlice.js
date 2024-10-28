@@ -32,10 +32,14 @@ const moduleSlice = createSlice({
       state.currentModuleName = null;
       state.currentModuleDescription = null;
       state.currentLectures = [];
+    },
+    resetModules: (state) => {
+      state.modules = []; // Clear modules
     }
   }
 });
 
-export const { setModules, setCurrentModule, clearCurrentModule, setCurrentModuleId } = moduleSlice.actions;
+export const { setModules, setCurrentModule, clearCurrentModule, setCurrentModuleId, resetModules } =
+  moduleSlice.actions;
 
 export default moduleSlice.reducer;

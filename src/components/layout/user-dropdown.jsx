@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { logout } from "@/service/auth";
+import { resetModules } from "@/store/moduleSlice";
 
 const UserDropdown = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -17,7 +19,9 @@ const UserDropdown = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("refresh_token");
 
-      navigate("/login");
+      dispatch(resetModules());
+
+      window.location.reload("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
