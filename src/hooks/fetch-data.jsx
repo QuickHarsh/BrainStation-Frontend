@@ -37,6 +37,7 @@ const useFetchData = (fetchFunction, args) => {
   useEffect(() => {
     const fetchData = async () => {
       const promise = fetchFunction(memoizedArgs);
+      console.log(promise);
       const wrappedPromise = wrapPromise(promise);
       setResource(wrappedPromise);
     };
