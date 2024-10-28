@@ -8,14 +8,14 @@ const defaultSettings = {
 
 export default function CurrentProgressGauge({ progress }) {
   const getStatus = (value) => {
-    if (value <= 50) {
+    if (value < 50) {
       return {
-        label: "Law",
+        label: "Low",
         grade: "C",
         color: "#ff4444",
         iconColor: "#ff4444"
       };
-    } else if (value > 50 && value <= 80) {
+    } else if (value >= 50 && value < 80) {
       return {
         label: "Medium",
         grade: "B",
@@ -33,13 +33,17 @@ export default function CurrentProgressGauge({ progress }) {
   };
 
   const status = getStatus(progress);
+
+  // Log the progress to ensure it's being passed correctly
+  console.log("Current progress value:", progress);
+
   return (
     <div style={{ position: "relative", width: defaultSettings.width, height: defaultSettings.height }}>
       <Gauge
         {...defaultSettings}
         value={progress}
         cornerRadius="50%"
-        sx={(theme) => ({
+        sx={{
           [`& .${gaugeClasses.valueText}`]: {
             fontSize: 0
           },
@@ -47,9 +51,9 @@ export default function CurrentProgressGauge({ progress }) {
             fill: status.color
           },
           [`& .${gaugeClasses.referenceArc}`]: {
-            fill: theme.palette.text.disabled
+            fill: "#e0e0e0" // Light grey for reference arc
           }
-        })}
+        }}
       />
 
       <div
@@ -65,9 +69,7 @@ export default function CurrentProgressGauge({ progress }) {
         }}
       >
         <AccountCircleIcon style={{ fontSize: "30px", color: status.iconColor }} />
-
         <div style={{ fontSize: "32px", fontWeight: "bold" }}>{status.grade}</div>
-
         <div style={{ fontSize: "16px", color: status.color }}>{status.label}</div>
       </div>
     </div>

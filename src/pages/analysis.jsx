@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ScrollView from "@/components/common/scrollable-view";
-import { getCompletedTasks, getCompletedTasksCount, getStudentAlerts } from "@/service/task";
+import { getCompletedTasks, getCompletedTasksCount, getOldPerformanceTypes, getStudentAlerts } from "@/service/task";
 import ChapterPerformence from "../components/charts/ChapterPerformence";
 import CurrentProgressGauge from "../components/charts/CurrentProgressGauge";
 import MarksComparison from "../components/charts/MarksComparison";
@@ -18,6 +18,7 @@ function Analysis() {
   const [progress, setProgress] = useState(0);
   const [alertMessage, setAlertMessage] = useState("");
   const [completedTasks, setCompletedTasks] = useState([]);
+  const [performanceData, setPerformanceData] = useState(null); // Initialize as null
 
   useEffect(() => {
     async function fetchAlertMessage() {
@@ -32,20 +33,31 @@ function Analysis() {
   }, []);
 
   useEffect(() => {
-    switch (performerType) {
-      case "Excellent Performer":
-        setProgress(100);
-        break;
-      case "Medium Performer":
-        setProgress(50);
-        break;
-      case "Low Performer":
-        setProgress(25);
-        break;
-      default:
-        setProgress(0);
+    console.log("Performertype:", performerType);
+    if (performerType) {
+      switch (performerType) {
+        case "Excellent Performer":
+          setProgress(100);
+          break;
+        case "Medium Performer":
+          setProgress(50);
+          break;
+        case "Low Performer":
+          setProgress(25);
+          break;
+        default:
+          setProgress(0);
+      }
+    } else {
+      console.warn("performerType is missing, setting progress to 0");
+      setProgress(0); // Default to 0 if performerType is missing
     }
   }, [performerType]);
+
+  // useEffect(() => {
+  //   console.log("Performer Type:", performerType);
+  //   console.log("Struggling Areas:", strugglingAreas);
+  // }, [performerType, strugglingAreas]);
 
   useEffect(() => {
     const fetchCompletedTasksCount = async () => {
@@ -69,6 +81,20 @@ function Analysis() {
       }
     };
     fetchCompletedTasks();
+  }, []);
+
+  useEffect(() => {
+    const fetchPerformanceTypes = async () => {
+      try {
+        const response = await getOldPerformanceTypes(); // Fetch performance types from the service
+        console.log("Fetched Performance Data:", response.performerTypes); // Log the fetched data
+        setPerformanceData(response.performerTypes); // Set the data for the chart
+      } catch (error) {
+        console.error("Error fetching performance types:", error);
+        setPerformanceData([]); // Set to an empty array in case of an error
+      }
+    };
+    fetchPerformanceTypes();
   }, []);
 
   const alertStyle = {
@@ -147,7 +173,17 @@ function Analysis() {
               <h2 className="text-center font-bold text-xl mb-3">Task Activity</h2>
               <TaskActivityChart completedTasks={completedTasks} />
             </div>
+            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
+              <h6 className="font-bold text-center text-xl mb-3">Performance Type</h6>
+              {performanceData && performanceData.length > 0 ? (
+                <QuizMarksLatestAttempt performanceData={performanceData} />
+              ) : (
+                <p className="text-center">No performance data found</p>
+              )}
+            </div>
+          </div>
 
+          <div className="flex flex-wrap lg:flex-nowrap gap-4">
             <div className="flex-1 p-8 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
               <h2 className="text-center font-bold text-xl mb-2">
                 Focus Level, Study Hours & Average Chapter Marks Comparison
@@ -155,13 +191,6 @@ function Analysis() {
               <div className="h-96 w-full">
                 <MarksComparison />
               </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap lg:flex-nowrap gap-4">
-            <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg">
-              <h6 className="font-bold text-center text-xl mb-3">Quiz Marks vs Latest Attempt</h6>
-              <QuizMarksLatestAttempt />
             </div>
 
             <div className="lg:w-1/2 w-full p-4 bg-gray-200 border border-gray-300 rounded-lg shadow-lg"></div>
