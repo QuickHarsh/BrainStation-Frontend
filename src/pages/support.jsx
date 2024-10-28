@@ -4,7 +4,7 @@ import { debounce } from "lodash";
 import SupportSkeleton from "@/components/skeletons/support";
 import PerformerTypeCard from "@/components/support/performer-card";
 import { getPredictionsForAllModules } from "@/service/progress";
-import {  getCompletedTasksCount } from "@/service/task";
+import { getCompletedTasksCount } from "@/service/task";
 
 function convertToPercentage(score) {
   return Math.min(Math.max(Math.round((score / 100) * 100), 0), 100);
@@ -24,7 +24,7 @@ function Support() {
           getPredictionsForAllModules(),
           getCompletedTasksCount() // Fetch completed tasks count
         ]);
-        
+
         setParsedUserData(predictionsResponse);
         setCompletedTasksCount(tasksCountResponse.completedTasksCount); // Set completed tasks count
         console.log(predictionsResponse);
@@ -43,7 +43,7 @@ function Support() {
   if (!parsedUserData) {
     return <SupportSkeleton />;
   }
- 
+
   const handleModuleClick = (moduleId) => {
     const selected = parsedUserData.modulePredictions.find((module) => module.moduleId === moduleId);
     setSelectedModule(selected);
@@ -92,7 +92,6 @@ function Support() {
             <div className="flex flex-col items-center bg-blue-50 p-4 rounded-lg shadow-sm w-32">
               <span className="text-lg font-semibold text-blue-600">Tasks Completed</span>
               <span className="text-4xl font-bold text-blue-900">{completedTasksCount}</span>
-              
             </div>
             <div className="flex flex-col items-center bg-red-50 p-4 rounded-lg shadow-sm w-32">
               <span className="text-lg font-semibold text-red-600">Tasks Remaining</span>
