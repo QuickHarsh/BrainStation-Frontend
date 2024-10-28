@@ -315,7 +315,7 @@ const SessionControl = ({ moduleId }) => {
                       </>
                     )}
                     <p className="text-left mb-2">
-                      <strong>Focus Time:</strong> {finalResult.focus_time?.toFixed(2) || 0} milliseconds
+                      <strong>Focus Time:</strong> {finalResult.focus_time?.toFixed(2) || 0} Seconds
                     </p>
                     <p className="text-left mb-2">
                       <strong>Total Movements:</strong> {finalResult.total_movements || 0}
