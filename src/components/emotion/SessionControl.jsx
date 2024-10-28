@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import Confetti from "react-confetti";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
 import {
@@ -6,10 +7,9 @@ import {
   checkAssrsResultExists,
   createAssrsResult,
   getAssrsResultByUser,
-  updateAssrsResult,
+  updateAssrsResult
 } from "@/service/asrs";
 import { saveSession } from "@/service/session";
-import Confetti from "react-confetti";
 import image01 from "../badges/01.png";
 import image02 from "../badges/02.png";
 import image03 from "../badges/03.png";
@@ -60,10 +60,12 @@ const SessionControl = ({ moduleId }) => {
     }
   };
 
-  const showConfetti = ["No ADHD symptoms with emotional and head movement alterations", 
-                        "No ADHD symptoms with emotional alterations", 
-                        "No ADHD symptoms with head movement alterations", 
-                        "No ADHD symptoms"];
+  const showConfetti = [
+    "No ADHD symptoms with emotional and head movement alterations",
+    "No ADHD symptoms with emotional alterations",
+    "No ADHD symptoms with head movement alterations",
+    "No ADHD symptoms"
+  ];
 
   const fetchASRSResultForSession = async () => {
     const { exists } = await checkAssrsResultExists();
@@ -85,7 +87,7 @@ const SessionControl = ({ moduleId }) => {
   const initVideoStream = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1920, height: 1080, frameRate: 60 },
+        video: { width: 1920, height: 1080, frameRate: 60 }
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -165,7 +167,7 @@ const SessionControl = ({ moduleId }) => {
         moduleId,
         startTime,
         stopTime,
-        date: sessionDate,
+        date: sessionDate
       };
 
       console.log("Session data:", sessionData);

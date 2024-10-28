@@ -31,10 +31,10 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
         .catch((error) => {
           console.error("Failed to fetch questions:", error);
           setQuestions([]);
-        }).finally(() => {
+        })
+        .finally(() => {
           setIsLoading(false);
-        }
-      );
+        });
     }
   }, [isVisible]);
 
@@ -64,12 +64,12 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
 
   if (!isVisible) return null;
 
-  if(isLoading) {
-    return <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
-      
-        <Loader/>
-      
-    </div>;
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
+        <Loader />
+      </div>
+    );
   }
 
   return (
