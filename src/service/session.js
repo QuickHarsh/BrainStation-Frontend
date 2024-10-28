@@ -50,6 +50,6 @@ export const getTotalSessionDurationByUser = async () => {
   return await apiRequest(() => axiosInstance.get(`/api/sessions/total-session-duration-by-user`));
 };
 
-export const getClassificationFeedback = async () => {
-  return await apiRequest(() => axiosInstance.get(`/api/sessions/classification-feedback`));
+export const getClassificationFeedback = async (classification) => {
+  return await apiRequest(() => axiosInstance.post(`/api/sessions/classification-feedback`, classification));
 };
