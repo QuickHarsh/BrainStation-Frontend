@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
-import { getAlternativeAssrsQuestions } from "@/service/asrs"; // Import the new API function
+import { useEffect, useState } from "react";
+import { getAlternativeAssrsQuestions } from "@/service/asrs";
+
+// Import the new API function
 
 const SurveyModal = ({ isVisible, onClose, onContinue }) => {
   const [surveyData, setSurveyData] = useState({});
@@ -14,12 +16,10 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
           console.log("API Response:", response.data); // Log the response to check its structure
 
           const questionList = response.data.alternatives; // Access the alternatives array
-          
+
           if (Array.isArray(questionList)) {
             setQuestions(questionList);
-            setSurveyData(
-              questionList.reduce((acc, _, index) => ({ ...acc, [`question${index + 1}`]: null }), {})
-            );
+            setSurveyData(questionList.reduce((acc, _, index) => ({ ...acc, [`question${index + 1}`]: null }), {}));
           } else {
             console.error("Unexpected response format:", response.data);
             setQuestions([]); // Clear questions if format is incorrect
@@ -35,7 +35,7 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
   const handleChange = (questionKey, value) => {
     setSurveyData((prevData) => ({
       ...prevData,
-      [questionKey]: value,
+      [questionKey]: value
     }));
   };
 
