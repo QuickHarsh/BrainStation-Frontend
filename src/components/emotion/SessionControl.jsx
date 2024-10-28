@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import Confetti from "react-confetti";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
 import {
@@ -9,6 +10,14 @@ import {
   updateAssrsResult
 } from "@/service/asrs";
 import { saveSession } from "@/service/session";
+import image01 from "../badges/01.png";
+import image02 from "../badges/02.png";
+import image03 from "../badges/03.png";
+import image04 from "../badges/04.png";
+import image05 from "../badges/05.png";
+import image06 from "../badges/06.png";
+import image07 from "../badges/07.png";
+import image08 from "../badges/08.png";
 
 const SessionControl = ({ moduleId }) => {
   const videoRef = useRef(null);
@@ -19,33 +28,57 @@ const SessionControl = ({ moduleId }) => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [sessionStatus, setSessionStatus] = useState("Not started");
   const [dotColor, setDotColor] = useState("red");
-
   const [startTime, setStartTime] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [stopTime, setStopTime] = useState(null);
   const [sessionDate, setSessionDate] = useState(null);
   const [isBarVisible, setIsBarVisible] = useState(false);
-
   const toggleBarVisibility = () => setIsBarVisible(!isBarVisible);
 
   const baseURL = import.meta.env.VITE_BRAINSTATION_EMOTIONURL;
 
-  // Main function to handle ASRS checks and fetch result if needed
+  const getImageSource = (classification) => {
+    switch (classification) {
+      case "ADHD symptoms with emotional and head movement alterations":
+        return image01;
+      case "ADHD symptoms with emotional alterations":
+        return image02;
+      case "ADHD symptoms with head movement alterations":
+        return image03;
+      case "ADHD symptoms detected, consider monitoring":
+        return image04;
+      case "No ADHD symptoms with emotional and head movement alterations":
+        return image05;
+      case "No ADHD symptoms with emotional alterations":
+        return image06;
+      case "No ADHD symptoms with head movement alterations":
+        return image07;
+      case "No ADHD symptoms":
+        return image08;
+      default:
+        return null;
+    }
+  };
+
+  const showConfetti = [
+    "No ADHD symptoms with emotional and head movement alterations",
+    "No ADHD symptoms with emotional alterations",
+    "No ADHD symptoms with head movement alterations",
+    "No ADHD symptoms"
+  ];
+
   const fetchASRSResultForSession = async () => {
     const { exists } = await checkAssrsResultExists();
     if (exists) {
       const isCurrent = await checkAssrsResultAge();
       if (isCurrent) {
-        // If ASRS result is current, fetch and return it
         const asrsResult = await getAssrsResultByUser();
         return asrsResult?.data?.assrsResult;
       } else {
-        // If ASRS result exists but is outdated, show survey to update it
         setShowSurvey(true);
         return null;
       }
     } else {
-      // If ASRS result does not exist, show survey to create a new one
       setShowSurvey(true);
       return null;
     }
@@ -192,12 +225,10 @@ const SessionControl = ({ moduleId }) => {
 
     try {
       if (surveyResult.update) {
-        // Update the existing ASRS result
         const updatedResult = await updateAssrsResult({ asrs_result: "Positive" });
         const asrsValue = updatedResult?.data;
         startSession(asrsValue);
       } else {
-        // Create a new ASRS result
         const newAsrsResult = await createAssrsResult(surveyResult);
         const asrsValue = newAsrsResult?.data;
         startSession(asrsValue);
@@ -210,24 +241,20 @@ const SessionControl = ({ moduleId }) => {
   return (
     <>
       <div
-        className={`absolute top-4 right-4 min-w-[17rem] z-[50]   rounded-md p-4 transition-all duration-300 ease-in-out ${
+        className={`absolute top-4 right-4 min-w-[17rem] z-[50] rounded-md p-4 transition-all duration-300 ease-in-out ${
           isBarVisible ? "max-h-[200px] bg-white shadow-lg" : "max-h-[50px] bg-primary-paper shadow-sm"
         }`}
       >
-        {/* Always visible part with status indicator */}
         <div className="flex">
           <div className="flex items-center gap-1">
             <div className={`w-2.5 h-2.5 rounded-full`} style={{ backgroundColor: dotColor }}></div>
             <p className="text-sm">{sessionStatus}</p>
           </div>
-
-          {/* Toggle button to show/hide the session control buttons */}
           <button className="ml-auto text-sm text-gray-500 hover:text-gray-700" onClick={toggleBarVisibility}>
             {isBarVisible ? "Hide" : "Show"}
           </button>
         </div>
 
-        {/* Conditional session control buttons with animation */}
         <div
           className={`mt-2 transition-opacity duration-300 ease-in-out ${
             isBarVisible ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -256,38 +283,61 @@ const SessionControl = ({ moduleId }) => {
       <SurveyModal isVisible={showSurvey} onClose={() => setShowSurvey(false)} onContinue={handleSurveyComplete} />
 
       {showPopup && finalResult && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[200]">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center w-[30rem]">
-            <h2 className="text-xl font-bold mb-4">Final Result</h2>
-            {finalResult ? (
-              <div className="text-left">
-                <p className="mb-2">
-                  <strong>Classification:</strong> {finalResult.final_classification || "N/A"}
-                </p>
-                <p className="mb-2">
-                  <strong>Focus Time:</strong> {finalResult.focus_time?.toFixed(2) || 0} milliseconds
-                </p>
-                <p className="mb-2">
-                  <strong>Total Movements:</strong> {finalResult.total_movements || 0}
-                </p>
-                <p className="mb-2">
-                  <strong>Erratic Movements:</strong> {finalResult.erratic_movements || 0}
-                </p>
-                <p className="mb-2">
-                  <strong>Erratic Percentage:</strong> {finalResult.erratic_percentage?.toFixed(2) || 0}%
-                </p>
-              </div>
-            ) : (
-              <p>No result</p>
-            )}
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 mt-4"
-              onClick={() => setShowPopup(false)}
-            >
-              Close
-            </button>
+        <>
+          {showConfetti.includes(finalResult.final_classification) && (
+            <div className="z-[1000]">
+              <Confetti />
+            </div>
+          )}
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[200]">
+            <div className="absolute top-1/2 left-[50%] transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg text-center w-[30rem]">
+              {finalResult.message ? (
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold mb-4 text-red-600">Sorry!</h2>
+                  <p className="text-lg mb-2 text-gray-700">
+                    {finalResult.message || "Session duration too short to determine ADHD symptoms."}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Please ensure your session lasts longer than 1 minute for accurate assessment.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold mb-4">Final Result</h2>
+                  <div className="text-center">
+                    {finalResult.final_classification && (
+                      <>
+                        <img
+                          src={getImageSource(finalResult.final_classification)}
+                          alt={finalResult.final_classification}
+                          className="mx-auto mb-4 w-21 h-21"
+                        />
+                      </>
+                    )}
+                    <p className="text-left mb-2">
+                      <strong>Focus Time:</strong> {finalResult.focus_time?.toFixed(2) || 0} milliseconds
+                    </p>
+                    <p className="text-left mb-2">
+                      <strong>Total Movements:</strong> {finalResult.total_movements || 0}
+                    </p>
+                    <p className="text-left mb-2">
+                      <strong>Erratic Movements:</strong> {finalResult.erratic_movements || 0}
+                    </p>
+                    <p className="text-left mb-2">
+                      <strong>Erratic Percentage:</strong> {finalResult.erratic_percentage?.toFixed(2) || 0}%
+                    </p>
+                  </div>
+                </>
+              )}
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 mt-4"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
