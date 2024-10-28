@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAlternativeAssrsQuestions } from "@/service/asrs";
+import { Loader } from "..";
 
 // Import the new API function
 
@@ -8,9 +9,11 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
   const [questions, setQuestions] = useState([]); // State to store fetched questions
   const [errorMessage, setErrorMessage] = useState("");
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
+      setIsLoading(true);
       getAlternativeAssrsQuestions()
         .then((response) => {
           console.log("API Response:", response.data); // Log the response to check its structure
@@ -28,7 +31,10 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
         .catch((error) => {
           console.error("Failed to fetch questions:", error);
           setQuestions([]);
-        });
+        }).finally(() => {
+          setIsLoading(false);
+        }
+      );
     }
   }, [isVisible]);
 
@@ -57,6 +63,14 @@ const SurveyModal = ({ isVisible, onClose, onContinue }) => {
   };
 
   if (!isVisible) return null;
+
+  if(isLoading) {
+    return <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
+      
+        <Loader/>
+      
+    </div>;
+  }
 
   return (
     <>
