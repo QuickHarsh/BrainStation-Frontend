@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Confetti from "react-confetti";
 import axios from "axios";
 import SurveyModal from "@/components/emotion/asrs-form";
@@ -9,7 +9,7 @@ import {
   getAssrsResultByUser,
   updateAssrsResult
 } from "@/service/asrs";
-import { saveSession } from "@/service/session";
+import { getClassificationFeedback, saveSession } from "@/service/session";
 import image01 from "../badges/01.png";
 import image02 from "../badges/02.png";
 import image03 from "../badges/03.png";
@@ -18,6 +18,7 @@ import image05 from "../badges/05.png";
 import image06 from "../badges/06.png";
 import image07 from "../badges/07.png";
 import image08 from "../badges/08.png";
+import ScrollView from "../common/scrollable-view";
 
 const SessionControl = ({ moduleId }) => {
   const videoRef = useRef(null);
@@ -33,9 +34,24 @@ const SessionControl = ({ moduleId }) => {
   const [stopTime, setStopTime] = useState(null);
   const [sessionDate, setSessionDate] = useState(null);
   const [isBarVisible, setIsBarVisible] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
   const toggleBarVisibility = () => setIsBarVisible(!isBarVisible);
 
   const baseURL = import.meta.env.VITE_BRAINSTATION_EMOTIONURL;
+
+  const fetchFeedback = async () => {
+    try {
+      const response = await getClassificationFeedback();
+      setFeedback(response.data?.feedback); // Assuming the feedback is stored under `feedback`
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedback();
+  }, []);
 
   const getImageSource = (classification) => {
     switch (classification) {
@@ -285,8 +301,8 @@ const SessionControl = ({ moduleId }) => {
       {showPopup && finalResult && (
         <>
           {showConfetti.includes(finalResult.final_classification) && (
-            <div className="z-[1000]">
-              <Confetti />
+            <div className="fixed inset-0 z-[1000] pointer-events-none">
+              <Confetti width={window.innerWidth} height={window.innerHeight} />
             </div>
           )}
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[200]">
@@ -303,32 +319,55 @@ const SessionControl = ({ moduleId }) => {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-xl font-bold mb-4">Final Result</h2>
-                  <div className="text-center">
-                    {finalResult.final_classification && (
-                      <>
+                  <h2 className="text-2xl font-semibold mb-6 text-gray-800">Final Result</h2>
+                  <ScrollView initialMaxHeight="14rem">
+                    <div className="text-center space-y-4">
+                      {/* Badge Image */}
+                      {finalResult.final_classification && (
                         <img
                           src={getImageSource(finalResult.final_classification)}
                           alt={finalResult.final_classification}
-                          className="mx-auto mb-4 w-21 h-21"
+                          className="mx-auto mb-2  w-48 h-48 "
                         />
-                      </>
-                    )}
-                    <p className="text-left mb-2">
-                      <strong>Focus Time:</strong> {finalResult.focus_time?.toFixed(2) || 0} Seconds
-                    </p>
-                    <p className="text-left mb-2">
-                      <strong>Total Movements:</strong> {finalResult.total_movements || 0}
-                    </p>
-                    <p className="text-left mb-2">
-                      <strong>Erratic Movements:</strong> {finalResult.erratic_movements || 0}
-                    </p>
-                    <p className="text-left mb-2">
-                      <strong>Erratic Percentage:</strong> {finalResult.erratic_percentage?.toFixed(2) || 0}%
-                    </p>
-                  </div>
+                      )}
+
+                      {/* Statistics */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center px-4 py-2 bg-gray-100 rounded-lg shadow-sm">
+                          <p className="text-md font-medium text-gray-600">Focus Time:</p>
+                          <p className="text-lg font-semibold text-gray-800">
+                            {finalResult.focus_time?.toFixed(2) || 0} s
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center px-4 py-2 bg-gray-100 rounded-lg shadow-sm">
+                          <p className="text-md font-medium text-gray-600">Total Movements:</p>
+                          <p className="text-lg font-semibold text-gray-800">{finalResult.total_movements || 0}</p>
+                        </div>
+                        <div className="flex justify-between items-center px-4 py-2 bg-gray-100 rounded-lg shadow-sm">
+                          <p className="text-md font-medium text-gray-600">Erratic Movements:</p>
+                          <p className="text-lg font-semibold text-gray-800">{finalResult.erratic_movements || 0}</p>
+                        </div>
+                        <div className="flex justify-between items-center px-4 py-2 bg-gray-100 rounded-lg shadow-sm">
+                          <p className="text-md font-medium text-gray-600">Erratic Percentage:</p>
+                          <p className="text-lg font-semibold text-gray-800">
+                            {finalResult.erratic_percentage?.toFixed(2) || 0}%
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Feedback */}
+                      {feedback && (
+                        <div className="px-4 py-3 mt-5 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg text-left">
+                          <p className="text-lg font-medium text-yellow-700">
+                            <strong>Feedback:</strong> {feedback}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollView>
                 </>
               )}
+
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 mt-4"
                 onClick={() => setShowPopup(false)}

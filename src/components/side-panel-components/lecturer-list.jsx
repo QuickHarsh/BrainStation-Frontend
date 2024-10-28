@@ -9,10 +9,12 @@ const LectureList = () => {
   const dispatch = useDispatch();
   const lectures = useSelector((state) => state.lectures.lectures);
 
-  const handleChapterClick = (lectureId) => {
+  const handleChapterClick = (lectureId, lectureTitle) => {
     dispatch(switchLecture(lectureId));
     dispatch(setQuizzesForLecture(lectureId));
     dispatch(switchView("quiz"));
+
+    localStorage.setItem("lastActivity", lectureTitle);
   };
 
   return (
@@ -31,7 +33,7 @@ const LectureList = () => {
                 id={lecture._id}
                 lectureNumber={index + 1}
                 title={lecture.title}
-                onClick={() => handleChapterClick(lecture._id)}
+                onClick={() => handleChapterClick(lecture._id, lecture.title)}
               />
             ))}
           </div>

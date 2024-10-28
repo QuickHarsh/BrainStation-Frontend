@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ModuleCard from "@/components/cards/module-card";
 import ScrollView from "@/components/common/scrollable-view";
 import MainSkeleton from "@/components/skeletons/main";
 import useFetchData from "@/hooks/fetch-data";
-import { getAllModules } from "@/service/module";
+import { getUserModules } from "@/service/user";
 import { setCurrentModule } from "@/store/lecturesSlice";
 import { setModules } from "@/store/moduleSlice";
 
@@ -13,21 +14,24 @@ const Main = () => {
   const navigate = useNavigate();
   const modules = useSelector((state) => state.modules.modules);
 
-  const modulesData = useFetchData(getAllModules);
+  const modulesData = useFetchData(getUserModules);
 
-  if (modulesData && modulesData.data?.docs && modules.length === 0) {
-    const modulesWithProgress = modulesData.data.docs.map((module) => ({
-      ...module,
-      progress: 50
-    }));
+  useEffect(() => {
+    if (modulesData && modulesData.data && modulesData.data.length > 0 && modules.length === 0) {
+      // Only dispatch if modulesData is non-empty and not already set
+      const modulesWithProgress = modulesData.data.map((module) => ({
+        ...module,
+        progress: 50
+      }));
 
-    dispatch(setModules(modulesWithProgress));
+      dispatch(setModules(modulesWithProgress));
 
-    const currentModule = localStorage.getItem("currentModule");
-    if (!currentModule && modulesWithProgress.length > 0) {
-      localStorage.setItem("currentModule", modulesWithProgress[0]._id);
+      const currentModule = localStorage.getItem("currentModule");
+      if (!currentModule && modulesWithProgress.length > 0) {
+        localStorage.setItem("currentModule", modulesWithProgress[0]._id);
+      }
     }
-  }
+  }, [modulesData, modules, dispatch]);
 
   const handleModuleClick = (moduleId) => {
     dispatch(setCurrentModule(moduleId));
@@ -51,7 +55,7 @@ const Main = () => {
                   moduleId={module._id}
                   title={module.name}
                   progress={module.progress}
-                  onClick={() => handleModuleClick(module._id)} // Handle click on module
+                  onClick={() => handleModuleClick(module._id)}
                 />
               ))
             ) : (

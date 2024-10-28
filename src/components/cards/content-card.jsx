@@ -15,7 +15,6 @@ const ContentCard = ({ content, lectureId }) => {
   const handleClose = () => setIsVisible(false);
 
   const data = {
-    userId: "66d97b6fc30a1f78cf41b620",
     lectureId: lectureId
   };
 
@@ -48,8 +47,11 @@ const ContentCard = ({ content, lectureId }) => {
   return (
     <>
       <ScrollView initialMaxHeight="13rem">
-        <div className="w-full flex flex-col gap-6">
-          <div className="prose prose-lg text-gray-800" dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="w-full flex flex-col items-center justify-center gap-6">
+          <div
+            className="prose prose-lg text-gray-800 text-justify mx-auto w-full max-w-4xl"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
           <button
             className="fixed bottom-16 right-8 bg-horizontal-gradient text-white py-3 px-3 rounded-full shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
             onClick={checkOntology}
