@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { debounce } from "lodash";
 import { getPredictionsForAllModules } from "@/service/progress";
 
 function cleanDescription(description) {
@@ -22,7 +23,7 @@ function Support() {
   const [selectedModule, setSelectedModule] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = debounce(async () => {
       try {
         const response = await getPredictionsForAllModules();
         setParsedUserData(response);
@@ -30,8 +31,13 @@ function Support() {
       } catch (error) {
         console.error("Error fetching prediction data:", error);
       }
-    };
+    }, 500);
+
     fetchData();
+
+    return () => {
+      fetchData.cancel();
+    };
   }, [searchParams]);
 
   if (!parsedUserData) {
