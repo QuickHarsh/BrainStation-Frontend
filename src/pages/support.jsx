@@ -4,6 +4,7 @@ import { debounce } from "lodash";
 import SupportSkeleton from "@/components/skeletons/support";
 import PerformerTypeCard from "@/components/support/performer-card";
 import { getPredictionsForAllModules } from "@/service/progress";
+import {  getCompletedTasksCount } from "@/service/task";
 
 function convertToPercentage(score) {
   return Math.min(Math.max(Math.round((score / 100) * 100), 0), 100);
@@ -14,15 +15,21 @@ function Support() {
   const [searchParams] = useSearchParams();
   const [parsedUserData, setParsedUserData] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
+  const [completedTasksCount, setCompletedTasksCount] = useState(0);
 
   useEffect(() => {
     const fetchData = debounce(async () => {
       try {
-        const response = await getPredictionsForAllModules();
-        setParsedUserData(response);
-        console.log(response);
+        const [predictionsResponse, tasksCountResponse] = await Promise.all([
+          getPredictionsForAllModules(),
+          getCompletedTasksCount() // Fetch completed tasks count
+        ]);
+        
+        setParsedUserData(predictionsResponse);
+        setCompletedTasksCount(tasksCountResponse.completedTasksCount); // Set completed tasks count
+        console.log(predictionsResponse);
       } catch (error) {
-        console.error("Error fetching prediction data:", error);
+        console.error("Error fetching data:", error);
       }
     }, 1000);
 
@@ -36,7 +43,7 @@ function Support() {
   if (!parsedUserData) {
     return <SupportSkeleton />;
   }
-
+ 
   const handleModuleClick = (moduleId) => {
     const selected = parsedUserData.modulePredictions.find((module) => module.moduleId === moduleId);
     setSelectedModule(selected);
@@ -84,7 +91,8 @@ function Support() {
           <div className="flex space-x-8 justify-center">
             <div className="flex flex-col items-center bg-blue-50 p-4 rounded-lg shadow-sm w-32">
               <span className="text-lg font-semibold text-blue-600">Tasks Completed</span>
-              <span className="text-4xl font-bold text-blue-900">20</span>
+              <span className="text-4xl font-bold text-blue-900">{completedTasksCount}</span>
+              
             </div>
             <div className="flex flex-col items-center bg-red-50 p-4 rounded-lg shadow-sm w-32">
               <span className="text-lg font-semibold text-red-600">Tasks Remaining</span>
