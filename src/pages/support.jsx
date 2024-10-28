@@ -72,13 +72,14 @@ function Support() {
     <main className="flex h-screen flex-col items-center justify-between p-10 bg-white">
       <div className="w-full md:w-3/4 bg-white shadow-lg rounded-lg p-6 space-y-6">
         <div className="flex justify-between items-start bg-blue-200 p-4 rounded-md border-b-4 border-yellow-500 shadow-lg">
-          <div>
-            <h2 className="text-4xl font-extrabold text-blue-900">Welcome back!</h2>
-            <p className="text-2xl font-bold text-blue-700">
-              Remember, consistency is key. Stay focused, and keep improving your results. Your next goal is within
-              reach!
-            </p>
-          </div>
+        <div>
+  <h2 className="text-4xl font-extrabold text-blue-900">Welcome back!</h2>
+  <p className="text-2xl font-bold text-blue-700">
+    Remember, consistency is key. Stay focused, and keep improving your results. Your next goal is within reach!
+  </p>
+ 
+</div>
+
           <div className="flex flex-col items-center space-y-2">
             <div className="flex space-x-6">
               <div className="text-center">
@@ -112,7 +113,7 @@ function Support() {
             </button>
           </div>
         </div>
-
+        <h3 className="text-3xl font-extrabold text-yellow-900 mt-4">Academic Forecasting</h3>
         {/* Module Predictions */}
         <div className="p-6 bg-white shadow-md rounded-lg border-l-4 border-blue-400">
           <h4 className="text-3xl font-bold text-black mb-6">Module Predictions</h4>
