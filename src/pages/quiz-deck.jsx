@@ -31,7 +31,7 @@ const QuizDeck = () => {
   return (
     <div className="relative px-8 py-8 h-full">
       {blur && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#ffffff80] bg-opacity-90 z-10">
+        <div className="absolute inset-1 flex items-center justify-center bg-[#ffffff80] bg-opacity-90 z-10">
           <p className="text-gray-700 text-lg font-semibold">Please select a lecture to view quiz details.</p>
         </div>
       )}
